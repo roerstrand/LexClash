@@ -1,0 +1,6 @@
+@OrdSpel.API_HostAddress = http://localhost:5260
+
+GET {{OrdSpel.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
