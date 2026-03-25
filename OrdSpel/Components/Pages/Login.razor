@@ -1,12 +1,50 @@
 ﻿@page "/"
+@using OrdSpel.Shared.UserDTOs
+@using OrdSpel.UI.Services
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Inloggning</PageTitle>
 
-<h1>Välkommen till Ordspel !</h1>
+<h1>Välkommen till Ordspelet !</h1>
+
+<div class="mb-3">
+
+    <form method="post">
+        <label @bind-Value="DisplayBox" type="text"></label>
+        <Input @bind-Value="@_enteredUsername" type="text" placeholder="Användarnamn"/>
+        <PasswordInput @bind-Value="@_enteredPassword" type="text" placeholder="Användarnamn"/>
+        <button type="submit">Logga in</button>
+    </form>
+
+</div>
+
+@code {
+
+    private HttpService _httpService;
+
+    public Login(HttpService httpService)
+    {
+        _httpService = httpService;
+    }
+
+    private string DisplayBox { get; set; } = string.Empty;
+    private string _enteredUsername = string.Empty;
+    private string? _enteredPassword = null;
+
+    public async Task LoginUser()
+    {
+        var LoginDTO = new LoginDTO
+        {
+            Username = _enteredUsername,
+            Password = _enteredPassword!
+        };
+
+        var result = await _httpService.Login(LoginDTO);
+
+        if (result == null)
+        {
+            DisplayBox = "Inloggning misslyckades, försök igen.";
+        }
+    }
 
 
-<form method="post">
-    <h3>Inloggning</h3>
-    <input type="text" placeholder="Användarnamn" />
-    <Passwordbox type="text" placeholder="Användarnamn" />
-</form>
+}
