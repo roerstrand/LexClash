@@ -1,4 +1,4 @@
-using OrdSpel.Components;
+using OrdSpel.UI.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
