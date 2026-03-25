@@ -1,0 +1,59 @@
+@page "/register"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 400px">
+        <h2 class="card-title text-center mb-4">Registrera</h2>
+
+        <EditForm Model="registerDto" OnValidSubmit="HandleRegister">
+            <DataAnnotationsValidator />
+
+            <div class="mb-3">
+                <label class="form-label">Användarnamn</label>
+                <InputText class="form-control" @bind-Value="registerDto.Username" />
+                <ValidationMessage For="@(() => registerDto.Username)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Lösenord</label>
+                <InputText type="password" class="form-control" @bind-Value="registerDto.Password" />
+                <ValidationMessage For="@(() => registerDto.Password)" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Bekräfta lösenord</label>
+                <InputText type="password" class="form-control" @bind-Value="registerDto.ConfirmPassword" />
+                <ValidationMessage For="@(() => registerDto.ConfirmPassword)" />
+            </div>
+
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
+
+            <button type="submit" class="btn btn-primary w-100">Registrera</button>
+        </EditForm>
+
+    </div>
+</div>
+
+@code
+{
+    private RegisterDto registerDto = new();
+    private string errorMessage = "";
+
+    private async Task HandleRegister()
+    {
+        var response = await Http.PostAsJsonAsync("api/auth/register", registerDto);
+
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/login");
+        }
+        else
+        {
+            errorMessage = "Något gick fel, försök igen.";
+        }
+    }
+}
