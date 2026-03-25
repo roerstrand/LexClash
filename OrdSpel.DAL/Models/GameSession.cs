@@ -1,0 +1,21 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace OrdSpel.DAL.Models
+{
+    public class GameSession
+    {
+        public int Id { get; set; }
+        public string GameCode { get; set; }
+        public GameStatus Status { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; } = null!;
+        public string StartWord { get; set; } = string.Empty;
+        public int CurrentRoud { get; set; }
+        public string? CurrentUserId { get; set; }
+        public AppUser? CurrentTurnUser { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+    }
+}
