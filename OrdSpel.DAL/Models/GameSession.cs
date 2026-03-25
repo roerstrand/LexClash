@@ -8,7 +8,7 @@ namespace OrdSpel.DAL.Models
     public class GameSession
     {
         public int Id { get; set; }
-        public string GameCode { get; set; }
+        public string GameCode { get; set; } = string.Empty;
         public GameStatus Status { get; set; } = GameStatus.Waiting;
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
