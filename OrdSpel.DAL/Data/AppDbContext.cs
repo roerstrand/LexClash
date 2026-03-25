@@ -1,28 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OrdSpel.DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 namespace OrdSpel.DAL.Data
 {
-    public class AppDbContext: DbContext
+    public class AppDbContext : IdentityDbContext<AppUser>
     {
+
+        // Inherite from IdentityDbContext to include ASP.NET Core Identity tables for user management
         public AppDbContext(DbContextOptions<AppDbContext> options)
-          : base(options)
+           : base(options)
         {
         }
+     
 
-        public DbSet<Category> Categories{ get; set; }
-        public DbSet<GamePlayer> GamePlayers { get; set; }
-        public DbSet<GameSession> GameSessions { get; set; }
-        public DbSet<GameTurn> GameTurns{ get; set; }
-        public DbSet<Word> Words { get; set; } 
-
-
-
-
-
+        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<GamePlayer> GamePlayers { get; set; } = null!;
+        public DbSet<GameSession> GameSessions { get; set; } = null!;
+        public DbSet<GameTurn> GameTurns { get; set; } = null!;
+        public DbSet<Word> Words { get; set; } = null!;
     }
 }

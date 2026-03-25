@@ -9,7 +9,7 @@ namespace OrdSpel.DAL.Models
     {
         public int Id { get; set; }
         public string GameCode { get; set; }
-        public GameStatus Status { get; set; }
+        public GameStatus Status { get; set; } = GameStatus.Waiting;
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
         public string StartWord { get; set; } = string.Empty;
@@ -17,6 +17,10 @@ namespace OrdSpel.DAL.Models
         public string? CurrentUserId { get; set; }
         public AppUser? CurrentTurnUser { get; set; }
         public DateTime CreatedAt { get; set; }
+
+   
+        public ICollection<GamePlayer> Players { get; set; } = new List<GamePlayer>();
+        public ICollection<GameTurn> Turns { get; set; } = new List<GameTurn>();
 
     }
 }

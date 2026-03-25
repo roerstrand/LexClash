@@ -10,5 +10,6 @@ namespace OrdSpel.DAL.Models
         public int CategoryId { get; set; }
         public string Text { get; set; }
         public bool IsHard { get; set; }
+
     }
 }
