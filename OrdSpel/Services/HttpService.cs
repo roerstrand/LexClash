@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Mvc;
 using OrdSpel.Shared.UserDTOs;
 
 namespace OrdSpel.UI.Services
@@ -8,21 +9,19 @@ namespace OrdSpel.UI.Services
         public HttpClient HttpClient { get; }
 
 
-        public async Task<ActionResult> LoginUser(LoginDTO loginDto)
+        public async Task<ActionResult> LoginUser(LoginDto loginDto)
         {
-            try
-            {
-                // endpoint auth existerar inte ännu i api som controller.
-                var result = await HttpClient.PostAsJsonAsync("api/auth", loginDto);
-                return new OkObjectResult(result);
+            var response = await HttpClient.PostAsJsonAsync("api/auth/login", loginDto);
 
-            } catch (Exception ex)
-            {
-                // Handle exceptions
-                return new BadRequestObjectResult(ex.Message);
-            }
+            if (!response.IsSuccessStatusCode)
+                return new UnauthorizedResult();
 
-            
+            var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+
+            HttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", result.Token);
+
+
         }
 
         public void RegisterUser(string username, string password, string email)

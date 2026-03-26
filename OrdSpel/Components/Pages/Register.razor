@@ -1,5 +1,7 @@
 @page "/register"
-@inject HttpClient Http
+@using OrdSpel.Shared.UserDtos
+@using OrdSpel.UI.Services
+@inject HttpService HttpService
 @inject NavigationManager Navigation
 
 <div class="d-flex justify-content-center align-items-center vh-100">
@@ -45,7 +47,7 @@
 
     private async Task HandleRegister()
     {
-        var response = await Http.PostAsJsonAsync("api/auth/register", registerDto);
+        var response = await HttpService.RegisterUser(registerDto);
 
         if (response.IsSuccessStatusCode)
         {

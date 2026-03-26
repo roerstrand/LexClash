@@ -26,17 +26,17 @@
     private string _enteredUsername = string.Empty;
     private string? _enteredPassword = null;
 
-    public LoginDTO LoginDto { get; set; };
+    public LoginDto loginDto { get; set; }
 
     public async Task LoginUser()
     {
-        LoginDto = new LoginDTO
+        var loginDto = new LoginDto
         {
             Username = _enteredUsername,
             Password = _enteredPassword!
         };
 
-        var result = await HttpService.LoginUser(LoginDto);
+        var result = await HttpService.LoginUser(loginDto);
 
         if (result == null)
         {
