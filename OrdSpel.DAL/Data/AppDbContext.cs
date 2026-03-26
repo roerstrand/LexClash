@@ -6,7 +6,7 @@ namespace OrdSpel.DAL.Data
     public class AppDbContext : DbContext
     {
 
-        // Inherite from IdentityDbContext to include ASP.NET Core Identity tables for user management
+       
         public AppDbContext(DbContextOptions<AppDbContext> options)
            : base(options)
         {
