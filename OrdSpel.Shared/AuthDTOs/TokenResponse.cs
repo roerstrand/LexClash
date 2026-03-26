@@ -4,9 +4,8 @@ using System.Text;
 
 namespace OrdSpel.Shared.UserDTOs
 {
-    public class LoginDTO
+    public class TokenResponse
     {
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string Token { get; set; } = null!;
     }
 }

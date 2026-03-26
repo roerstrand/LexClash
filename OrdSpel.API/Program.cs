@@ -1,7 +1,12 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using OrdSpel.API.Services;
+using OrdSpel.BLL.Services;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Data.SeededData;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,16 +16,20 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnection")));
 builder.Services.AddDbContext<AuthDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection")));
 
-//lägg till identity + lösenordskrav:
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddAuthentication(options =>
 {
-    options.Password.RequireDigit = false;
-    options.Password.RequiredLength = 3;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequireUppercase = false;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
     .AddEntityFrameworkStores<AuthDbContext>();
-    //.AddDefaultTokenProviders(); finns inte längre efter Gula separerade databaserna?
+    .AddDefaultTokenProviders();
 
 
 var app = builder.Build();
@@ -29,13 +38,12 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-// Authentication & Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-//seeda standardvärdena
+//seeda standardanvändarna
 using (var scope = app.Services.CreateScope())
 {
     //användare
