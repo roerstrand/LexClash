@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace OrdSpel.DAL.Data
 {
     public class AuthDbContext : IdentityDbContext
     {
+        public AuthDbContext(DbContextOptions<AuthDbContext> options)
+            : base(options)
+        {
+        }
     }
 }
