@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using OrdSpel.Shared.UserDtos;
+//using OrdSpel.Shared.UserDTOs;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -34,9 +34,9 @@ namespace OrdSpel.BLL.Services
             return GenerateJwtToken(user);
         }
 
-        public async Task<bool> LoginAsync(LoginDto dto) //Kolla namngivning sen mot Login!
+        public async Task<bool> LoginAsync(LoginDTO dto) //Kolla namngivning sen mot Login!
         {
-            
+            throw new NotImplementedException();
         }
 
         private string GenerateJwtToken(IdentityUser user)
