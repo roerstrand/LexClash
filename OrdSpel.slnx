@@ -1,5 +1,7 @@
 <Solution>
-  <Project Path="OrdSpe.BLL.Test/OrdSpe.BLL.Test.csproj" />
+  <Project Path="OrdSpe.BLL.Test/OrdSpel.BLL.Test.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="OrdSpel.API/OrdSpel.API.csproj" />
   <Project Path="OrdSpel.BLL/OrdSpel.BLL.csproj" />
   <Project Path="OrdSpel.DAL.Test/OrdSpel.DAL.Test.csproj" />

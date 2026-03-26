@@ -1,15 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using OrdSpel.Shared.UserDtos;
-//using OrdSpel.Shared.UserDTOs;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-
-
-
+using Microsoft.AspNetCore.Identity;
+using OrdSpel.Shared.UserDTOs;
 
 namespace OrdSpel.BLL.Services
 {
@@ -22,41 +12,21 @@ namespace OrdSpel.BLL.Services
             _userManager = userManager;
         }
 
-        public async Task<string?> RegisterAsync(RegisterDto dto)
+        public async Task<IdentityUser?> RegisterAsync(RegisterDto dto)
         {
             var user = new IdentityUser { UserName = dto.Username };
             var result = await _userManager.CreateAsync(user, dto.Password);
 
-            if (!result.Succeeded)
-                return null;
-
-            // 2. Generera och returnera JWT-token
-            return GenerateJwtToken(user);
+            return result.Succeeded ? user : null;
         }
 
-        public async Task<bool> LoginAsync(LoginDTO dto) //Kolla namngivning sen mot Login!
+        public async Task<IdentityUser?> LoginAsync(LoginDto dto)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _userManager.FindByNameAsync(dto.Username);
+            if (user == null) return null;
 
-        private string GenerateJwtToken(IdentityUser user)
-        {
-            var claims = new[]
-            {
-        new Claim(ClaimTypes.NameIdentifier, user.Id),
-        new Claim(ClaimTypes.Name, user.UserName)
-    };
-
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("DIN-HEMLIGA-NYCKEL"));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            var passwordOk = await _userManager.CheckPasswordAsync(user, dto.Password);
+            return passwordOk ? user : null;
         }
     }
 }

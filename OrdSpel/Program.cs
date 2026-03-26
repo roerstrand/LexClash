@@ -1,4 +1,4 @@
-using OrdSpel.UI.Components;
+
 using OrdSpel.UI.Components;
 using OrdSpel.UI.Services;
 
@@ -8,7 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient<HttpService>();
+builder.Services.AddHttpClient<HttpService>(options =>
+{
+    options.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
+});
 
 var app = builder.Build();
 

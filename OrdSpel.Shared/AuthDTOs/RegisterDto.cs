@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
-namespace OrdSpel.Shared.UserDtos
+namespace OrdSpel.Shared.UserDTOs
 {
     public class RegisterDto
     {
