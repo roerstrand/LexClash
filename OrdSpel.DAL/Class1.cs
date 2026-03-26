@@ -1,4 +1,4 @@
-﻿namespace OrdSpel.BLL
+﻿namespace OrdSpel.DAL
 {
     public class Class1
     {

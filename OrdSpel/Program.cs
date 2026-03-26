@@ -1,10 +1,14 @@
-using OrdSpel.Components;
+using OrdSpel.UI.Components;
+using OrdSpel.UI.Components;
+using OrdSpel.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddHttpClient<HttpService>();
 
 var app = builder.Build();
 
