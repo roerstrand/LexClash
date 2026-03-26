@@ -11,7 +11,7 @@ namespace OrdSpel.DAL.Data.SeededData
         public static async Task SeedCategoriesAsync(AppDbContext context)
         {
             //lägg till kategorier i listan efterhand
-            var categoryName = new List<string> { "Länder", "Djur" };
+            var categoryName = new List<string> { "Länder", "Djur", "Frukter och grönsaker" };
 
             //om det inte finns en category med ett namn från listan ovan, skapa:
             foreach (var name in categoryName)
@@ -444,6 +444,137 @@ namespace OrdSpel.DAL.Data.SeededData
                     context.Words.Add(new Models.Word
                     {
                         Text = animal.ToLower(),
+                        CategoryId = category.Id,
+                        IsHard = false
+                    });
+                }
+            }
+
+            await context.SaveChangesAsync();
+        }
+
+        public static async Task SeedFruitsAndVegetablesAsync(AppDbContext context)
+        {
+            var category = context.Categories.FirstOrDefault(c => c.Name == "Frukter och grönsaker");
+
+            if(category == null)
+            {
+                return;
+            }
+
+            var fruitsAndVegetables = new List<string>
+            {
+                "ananas",
+"apelsin",
+"avokado",
+"äpple",
+"ärt",
+"banan",
+"björnbär",
+"bladspenat",
+"blomkål",
+"blåbär",
+"bondböna",
+"broccolini",
+"broccoli",
+"brysselkål",
+"brytböna",
+"butternutpumpa",
+"cantaloupe",
+"chili",
+"citron",
+"clementin",
+"druva",
+"durian",
+"fikon",
+"fänkål",
+"fläderbär",
+"grönkål",
+"guava",
+"gurka",
+"hallon",
+"honungsmelon",
+"jalapeño",
+"jordärtskocka",
+"jordgubbe",
+"karambola",
+"kikärta",
+"kiwano",
+"kiwi",
+"knipplök",
+"kokosnöt",
+"kål",
+"kålrabbi",
+"körsbär",
+"lime",
+"litchi",
+"majs",
+"majrova",
+"mandarin",
+"mango",
+"mangostan",
+"mangold",
+"maracuja",
+"mirabel",
+"morot",
+"mullbär",
+"nektarin",
+"pak choi",
+"palsternacka",
+"papaya",
+"paprika",
+"passionsfrukt",
+"pastinacka",
+"pepparrot",
+"persika",
+"physalis",
+"plommon",
+"pomelo",
+"potatis",
+"pumpa",
+"purjolök",
+"päron",
+"rabarber",
+"ramslök",
+"rambutan",
+"raps",
+"rädisa",
+"rödbeta",
+"rödkål",
+"rödlök",
+"rotselleri",
+"ruccola",
+"sallad",
+"satsuma",
+"schalottenlök",
+"snöärta",
+"sockerärta",
+"sojaböna",
+"sparris",
+"spenat",
+"stjärnfrukt",
+"svartrot",
+"svartkål",
+"squash",
+"sötpotatis",
+"tomat",
+"tomatillo",
+"vattenmelon",
+"vaxböna",
+"vindruva",
+"vitkål",
+"vitlök",
+"yuzu",
+"zucchini",
+            };
+
+            foreach (var item in fruitsAndVegetables)
+            {
+                if (!context.Words.Any(w => w.Text.ToLower() == item && w.CategoryId == category.Id))
+                {
+                    context.Words.Add(new Models.Word
+                    {
+                        Text = item.ToLower(),
                         CategoryId = category.Id,
                         IsHard = false
                     });

@@ -45,8 +45,11 @@ using (var scope = app.Services.CreateScope())
     //kategorier
     var appDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await SeededAppData.SeedCategoriesAsync(appDb);
+
+    //innehåll i kategorier
     await SeededAppData.SeedCountriesAsync(appDb);
     await SeededAppData.SeedAnimalsAsync(appDb);
+    await SeededAppData.SeedFruitsAndVegetablesAsync(appDb);
 }
 
 app.Run();
