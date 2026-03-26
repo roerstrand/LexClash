@@ -20,7 +20,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequireUppercase = false;
 })
     .AddEntityFrameworkStores<AuthDbContext>();
-    .AddDefaultTokenProviders();
+    //.AddDefaultTokenProviders(); finns inte längre efter Gula separerade databaserna?
 
 
 var app = builder.Build();
@@ -35,11 +35,16 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//seeda standardanvändarna
+//seeda standardvärdena
 using (var scope = app.Services.CreateScope())
 {
+    //användare
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     await SeededUserData.SeedUserAsync(userManager);
+
+    //kategorier
+    var appDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await SeededAppData.SeedCategoriesAsync(appDb);
 }
 
 app.Run();
