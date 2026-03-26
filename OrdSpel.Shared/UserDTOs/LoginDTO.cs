@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OrdSpel.Shared.UserDTOs
+namespace OrdSpel.Shared.UserDtos
 {
     public class LoginDTO
     {
