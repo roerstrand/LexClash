@@ -1,6 +1,7 @@
 @page "/register"
 @using OrdSpel.Shared.UserDtos
 @using OrdSpel.UI.Services
+@using OrdSpel.UI.Models
 @inject HttpService HttpService
 @inject NavigationManager Navigation
 
@@ -47,15 +48,12 @@
 
     private async Task HandleRegister()
     {
-        var response = await HttpService.RegisterUser(registerDto);
+        var result = await HttpService.RegisterUser(registerDto);
 
-        if (response.IsSuccessStatusCode)
-        {
-            Navigation.NavigateTo("/login");
-        }
+        if (result.Success)
+			Navigation.NavigateTo("/spelsida"); //Ändra till rätt sida efter registrering
         else
-        {
-            errorMessage = "Något gick fel, försök igen.";
-        }
+            errorMessage = result.ErrorMessage;
     }
-}
+
+ }
