@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace OrdSpel.DAL.Migrations
+namespace OrdSpel.DAL.Migrations.AuthDb
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Auth_Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,34 +49,6 @@ namespace OrdSpel.DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Words",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsHard = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Words", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -185,96 +157,6 @@ namespace OrdSpel.DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "GameSessions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    GameCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    StartWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CurrentRoud = table.Column<int>(type: "int", nullable: false),
-                    CurrentUserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CurrentTurnUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GameSessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GameSessions_AspNetUsers_CurrentTurnUserId",
-                        column: x => x.CurrentTurnUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_GameSessions_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GamePlayers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SessionId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    PlayerOrder = table.Column<int>(type: "int", nullable: false),
-                    TotalScore = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GamePlayers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GamePlayers_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GamePlayers_GameSessions_SessionId",
-                        column: x => x.SessionId,
-                        principalTable: "GameSessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GameTurns",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SessionId = table.Column<int>(type: "int", nullable: false),
-                    Round = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Word = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Score = table.Column<int>(type: "int", nullable: false),
-                    PassedTurn = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GameTurns", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_GameTurns_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GameTurns_GameSessions_SessionId",
-                        column: x => x.SessionId,
-                        principalTable: "GameSessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -313,36 +195,6 @@ namespace OrdSpel.DAL.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GamePlayers_SessionId",
-                table: "GamePlayers",
-                column: "SessionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GamePlayers_UserId",
-                table: "GamePlayers",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GameSessions_CategoryId",
-                table: "GameSessions",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GameSessions_CurrentTurnUserId",
-                table: "GameSessions",
-                column: "CurrentTurnUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GameTurns_SessionId",
-                table: "GameTurns",
-                column: "SessionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GameTurns_UserId",
-                table: "GameTurns",
-                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -364,25 +216,10 @@ namespace OrdSpel.DAL.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "GamePlayers");
-
-            migrationBuilder.DropTable(
-                name: "GameTurns");
-
-            migrationBuilder.DropTable(
-                name: "Words");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "GameSessions");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
         }
     }
 }

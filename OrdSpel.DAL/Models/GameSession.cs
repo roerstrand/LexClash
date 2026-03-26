@@ -15,7 +15,6 @@ namespace OrdSpel.DAL.Models
         public string StartWord { get; set; } = string.Empty;
         public int CurrentRoud { get; set; }
         public string? CurrentUserId { get; set; }
-        public AppUser? CurrentTurnUser { get; set; }
         public DateTime CreatedAt { get; set; }
 
    

@@ -10,7 +10,6 @@ namespace OrdSpel.DAL.Models
         public int SessionId { get; set; }
         public GameSession Session { get; set; }
         public string UserId { get; set; } = string.Empty;
-        public AppUser User { get; set; } = null!;
         public int PlayerOrder { get; set; } // 1 or 2
         public int TotalScore { get; set; } = 0;
 

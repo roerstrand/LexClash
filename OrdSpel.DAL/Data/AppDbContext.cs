@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using OrdSpel.DAL.Models;
 
 namespace OrdSpel.DAL.Data
 {
-    public class AppDbContext : IdentityDbContext<AppUser>
+    public class AppDbContext : DbContext
     {
 
         // Inherite from IdentityDbContext to include ASP.NET Core Identity tables for user management
@@ -63,11 +62,6 @@ namespace OrdSpel.DAL.Data
                     .WithMany(c => c.GameSessions)
                     .HasForeignKey(g => g.CategoryId)
                     .OnDelete(DeleteBehavior.Restrict);
-
-                entity.HasOne(g => g.CurrentTurnUser)
-                    .WithMany()
-                    .HasForeignKey(g => g.CurrentUserId)
-                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             builder.Entity<GamePlayer>(entity =>
@@ -76,11 +70,6 @@ namespace OrdSpel.DAL.Data
                     .WithMany(gs => gs.Players)
                     .HasForeignKey(gp => gp.SessionId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(gp => gp.User)
-                    .WithMany(u => u.GamePlayers)
-                    .HasForeignKey(gp => gp.UserId)
-                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasIndex(gp => new { gp.SessionId, gp.UserId })
                     .IsUnique();
@@ -99,10 +88,6 @@ namespace OrdSpel.DAL.Data
                     .HasForeignKey(gt => gt.SessionId)
                     .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasOne(gt => gt.User)
-                    .WithMany(u => u.GameTurns)
-                    .HasForeignKey(gt => gt.UserId)
-                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
