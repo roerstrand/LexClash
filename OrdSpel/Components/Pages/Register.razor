@@ -1,8 +1,7 @@
 @page "/register"
 @rendermode InteractiveServer
-@using OrdSpel.Shared.UserDtos
+@using OrdSpel.Shared.UserDTOs
 @using OrdSpel.UI.Services
-@using OrdSpel.UI.Models
 @inject HttpService HttpService
 @inject NavigationManager Navigation
 
@@ -52,7 +51,7 @@
         var result = await HttpService.RegisterUser(registerDto);
 
         if (result.Success)
-			Navigation.NavigateTo("/login");
+            Navigation.NavigateTo("/login");
         else
             errorMessage = result.ErrorMessage;
     }

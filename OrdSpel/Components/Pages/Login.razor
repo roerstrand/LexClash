@@ -2,6 +2,9 @@
 @using OrdSpel.Shared.UserDTOs
 @using OrdSpel.UI.Services
 
+@inject HttpService HttpService
+@inject NavigationManager NavigationManager
+
 <PageTitle>Inloggning</PageTitle>
 
 <h1>Välkommen till Ordspelet !</h1>
@@ -11,9 +14,9 @@
 <div class="mb-3">
 
     <form method="post">
-        <label @bind-Value="DisplayBox" type="text"></label>
-        <Input @bind-Value="@_enteredUsername" type="text" placeholder="Användarnamn"/>
-        <PasswordInput @bind-Value="@_enteredPassword" type="text" placeholder="Användarnamn"/>
+        <label>@DisplayBox</label>
+        <input @bind="_enteredUsername" type="text" placeholder="Användarnamn"/>
+        <input @bind="_enteredPassword" type="password" placeholder="Lösenord"/>
         <button type="submit">Logga in</button>
     </form>
 
@@ -21,26 +24,21 @@
 
 @code {
 
-    private HttpService _httpService;
-
-    public Login(HttpService httpService)
-    {
-        _httpService = httpService;
-    }
-
     private string DisplayBox { get; set; } = string.Empty;
     private string _enteredUsername = string.Empty;
     private string? _enteredPassword = null;
 
+    public LoginDto loginDto { get; set; }
+
     public async Task LoginUser()
     {
-        var LoginDTO = new LoginDTO
+        var loginDto = new LoginDto
         {
             Username = _enteredUsername,
             Password = _enteredPassword!
         };
 
-        var result = await _httpService.Login(LoginDTO);
+        var result = await HttpService.LoginUser(loginDto);
 
         if (result == null)
         {

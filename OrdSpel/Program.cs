@@ -7,9 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddHttpClient<HttpService>(client =>
+builder.Services.AddHttpClient<HttpService>(options =>
 {
-    client.BaseAddress = new Uri("https://localhost:7099"); // API:ets port
+    options.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
 });
 
 var app = builder.Build();
