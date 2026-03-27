@@ -2,6 +2,10 @@ h1:focus {
     outline: none;
 }
 
+#blazor-error-ui {
+    display: none;
+}
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

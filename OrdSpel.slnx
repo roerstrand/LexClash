@@ -1,11 +1,17 @@
 <Solution>
-  <Project Path="OrdSpe.BLL.Test/OrdSpel.BLL.Test.csproj">
+  <Project Path="OrdSpe.BLL.Test/OrdSpe.BLL.Test.csproj">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
+  <Project Path="OrdSpel.API.Test/OrdSpel.API.Test.csproj" Id="b3dea550-2f48-4477-b290-1ba70ba05153">
     <Build Solution="Debug|*" Project="false" />
   </Project>
   <Project Path="OrdSpel.API/OrdSpel.API.csproj" />
   <Project Path="OrdSpel.BLL/OrdSpel.BLL.csproj" />
   <Project Path="OrdSpel.DAL.Test/OrdSpel.DAL.Test.csproj" />
   <Project Path="OrdSpel.DAL/OrdSpel.DAL.csproj" />
+  <Project Path="OrdSpel.PlaywrightTests/OrdSpel.PlaywrightTests.csproj" Id="b2ffee56-e48b-4af6-bd53-ac2d2b6f37e7">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="OrdSpel.Shared/OrdSpel.Shared.csproj" />
   <Project Path="OrdSpel/OrdSpel.UI.csproj" />
 </Solution>

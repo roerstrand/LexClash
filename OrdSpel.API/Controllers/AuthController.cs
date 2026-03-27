@@ -6,13 +6,14 @@ using OrdSpel.Shared.UserDTOs;
 
 namespace OrdSpel.API.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiController]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
         private readonly JwtService _jwtService;
 
-        public AuthController(AuthService authService, JwtService jwtService)
+        public AuthController(IAuthService authService, JwtService jwtService)
         {
             _authService = authService;
             _jwtService = jwtService;
@@ -31,14 +32,13 @@ namespace OrdSpel.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
-            //kollar att allt är korrekt ifyllt, annars skickas ett badrequest tillbaka
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            //Skickar till BLL för att skapa en ny användare och få tillbaka en token
+
             var token = await _authService.RegisterAsync(dto);
 
             if (token == null)
-                return BadRequest("Något gick fel vid registrering.");
+                return BadRequest("NÃ¥got gick fel vid registrering.");
 
             return Ok(new { token });
         }

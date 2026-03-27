@@ -1,4 +1,5 @@
 @page "/register"
+@rendermode InteractiveServer
 @using OrdSpel.Shared.UserDTOs
 @using OrdSpel.UI.Services
 @inject HttpService HttpService
@@ -50,7 +51,7 @@
         var result = await HttpService.RegisterUser(registerDto);
 
         if (result.Success)
-			Navigation.NavigateTo("/spelsida"); //Ändra till rätt sida efter registrering
+            Navigation.NavigateTo("/login");
         else
             errorMessage = result.ErrorMessage;
     }
