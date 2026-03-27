@@ -231,7 +231,7 @@ namespace OrdSpel.DAL.Data.SeededData
 
             foreach (var country in countries)
             {
-                if (!context.Words.Any(w => w.Text.ToLower() == country && w.CategoryId == category.Id))
+                if (!context.Words.Any(w => w.Text.ToLower() == country.ToLower() && w.CategoryId == category.Id))
                 {
                     context.Words.Add(new Models.Word
                     {
@@ -439,7 +439,7 @@ namespace OrdSpel.DAL.Data.SeededData
 
             foreach (var animal in animals)
             {
-                if (!context.Words.Any(w => w.Text.ToLower() == animal && w.CategoryId == category.Id))
+                if (!context.Words.Any(w => w.Text.ToLower() == animal.ToLower() && w.CategoryId == category.Id))
                 {
                     context.Words.Add(new Models.Word
                     {
@@ -570,7 +570,7 @@ namespace OrdSpel.DAL.Data.SeededData
 
             foreach (var item in fruitsAndVegetables)
             {
-                if (!context.Words.Any(w => w.Text.ToLower() == item && w.CategoryId == category.Id))
+                if (!context.Words.Any(w => w.Text.ToLower() == item.ToLower() && w.CategoryId == category.Id))
                 {
                     context.Words.Add(new Models.Word
                     {
