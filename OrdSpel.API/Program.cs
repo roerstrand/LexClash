@@ -25,6 +25,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<AppDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnection")));
 builder.Services.AddDbContext<AuthDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection")));
 
+//lägg till identity + lösenordskrav:
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -48,14 +49,19 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+        ),
+
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+
+        ClockSkew = TimeSpan.Zero // strikt expiration
     };
 });
 
@@ -70,10 +76,21 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+//seeda standardanvändarna
 using (var scope = app.Services.CreateScope())
 {
+    //användare
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
     await SeededUserData.SeedUserAsync(userManager);
+
+    //kategorier
+    var appDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await SeededAppData.SeedCategoriesAsync(appDb);
+
+    //innehåll i kategorier
+    await SeededAppData.SeedCountriesAsync(appDb);
+    await SeededAppData.SeedAnimalsAsync(appDb);
+    await SeededAppData.SeedFruitsAndVegetablesAsync(appDb);
 }
 
 app.Run();
