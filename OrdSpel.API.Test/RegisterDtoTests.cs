@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
-using OrdSpel.Shared.UserDtos;
+using OrdSpel.Shared.UserDTOs;
 using NUnit.Framework;
-using System.ComponentModel.DataAnnotations;
-using OrdSpel.Shared.UserDtos;
 using Assert = NUnit.Framework.Assert;
 
 

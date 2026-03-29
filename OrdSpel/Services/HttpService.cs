@@ -8,6 +8,11 @@ namespace OrdSpel.UI.Services
     {
         public HttpClient _httpClient { get; }
 
+        public HttpService(HttpClient httpClient)
+        {
+            _httpClient = httpClient;
+        }
+
 
         public async Task<ActionResult> LoginUser(LoginDto loginDto)
         {

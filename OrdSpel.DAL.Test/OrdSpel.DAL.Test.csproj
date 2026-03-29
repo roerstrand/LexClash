@@ -23,4 +23,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OrdSpel.DAL\OrdSpel.DAL.csproj" />
+  </ItemGroup>
+
 </Project>
