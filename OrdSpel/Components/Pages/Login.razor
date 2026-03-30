@@ -1,4 +1,4 @@
-﻿@page "/login"
+﻿@page "/"
 @using OrdSpel.Shared.UserDTOs
 @using OrdSpel.UI.Services
 
@@ -8,16 +8,16 @@
 <PageTitle>Inloggning</PageTitle>
 
 <h1>Välkommen till Ordspelet !</h1>
-<a href="/register">Registrera dig</a>
+<NavLink href="/register">Registrera dig</NavLink>
 
 
 <div class="mb-3">
 
     <form method="post">
-        <label>@DisplayBox</label>
-        <input @bind="_enteredUsername" type="text" placeholder="Användarnamn"/>
-        <input @bind="_enteredPassword" type="password" placeholder="Lösenord"/>
-        <button type="submit">Logga in</button>
+        <label id="errorBox">@DisplayBox</label>
+        <input id="username" @bind="_enteredUsername" type="text" placeholder="Användarnamn"/>
+        <input id="password" @bind="_enteredPassword" type="password" placeholder="Lösenord"/>
+        <button id="submitLogin" type="submit">Logga in</button>
     </form>
 
 </div>
@@ -28,10 +28,16 @@
     private string _enteredUsername = string.Empty;
     private string? _enteredPassword = null;
 
-    public LoginDto loginDto { get; set; }
-
     public async Task LoginUser()
     {
+
+        if (string.IsNullOrWhiteSpace(_enteredUsername) ||
+            string.IsNullOrWhiteSpace(_enteredPassword))
+        {
+            DisplayBox = "Vänligen fyll i både användarnamn och lösenord";
+            return;
+        }
+
         var loginDto = new LoginDto
         {
             Username = _enteredUsername,
@@ -40,11 +46,16 @@
 
         var result = await HttpService.LoginUser(loginDto);
 
-        if (result == null)
+        if (!result.Success)
         {
-            DisplayBox = "Inloggning misslyckades, försök igen.";
-        }
-    }
+            DisplayBox = "Fel användarnamn eller lösenord";
 
+            await Task.Delay(3000);
+            DisplayBox = string.Empty;
+            return;
+        }
+
+        NavigationManager.NavigateTo("/game");
+    }
 
 }

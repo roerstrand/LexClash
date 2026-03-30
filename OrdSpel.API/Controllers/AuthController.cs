@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using OrdSpel.API.Services;
 using OrdSpel.BLL.Services;
 using OrdSpel.Shared.UserDTOs;
+using System.Security.Claims;
 
 namespace OrdSpel.API.Controllers
 {
@@ -41,6 +42,16 @@ namespace OrdSpel.API.Controllers
                 return BadRequest("Något gick fel vid registrering.");
 
             return Ok(new { token });
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var username = User.FindFirst(ClaimTypes.Name)?.Value;
+
+            return Ok(new { userId, username });
         }
     }
 }

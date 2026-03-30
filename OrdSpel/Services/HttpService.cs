@@ -14,19 +14,18 @@ namespace OrdSpel.UI.Services
         }
 
 
-        public async Task<ActionResult> LoginUser(LoginDto loginDto)
+        public async Task<AuthResult> LoginUser(LoginDto loginDto)
         {
             var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginDto);
 
             if (!response.IsSuccessStatusCode)
-                return new UnauthorizedResult();
+            {
 
-            var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+                var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
+                return new AuthResult { Success = true, Token = result?.Token };
+            }
 
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", result!.Token);
-
-            return new OkResult();
+            return new AuthResult { Success = false, ErrorMessage = "Något gick fel." };
         }
 
         public async Task<AuthResult> RegisterUser(RegisterDto dto)

@@ -1,0 +1,77 @@
+﻿@baseUrl = https:://localhost:7099
+
+### 1. REGISTER (ny användare)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "123456"
+}
+
+###
+
+### 2. REGISTER (förväntat fail – samma användare)
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "123456"
+}
+
+###
+
+### 3. LOGIN (korrekt)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "123456"
+}
+
+###
+
+### 4. LOGIN (fel lösenord → 401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "fel_lösen"
+}
+
+###
+
+### 5. LOGIN (okänd user → 401)
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "nope@test.com",
+  "password": "123456"
+}
+
+###
+
+### 6. JWT TEST (KLIPP IN TOKEN)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer DIN_TOKEN_HÄR
+
+###
+
+### 7. JWT TEST (utan token → 401)
+GET {{baseUrl}}/api/auth/me
+
+###
+
+### 8. JWT TEST (fel token → 401)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer faketoken123
+
+###
+
+### 9. JWT TEST (manipulerad token → 401)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer DIN_TOKEN_HÄR123

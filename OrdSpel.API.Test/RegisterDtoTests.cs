@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using OrdSpel.Shared.UserDTOs;
-using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
-
+using Xunit;
 
 namespace OrdSpel.API.Test
 {
-    internal class RegisterDtoTests
+    public class RegisterDtoTests
     {
         private IList<ValidationResult> ValidateDto(RegisterDto dto)
         {
@@ -17,7 +15,7 @@ namespace OrdSpel.API.Test
             return results;
         }
 
-        [Test]
+        [Fact]
         public void Register_WithValidData_ShouldPassValidation()
         {
             var dto = new RegisterDto
@@ -29,10 +27,10 @@ namespace OrdSpel.API.Test
 
             var results = ValidateDto(dto);
 
-            Assert.That(results, Is.Empty);
+            Assert.Empty(results);
         }
 
-        [Test]
+        [Fact]
         public void Register_WithEmptyUsername_ShouldFailValidation()
         {
             var dto = new RegisterDto
@@ -44,10 +42,10 @@ namespace OrdSpel.API.Test
 
             var results = ValidateDto(dto);
 
-            Assert.That(results, Is.Not.Empty);
+            Assert.NotEmpty(results);
         }
 
-        [Test]
+        [Fact]
         public void Register_WithMismatchedPasswords_ShouldFailValidation()
         {
             var dto = new RegisterDto
@@ -59,7 +57,7 @@ namespace OrdSpel.API.Test
 
             var results = ValidateDto(dto);
 
-            Assert.That(results, Is.Not.Empty);
+            Assert.NotEmpty(results);
         }
     }
 }
