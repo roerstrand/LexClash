@@ -2,6 +2,7 @@
 using OrdSpel.BLL.Services;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Models;
+using OrdSpel.DAL.Repositories;
 using OrdSpel.Shared;
 using Xunit;
 
@@ -28,7 +29,8 @@ namespace OrdSpel.BLL.Test
         {
             // Arrange
             var context = CreateContext();
-            var service = new GameLobbyService(context);
+            var repo = new GameSessionRepository(context);
+            var service = new GameLobbyService(repo);
 
             // Act
             var result = await service.GetLobbyStatusAsync("NOPE");
@@ -83,7 +85,8 @@ namespace OrdSpel.BLL.Test
             await context.SaveChangesAsync();
 
             // Call GetLobbyStatusAsyn and verify the returned DTO contains correct data based on the session and player we created.
-            var service = new GameLobbyService(context);
+            var repo = new GameSessionRepository(context);
+            var service = new GameLobbyService(repo);
 
 
 
@@ -156,7 +159,8 @@ namespace OrdSpel.BLL.Test
             await context.SaveChangesAsync();
 
             // Call Service to test
-            var service = new GameLobbyService(context);
+            var repo = new GameSessionRepository(context);
+            var service = new GameLobbyService(repo);
 
             // Act: Call  to retrieve the lobby status for this game code
             var result = await service.GetLobbyStatusAsync("XYZ789");

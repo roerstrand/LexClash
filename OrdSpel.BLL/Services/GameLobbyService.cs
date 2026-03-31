@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using OrdSpel.DAL.Data;
+﻿using OrdSpel.DAL.Repositories.Interfaces;
 using OrdSpel.Shared;
 using OrdSpel.Shared.DTOs;
 using System.Threading.Tasks;
@@ -11,11 +10,11 @@ namespace OrdSpel.BLL.Services
 
     public class GameLobbyService : IGameLobbyService
     {
-        private readonly AppDbContext _context;
+        private readonly IGameSessionRepository _gameSessionRepository;
 
-        public GameLobbyService(AppDbContext context)
+        public GameLobbyService(IGameSessionRepository gameSessionRepository)
         {
-            _context = context;
+            _gameSessionRepository = gameSessionRepository;
         }
 
         // Retrieves the game lobby status for a given game code
@@ -25,12 +24,9 @@ namespace OrdSpel.BLL.Services
             {
                 return null;
             }
-            // Query the database for the game session with the specified game code,
-            // including related category and players
-            var session = await _context.GameSessions
-                .Include(s => s.Category)
-                .Include(s => s.Players)
-                .FirstOrDefaultAsync(s => s.GameCode == gameCode);
+
+            // Retrieve the game session including related category and players
+            var session = await _gameSessionRepository.GetByGameCodeWithLobbyAsync(gameCode);
 
             if (session == null)
             {
