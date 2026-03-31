@@ -2,11 +2,8 @@
 using OrdSpel.API.Controllers;
 using OrdSpel.API.Services;
 using OrdSpel.BLL.Services;
-using OrdSpel.Shared.UserDTOs;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.Configuration;
+using OrdSpel.Shared.AuthDTOs;
 
 namespace OrdSpel.API.Test
 {

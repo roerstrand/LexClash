@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using OrdSpel.Shared.UserDTOs;
+using OrdSpel.Shared.AuthDTOs;
 
 namespace OrdSpel.BLL.Services
 {

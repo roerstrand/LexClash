@@ -9,12 +9,12 @@ namespace OrdSpel.DAL.Models
     {
         public int Id { get; set; }
         public string GameCode { get; set; } = string.Empty;
-        public GameStatus Status { get; set; } = GameStatus.Waiting;
+        public GameStatus Status { get; set; } = GameStatus.WaitingForPlayers;
         public int CategoryId { get; set; }
         public Category Category { get; set; } = null!;
         public string StartWord { get; set; } = string.Empty;
         public int CurrentRound { get; set; }
-        public string? CurrentUserId { get; set; }
+        public string? CurrentTurnUserId { get; set; }
         public DateTime CreatedAt { get; set; }
 
    

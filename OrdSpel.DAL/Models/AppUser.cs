@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Identity;
+//using Microsoft.AspNetCore.Identity;
 
-namespace OrdSpel.DAL.Models;
+//namespace OrdSpel.DAL.Models;
 
-public class AppUser : IdentityUser
-{
-    public string? DisplayName { get; set; }
-}
+//public class AppUser : IdentityUser
+//{
+//    public string? DisplayName { get; set; }
+//}

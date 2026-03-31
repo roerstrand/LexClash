@@ -39,10 +39,10 @@ namespace OrdSpel.DAL.Data
                 entity.HasIndex(w => new { w.CategoryId, w.Text })
                     .IsUnique();
 
-                entity.HasOne<Category>()
+                entity.HasOne(w => w.Category)
                     .WithMany(c => c.Words)
                     .HasForeignKey(w => w.CategoryId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.NoAction);
             });
 
             builder.Entity<GameSession>(entity =>

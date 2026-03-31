@@ -11,5 +11,7 @@ namespace OrdSpel.DAL.Models
         public string Text { get; set; } = string.Empty;
         public bool IsHard { get; set; }
 
+        public Category Category { get; set; } = null!;
+
     }
 }

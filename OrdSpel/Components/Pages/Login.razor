@@ -1,25 +1,36 @@
 ﻿@page "/"
-@using OrdSpel.Shared.UserDTOs
+@using OrdSpel.Shared.AuthDTOs
 @using OrdSpel.UI.Services
 
 @inject HttpService HttpService
 @inject NavigationManager NavigationManager
+@inject AuthStateService AuthState
 
 <PageTitle>Inloggning</PageTitle>
 
-<h1>Välkommen till Ordspelet !</h1>
-<NavLink href="/register">Registrera dig</NavLink>
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 400px">
+        <h2 class="card-title text-center mb-4">Välkommen till Ordspelet!</h2>
 
+        <form @onsubmit="LoginUser" @onsubmit:preventDefault>
+            <div class="mb-3">
+                <label class="form-label">Användarnamn</label>
+                <input class="form-control" @bind="_enteredUsername" type="text" placeholder="Användarnamn" />
+            </div>
 
-<div class="mb-3">
+            <div class="mb-3">
+                <label class="form-label">Lösenord</label>
+                <input class="form-control" @bind="_enteredPassword" type="password" placeholder="Lösenord" />
+            </div>
 
-    <form method="post">
-        <label id="errorBox">@DisplayBox</label>
-        <input id="username" @bind="_enteredUsername" type="text" placeholder="Användarnamn"/>
-        <input id="password" @bind="_enteredPassword" type="password" placeholder="Lösenord"/>
-        <button id="submitLogin" type="submit">Logga in</button>
-    </form>
+            @if (!string.IsNullOrEmpty(DisplayBox))
+            {
+                <div class="alert alert-danger">@DisplayBox</div>
+            }
 
+            <button type="submit" class="btn btn-primary w-100">Logga in</button>
+        </form>
+    </div>
 </div>
 
 @code {
@@ -50,11 +61,12 @@
         {
             DisplayBox = "Fel användarnamn eller lösenord";
 
-            await Task.Delay(3000);
+            await Task.Delay(8000);
             DisplayBox = string.Empty;
             return;
         }
 
+        AuthState.Login(result.Token!);
         NavigationManager.NavigateTo("/game");
     }
 

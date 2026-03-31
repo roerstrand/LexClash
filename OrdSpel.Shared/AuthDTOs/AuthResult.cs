@@ -1,4 +1,4 @@
-namespace OrdSpel.Shared.UserDTOs
+namespace OrdSpel.Shared.AuthDTOs
 {
     public class AuthResult
     {

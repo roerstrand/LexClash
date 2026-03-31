@@ -10,6 +10,7 @@ using OrdSpel.DAL.Repositories;
 using OrdSpel.DAL.Repositories.Interfaces;
 using System.Text;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -34,6 +35,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     options.Password.RequiredLength = 3;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
 })
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
@@ -41,6 +43,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.AddScoped<JwtService>();
 // Registrerat via interface så MockAuthService enkelt kan bytas in vid testning
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGameLobbyService, GameLobbyService>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -73,7 +76,25 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
+
+// Global felhanterare för bubblande fel från backend
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+
+        await context.Response.WriteAsync("""
+    {
+        "message": "Internal server error"
+    }
+    """);
+    });
+});
 
 // Configure the HTTP request pipeline.
 app.UseCors("AllowUI");

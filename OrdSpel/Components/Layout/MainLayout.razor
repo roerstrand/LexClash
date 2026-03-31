@@ -1,11 +1,36 @@
 ﻿@namespace OrdSpel.UI.Components.Layout
 @inherits LayoutComponentBase
+@inject OrdSpel.UI.Services.AuthStateService AuthState
+@inject NavigationManager Nav
 
-@Body
+<nav class="d-flex flex-column bg-dark p-3 gap-2" style="position:fixed; top:0; left:0; width:180px; height:100vh;">
+    @if (AuthState.IsLoggedIn)
+    {
+        <NavLink class="text-white text-decoration-none fw-bold" href="/game">Ordspelet</NavLink>
+        <button class="btn btn-outline-light btn-sm mt-auto" @onclick="Logout">Logga ut</button>
+    }
+    else
+    {
+        <NavLink class="btn btn-outline-light btn-sm" href="/">Logga in</NavLink>
+        <NavLink class="btn btn-outline-light btn-sm" href="/register">Registrera</NavLink>
+    }
+</nav>
+
+<div style="margin-left:180px;">
+    @Body
+</div>
 
 <div id="blazor-error-ui" data-nosnippet>
     An unhandled error has occurred.
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private void Logout()
+    {
+        AuthState.Logout();
+        Nav.NavigateTo("/");
+    }
+}
 

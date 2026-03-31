@@ -23,6 +23,7 @@ namespace OrdSpel.DAL.Data.SeededData
                 var user = new IdentityUser { UserName = "spelare2", EmailConfirmed = true };
                 await userManager.CreateAsync(user, "123");
             }
+
         }
     }
 }

@@ -1,6 +1,5 @@
 @page "/register"
-@rendermode InteractiveServer
-@using OrdSpel.Shared.UserDTOs
+@using OrdSpel.Shared.AuthDTOs
 @using OrdSpel.UI.Services
 @inject HttpService HttpService
 @inject NavigationManager Navigation
@@ -9,25 +8,20 @@
     <div class="card p-4 shadow" style="width: 400px">
         <h2 class="card-title text-center mb-4">Registrera</h2>
 
-        <EditForm Model="registerDto" OnValidSubmit="HandleRegister">
-            <DataAnnotationsValidator />
-
+        <form @onsubmit="HandleRegister" @onsubmit:preventDefault>
             <div class="mb-3">
                 <label class="form-label">Användarnamn</label>
-                <InputText class="form-control" @bind-Value="registerDto.Username" />
-                <ValidationMessage For="@(() => registerDto.Username)" />
+                <input class="form-control" @bind="registerDto.Username" type="text" placeholder="Användarnamn" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Lösenord</label>
-                <InputText type="password" class="form-control" @bind-Value="registerDto.Password" />
-                <ValidationMessage For="@(() => registerDto.Password)" />
+                <input class="form-control" @bind="registerDto.Password" type="password" placeholder="Lösenord" />
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Bekräfta lösenord</label>
-                <InputText type="password" class="form-control" @bind-Value="registerDto.ConfirmPassword" />
-                <ValidationMessage For="@(() => registerDto.ConfirmPassword)" />
+                <input class="form-control" @bind="registerDto.ConfirmPassword" type="password" placeholder="Bekräfta lösenord" />
             </div>
 
             @if (!string.IsNullOrEmpty(errorMessage))
@@ -36,7 +30,7 @@
             }
 
             <button type="submit" class="btn btn-primary w-100">Registrera</button>
-        </EditForm>
+        </form>
 
     </div>
 </div>
@@ -48,12 +42,26 @@
 
     private async Task HandleRegister()
     {
+        if (string.IsNullOrWhiteSpace(registerDto.Username) ||
+            string.IsNullOrWhiteSpace(registerDto.Password) ||
+            string.IsNullOrWhiteSpace(registerDto.ConfirmPassword))
+        {
+            errorMessage = "Vänligen fyll i alla fält.";
+            return;
+        }
+
+        if (registerDto.Password != registerDto.ConfirmPassword)
+        {
+            errorMessage = "Lösenorden matchar inte.";
+            return;
+        }
+
         var result = await HttpService.RegisterUser(registerDto);
 
         if (result.Success)
-            Navigation.NavigateTo("/login");
+            Navigation.NavigateTo("/");
         else
-            errorMessage = result.ErrorMessage;
+            errorMessage = result.ErrorMessage ?? "Något gick fel.";
     }
 
  }

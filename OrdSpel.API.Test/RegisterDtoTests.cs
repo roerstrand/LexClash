@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using OrdSpel.Shared.UserDTOs;
-using Xunit;
+using OrdSpel.Shared.AuthDTOs;
 
 namespace OrdSpel.API.Test
 {

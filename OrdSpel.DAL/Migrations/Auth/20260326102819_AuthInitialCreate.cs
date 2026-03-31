@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace OrdSpel.DAL.Migrations.Auth
 {
     /// <inheritdoc />
-    public partial class AuthInitialCreate : Migration
+    public partial class AuthInitialCreate : Microsoft.EntityFrameworkCore.Migrations.Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
