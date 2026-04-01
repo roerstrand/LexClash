@@ -82,18 +82,25 @@
 
 
 
-    // 1. When accesing the page first time or when the URL parameter changes, 
+    // 1. When accesing the page first time or when the URL parameter changes,
     // we need to fetch the lobby status and set up the SignalR connection.
     protected override async Task OnParametersSetAsync()
     {
         // Stop any existing polling and close existing SignalR connection before starting a new one
-        await StopPollingAsync();   
+        await StopPollingAsync();
         await DisposeHubAsync();
 
         // Fetch the initial lobby status from the API
         _isLoading = true;
         _lobbyStatus = await LobbyApi.GetLobbyStatusAsync(Code);
         _isLoading = false;
+
+        // If game already started when entering lobby, go straight to game
+        if (_lobbyStatus?.Status == OrdSpel.Shared.GameStatus.InProgress)
+        {
+            Navigation.NavigateTo($"/game/{Code}");
+            return;
+        }
 
         // Start the SignalR connection to receive real-time updates about the lobby status
         // (If it fails, we will fall back to polling)
@@ -125,6 +132,13 @@
             if (string.Equals(gameCode, Code, StringComparison.OrdinalIgnoreCase))
             {
                 _lobbyStatus = await LobbyApi.GetLobbyStatusAsync(Code);
+
+                if (_lobbyStatus?.Status == OrdSpel.Shared.GameStatus.InProgress)
+                {
+                    await InvokeAsync(() => Navigation.NavigateTo($"/game/{Code}"));
+                    return;
+                }
+
                 await InvokeAsync(StateHasChanged);
             }
         });
@@ -214,7 +228,13 @@
             while (await timer.WaitForNextTickAsync(ct))
             {
                 _lobbyStatus = await LobbyApi.GetLobbyStatusAsync(Code, ct);
-                // Update the UI with the latest lobby status
+
+                if (_lobbyStatus?.Status == OrdSpel.Shared.GameStatus.InProgress)
+                {
+                    await InvokeAsync(() => Navigation.NavigateTo($"/game/{Code}"));
+                    return;
+                }
+
                 await InvokeAsync(StateHasChanged);
             }
         }

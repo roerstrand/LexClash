@@ -1,3 +1,4 @@
+using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
 using System.Net.Http.Headers;
 
@@ -68,6 +69,17 @@ namespace OrdSpel.UI.Services
                 return null;
 
             return await response.Content.ReadFromJsonAsync<GameSessionResponseDto>();
+        }
+
+        public async Task<GameStatusDto?> GetGameStatusAsync(string gameCode)
+        {
+            SetAuthHeader();
+            var response = await _httpClient.GetAsync($"api/games/{gameCode}/status");
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<GameStatusDto>();
         }
     }
 }

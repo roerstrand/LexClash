@@ -27,7 +27,7 @@ namespace OrdSpel.UI.Services
             {
 
                 var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-                return new AuthResult { Success = true, Token = result?.Token };
+                return new AuthResult { Success = true, Token = result?.Token, UserId = result?.UserId };
             }
 
             var errorMessage = await response.Content.ReadAsStringAsync();
@@ -42,7 +42,7 @@ namespace OrdSpel.UI.Services
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-                return new AuthResult { Success = true, Token = result?.Token }; //Returnerar AuthResult-modell (modell i UI:t!)
+                return new AuthResult { Success = true, Token = result?.Token, UserId = result?.UserId }; //Returnerar AuthResult-modell (modell i UI:t!)
             }
 
             var errorMessage = await response.Content.ReadAsStringAsync();

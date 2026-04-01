@@ -29,7 +29,7 @@ namespace OrdSpel.API.Controllers
             if (user == null) return Unauthorized();
 
             var token = _jwtService.GenerateToken(user);
-            return Ok(new TokenResponse { Token = token });
+            return Ok(new TokenResponse { Token = token, UserId = user.Id });
         }
 
         [AllowAnonymous]
@@ -45,7 +45,7 @@ namespace OrdSpel.API.Controllers
                 return BadRequest(result.Error);
 
             var token = _jwtService.GenerateToken(result.Data!);
-            return Ok(new TokenResponse { Token = token });
+            return Ok(new TokenResponse { Token = token, UserId = result.Data!.Id });
         }
 
         [Authorize]
