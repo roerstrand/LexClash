@@ -90,6 +90,13 @@
         await StopPollingAsync();   
         await DisposeHubAsync();
 
+        if (string.IsNullOrWhiteSpace(Code))
+        {
+            _lobbyStatus = null;
+            _isLoading = false;
+            return;
+        }
+
         // Fetch the initial lobby status from the API
         _isLoading = true;
         _lobbyStatus = await LobbyApi.GetLobbyStatusAsync(Code);
@@ -153,9 +160,13 @@
             await _hubConnection.StartAsync();
             await _hubConnection.InvokeAsync("JoinGame", Code);
         }
-        catch
+        catch (InvalidOperationException)
         {
             // If starting the connection or joining the lobby group fails, start polling as a fallback.
+            await StartPollingAsync();
+        }
+        catch (HttpRequestException)
+        {
             await StartPollingAsync();
         }
     }
