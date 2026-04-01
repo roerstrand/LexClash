@@ -1,6 +1,6 @@
 using OrdSpel.Shared.GameDTOs;
 
-namespace OrdSpel.DAL.Repositories
+namespace OrdSpel.DAL.Repositories.Interfaces
 {
     public interface IGameRepository
     {

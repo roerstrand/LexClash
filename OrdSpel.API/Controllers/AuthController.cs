@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrdSpel.API.Interfaces;
 using OrdSpel.API.Services;
-using OrdSpel.BLL.Services;
+using OrdSpel.BLL.Interfaces;
 using OrdSpel.Shared.AuthDTOs;
 using System.Security.Claims;
 
 namespace OrdSpel.API.Controllers
 {
-    
+
     [ApiController]
     [Route("api/auth")]
-    public class AuthController : ControllerBase
+    public class AuthController : ControllerBase, IAuthController
     {
         private readonly IAuthService _authService;
         private readonly JwtService _jwtService;

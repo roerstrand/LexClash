@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using OrdSpel.Shared;
+using OrdSpel.Shared.Enums;
 
 namespace OrdSpel.Shared.GameDTOs
 {

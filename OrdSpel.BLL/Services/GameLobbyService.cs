@@ -1,6 +1,7 @@
-﻿using OrdSpel.DAL.Repositories.Interfaces;
-using OrdSpel.Shared;
+﻿using OrdSpel.BLL.Interfaces;
+using OrdSpel.DAL.Repositories.Interfaces;
 using OrdSpel.Shared.DTOs;
+using OrdSpel.Shared.Enums;
 using System.Threading.Tasks;
 
 namespace OrdSpel.BLL.Services

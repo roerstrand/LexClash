@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OrdSpel.API.Interfaces;
+using OrdSpel.BLL.Interfaces;
 using OrdSpel.BLL.Services;
+using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
 using System.Security.Claims;
 
@@ -9,13 +12,28 @@ namespace OrdSpel.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class GameController : ControllerBase
+    public class GameController : ControllerBase, IGameController
     {
         private readonly IGameService _gameService;
+        private readonly IGameLobbyService _gameLobbyService;
 
-        public GameController(IGameService gameService)
+        public GameController(IGameService gameService, IGameLobbyService gameLobbyService)
         {
             _gameService = gameService;
+            _gameLobbyService = gameLobbyService;
+        }
+
+        [HttpGet("{code}/lobby")]
+        public async Task<ActionResult<GameLobbyStatusDto>> GetLobbyStatus(string code)
+        {
+            var result = await _gameLobbyService.GetLobbyStatusAsync(code);
+
+            if (result == null)
+            {
+                return NotFound("Game session was not found.");
+            }
+
+            return Ok(result);
         }
 
         [HttpPost("create")]

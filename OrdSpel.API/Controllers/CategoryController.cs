@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using OrdSpel.BLL.Services;
+using OrdSpel.API.Interfaces;
+using OrdSpel.BLL.Interfaces;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Repositories;
 
@@ -8,7 +9,7 @@ namespace OrdSpel.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController : ControllerBase
+    public class CategoryController : ControllerBase, ICategoryController
     {
         private readonly ICategoryService _categoryService;
 

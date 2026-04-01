@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Models;
-using OrdSpel.Shared;
+using OrdSpel.DAL.Repositories.Interfaces;
+using OrdSpel.Shared.Enums;
 using OrdSpel.Shared.GameDTOs;
 
 namespace OrdSpel.DAL.Repositories

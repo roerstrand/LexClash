@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OrdSpel.Shared
+namespace OrdSpel.Shared.Enums
 {
     public enum GameStatus
     {

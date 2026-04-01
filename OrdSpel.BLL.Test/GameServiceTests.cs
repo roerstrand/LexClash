@@ -1,7 +1,7 @@
 using Moq;
 using OrdSpel.BLL.Services;
-using OrdSpel.DAL.Repositories;
-using OrdSpel.Shared;
+using OrdSpel.DAL.Repositories.Interfaces;
+using OrdSpel.Shared.Enums;
 using OrdSpel.Shared.GameDTOs;
 using Xunit;
 

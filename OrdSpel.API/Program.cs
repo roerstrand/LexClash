@@ -7,9 +7,9 @@ using OrdSpel.BLL.Services;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Repositories;
 using OrdSpel.DAL.Data.SeededData;
-using OrdSpel.DAL.Repositories;
 using OrdSpel.DAL.Repositories.Interfaces;
 using System.Text;
+using OrdSpel.BLL.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);

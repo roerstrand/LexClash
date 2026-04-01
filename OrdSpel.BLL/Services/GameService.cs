@@ -1,5 +1,7 @@
-using OrdSpel.DAL.Repositories;
+using OrdSpel.BLL.Interfaces;
+using OrdSpel.DAL.Repositories.Interfaces;
 using OrdSpel.Shared;
+using OrdSpel.Shared.Enums;
 using OrdSpel.Shared.GameDTOs;
 
 namespace OrdSpel.BLL.Services

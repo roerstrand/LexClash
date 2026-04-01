@@ -11,7 +11,7 @@
 #region Designer generated code
 #pragma warning disable
 using Reqnroll;
-namespace OrdSpel.PlaywrightTests.Features
+namespace OrdSpel.UI.Test.Features
 {
     
     

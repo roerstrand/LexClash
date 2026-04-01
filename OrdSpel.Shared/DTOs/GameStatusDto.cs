@@ -1,6 +1,6 @@
 
+using OrdSpel.Shared.Enums;
 using System.Collections.Generic;
-using OrdSpel.Shared;
 
 namespace OrdSpel.Shared.DTOs
 {

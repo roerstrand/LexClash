@@ -1,7 +1,7 @@
 ﻿using OrdSpel.Shared.DTOs;
 using System.Threading.Tasks;
 
-namespace OrdSpel.BLL.Services
+namespace OrdSpel.BLL.Interfaces
 {
     public interface IGameLobbyService
     {

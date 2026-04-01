@@ -1,9 +1,10 @@
 ﻿using System.Net.Http.Headers;
 using OrdSpel.Shared.AuthDTOs;
+using OrdSpel.UI.Interfaces;
 
 namespace OrdSpel.UI.Services
 {
-    public class HttpService
+    public class HttpService : IHttpService
     {
         public HttpClient _httpClient { get; }
 

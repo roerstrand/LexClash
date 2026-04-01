@@ -1,7 +1,7 @@
 ﻿using OrdSpel.Shared;
 using OrdSpel.Shared.GameDTOs;
 
-namespace OrdSpel.BLL.Services
+namespace OrdSpel.BLL.Interfaces
 {
     public interface IGameService
     {

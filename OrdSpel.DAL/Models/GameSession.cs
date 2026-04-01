@@ -1,4 +1,4 @@
-﻿using OrdSpel.Shared;
+﻿using OrdSpel.Shared.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;

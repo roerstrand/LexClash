@@ -1,9 +1,10 @@
 using OrdSpel.Shared.GameDTOs;
+using OrdSpel.UI.Interfaces;
 using System.Net.Http.Headers;
 
 namespace OrdSpel.UI.Services
 {
-    public class GameService
+    public class GameService : IGameService
     {
         private readonly HttpClient _httpClient;
         private readonly AuthStateService _authState;

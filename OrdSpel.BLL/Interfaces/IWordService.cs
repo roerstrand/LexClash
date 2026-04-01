@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OrdSpel.BLL.Services
+namespace OrdSpel.BLL.Interfaces
 {
     public interface IWordService
     {

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using OrdSpel.Shared;
 using OrdSpel.Shared.AuthDTOs;
 
-namespace OrdSpel.BLL.Services
+namespace OrdSpel.BLL.Interfaces
 {
     public interface IAuthService
     {

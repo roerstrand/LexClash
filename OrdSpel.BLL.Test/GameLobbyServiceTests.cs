@@ -3,7 +3,7 @@ using OrdSpel.BLL.Services;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Models;
 using OrdSpel.DAL.Repositories;
-using OrdSpel.Shared;
+using OrdSpel.Shared.Enums;
 using Xunit;
 
 namespace OrdSpel.BLL.Test
