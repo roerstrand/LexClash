@@ -43,8 +43,8 @@ namespace OrdSpel.BLL.Services
                 StartWord = session.StartWord,
                 Status = session.Status,
                 PlayerCount = session.Players.Count,
-                MaxPlayers = 2,
-                IsReadyToStart = session.Players.Count >= 2 && session.Status == GameStatus.InProgress,
+                MaxPlayers = 2, // Now is fixed at 2
+                IsReadyToStart = session.Players.Count >= 2 && session.Status == GameStatus.WaitingForPlayers,
                 CurrentTurnUserId = session.CurrentTurnUserId,
               
             };
