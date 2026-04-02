@@ -16,11 +16,9 @@
   </Project>
 
   <Project Path="OrdSpel.DAL/OrdSpel.DAL.csproj" />
-  <Project Path="OrdSpel.UI.Test/OrdSpel.UI.Test.csproj" Id="b2ffee56-e48b-4af6-bd53-ac2d2b6f37e7">
-    <Build Solution="Debug|*" Project="false" />
-  </Project>
 
   <Project Path="OrdSpel.Shared/OrdSpel.Shared.csproj" />
+  <Project Path="OrdSpel.UI.Test/OrdSpel.UI.Test.csproj" Id="b2ffee56-e48b-4af6-bd53-ac2d2b6f37e7" />
 
   <Project Path="OrdSpel/OrdSpel.UI.csproj" />
 </Solution>
