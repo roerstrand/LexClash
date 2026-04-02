@@ -40,18 +40,14 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
         [Then("I should see a game code on the screen")]
         public async Task ThenIShouldSeeAGameCodeOnTheScreen()
         {
-            await _page.WaitForSelectorAsync("#gameCode, #createError", new PageWaitForSelectorOptions { Timeout = 10000 });
+            // Efter att spelet skapats navigeras användaren till /lobby/{spelkod}
+            await _page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@"/lobby/[A-Za-z0-9]{6}$"),
+                new PageWaitForURLOptions { Timeout = 10000 });
 
-            var errorElement = _page.Locator("#createError");
-            if (await errorElement.IsVisibleAsync())
-            {
-                var errorText = await errorElement.TextContentAsync();
-                Assert.Fail($"Spelet skapades inte. Felmeddelande: {errorText}");
-            }
-
-            var gameCode = await _page.TextContentAsync("#gameCode");
+            var url = _page.Url;
+            var gameCode = url.Split("/lobby/").Last();
             Assert.That(gameCode, Is.Not.Null.And.Not.Empty);
-            Assert.That(gameCode!.Length, Is.EqualTo(6));
+            Assert.That(gameCode.Length, Is.EqualTo(6));
         }
 
         [When("I enter the game code {string} and click Join")]
