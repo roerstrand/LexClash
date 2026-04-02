@@ -103,7 +103,7 @@
         _isLoading = false;
 
         // If game already started when entering lobby, go straight to game
-        if (_lobbyStatus?.Status == OrdSpel.Shared.GameStatus.InProgress)
+        if (_lobbyStatus?.Status == OrdSpel.Shared.Enums.GameStatus.InProgress)
         {
             Navigation.NavigateTo($"/game/{Code}");
             return;
@@ -140,7 +140,7 @@
             {
                 _lobbyStatus = await LobbyApi.GetLobbyStatusAsync(Code);
 
-                if (_lobbyStatus?.Status == OrdSpel.Shared.GameStatus.InProgress)
+                if (_lobbyStatus?.Status == OrdSpel.Shared.Enums.GameStatus.InProgress)
                 {
                     await InvokeAsync(() => Navigation.NavigateTo($"/game/{Code}"));
                     return;
@@ -240,7 +240,7 @@
             {
                 _lobbyStatus = await LobbyApi.GetLobbyStatusAsync(Code, ct);
 
-                if (_lobbyStatus?.Status == OrdSpel.Shared.GameStatus.InProgress)
+                if (_lobbyStatus?.Status == OrdSpel.Shared.Enums.GameStatus.InProgress)
                 {
                     await InvokeAsync(() => Navigation.NavigateTo($"/game/{Code}"));
                     return;
