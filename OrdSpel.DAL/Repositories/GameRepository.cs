@@ -90,11 +90,26 @@ namespace OrdSpel.DAL.Repositories
         public async Task SetSessionActiveAsync(string gameCode)
         {
             var session = await _db.GameSessions
+                .Include(s => s.Players)
                 .FirstOrDefaultAsync(s => s.GameCode == gameCode);
 
             if (session == null) return;
 
             session.Status = GameStatus.InProgress;
+            if (session.CurrentRound <= 0)
+            {
+                session.CurrentRound = 1;
+            }
+
+            var firstPlayerId = session.Players
+                .OrderBy(p => p.PlayerOrder)
+                .Select(p => p.UserId)
+                .FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(firstPlayerId))
+            {
+                session.CurrentTurnUserId = firstPlayerId;
+            }
             await _db.SaveChangesAsync();
         }
 
