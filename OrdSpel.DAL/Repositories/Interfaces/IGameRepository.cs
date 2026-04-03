@@ -1,10 +1,12 @@
 using OrdSpel.Shared.GameDTOs;
+using OrdSpel.Shared.DTOs;
 
 namespace OrdSpel.DAL.Repositories.Interfaces
 {
     public interface IGameRepository
     {
         Task<GameSessionResponseDto?> GetSessionByCodeAsync(string code);
+        Task<GameResultDto?> GetGameResultAsync(string code);
         Task<bool> CodeExistsAsync(string code);
         Task<List<string>> GetWordsByCategoryAsync(int categoryId);
         Task<GameSessionResponseDto> CreateSessionAsync(string code, int categoryId, string startWord, string userId);
