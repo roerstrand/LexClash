@@ -28,10 +28,10 @@
         <div class="mb-3">
             <div class="d-flex align-items-center gap-2 flex-wrap">
                 <div><strong>Spelkod:</strong> @Code</div>
-                <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="CopyGameCodeAsync">Copy</button>
+                <button id="copyGameCodeButton" type="button" class="btn btn-sm btn-outline-secondary" @onclick="CopyGameCodeAsync">Copy</button>
                 @if (!string.IsNullOrWhiteSpace(_copyMessage))
                 {
-                    <span class="text-muted">@_copyMessage</span>
+                    <span id="copyGameCodeMessage" class="text-muted">@_copyMessage</span>
                 }
             </div>
 
@@ -45,10 +45,10 @@
            @*  After copied message, it will show lobby information: Status, Spelare, Katagori, Startord *@
             @if (_lobbyStatus is not null)
             {
-                <div><strong>Status:</strong> @_lobbyStatus.Status</div>
-                <div><strong>Spelare:</strong> @_lobbyStatus.PlayerCount / @_lobbyStatus.MaxPlayers</div>
-                <div><strong>Kategori:</strong> @_lobbyStatus.CategoryName</div>
-                <div><strong>Startsord:</strong> @_lobbyStatus.StartWord</div>
+                <div id="lobbyStatus"><strong>Status:</strong> @_lobbyStatus.Status</div>
+                <div id="lobbyPlayers"><strong>Spelare:</strong> @_lobbyStatus.PlayerCount / @_lobbyStatus.MaxPlayers</div>
+                <div id="lobbyCategory"><strong>Kategori:</strong> @_lobbyStatus.CategoryName</div>
+                <div id="lobbyStartWord"><strong>Startsord:</strong> @_lobbyStatus.StartWord</div>
             }
         </div>
     }
@@ -57,8 +57,8 @@
     @* ifall no code(/lobby) > Show the msg and navigate to /game for creating "Join" *@
     @if (string.IsNullOrWhiteSpace(Code))
     {
-        <p class="text-muted">Gå till spelsidan för att skapa eller joina ett spel.</p>
-        <button class="btn btn-primary" @onclick="NavigateToGame">Till spelsidan</button>
+        <p id="lobbyNoCodeMessage" class="text-muted">Gå till spelsidan för att skapa eller joina ett spel.</p>
+        <button id="goToGameButton" class="btn btn-primary" @onclick="NavigateToGame">Till spelsidan</button>
     }
     @* After got code> is loading *@
     else if (_isLoading)
