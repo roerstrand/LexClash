@@ -6,5 +6,6 @@ namespace OrdSpel.DAL.Repositories.Interfaces
     {
         Task<GameSession?> GetByGameCodeAsync(string gameCode);
         Task<GameSession?> GetByGameCodeWithLobbyAsync(string gameCode);
+        Task<GameSession?> GetByGameCodeWithDetailsAsync(string gameCode);
     }
 }
