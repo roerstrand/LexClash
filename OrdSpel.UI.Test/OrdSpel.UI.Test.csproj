@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ReqnrollFeatureFile Remove="Features\Lobby.feature" />
     <ReqnrollFeatureFile Remove="features\Login.feature" />
     <ReqnrollFeatureFile Remove="Features\Turn.feature" />
   </ItemGroup>
