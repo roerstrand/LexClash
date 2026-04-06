@@ -82,5 +82,20 @@ namespace OrdSpel.UI.Services
 
             return await response.Content.ReadFromJsonAsync<GameStatusDto>();
         }
+
+        public async Task<(TurnResponseDto? Result, string? Error)> SubmitTurnAsync(string gameCode, TurnRequestDto dto)
+        {
+            SetAuthHeader();
+            var response = await _httpClient.PostAsJsonAsync($"api/games/{gameCode}/turns", dto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<TurnResponseDto>();
+                return (result, null);
+            }
+
+            var error = await response.Content.ReadAsStringAsync();
+            return (null, error);
+        }
     }
 }
