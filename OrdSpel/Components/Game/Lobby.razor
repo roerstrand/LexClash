@@ -1,195 +1,100 @@
-@page "/lobby/{Code}"
-@page "/lobby"
+
 @using OrdSpel.Shared.DTOs
+@using Microsoft.JSInterop
 
-@* For creating realtime HubConnection *@
-@using Microsoft.AspNetCore.SignalR.Client 
-@using Microsoft.JSInterop 
-
-
-@inject OrdSpel.UI.Services.GameLobbyApiService LobbyApi
-@inject NavigationManager Navigation
 @inject IJSRuntime JS
 
-@* This component performs “async disposal.” *@
-@* It is used to close the SignalR connection and cancel polling when leaving the page, so that no resources remain hanging. *@
-@implements IAsyncDisposable
-
-
-
+@* For showing GameCode, Status, Number of Players, Category, StartWord, 
+and a Start button if ready to start. Also includes a Copy button for the GameCode. *@
 
 
 <div class="container mt-4">
     <h2>Spellobby</h2>
-
-    @if (!string.IsNullOrWhiteSpace(Code))
+  @*   if GameCode us null >> Show massage... *@
+    @if (string.IsNullOrWhiteSpace(GameCode))
     {
-       @*  Create a Click-button to copy the game code to clipboard *@
+        <p id="lobbyNoCodeMessage" class="text-muted">Ingen spelkod hittades.</p>
+    }
+
+    @*   if there is GameCode, but Status is null>> Show massage... *@
+    else if (Status is null)
+    {
+        <p class="text-muted">Laddar lobbystatus...</p>
+    }
+
+    @*   if GameCode and Status is not null >>> Show details...GameCode, Copy-button *@
+    else
+    {
         <div class="mb-3">
             <div class="d-flex align-items-center gap-2 flex-wrap">
-                <div><strong>Spelkod:</strong> @Code</div>
-                <button id="copyGameCodeButton" type="button" class="btn btn-sm btn-outline-secondary" @onclick="CopyGameCodeAsync">Copy</button>
+                <div><strong>Spelkod:</strong> @GameCode</div>
+                <button id="copyGameCodeButton"
+                        type="button"
+                        class="btn btn-sm btn-outline-secondary"
+                        @onclick="CopyGameCodeAsync">
+                    Copy
+                </button>
+
+                @* If copyMessage is not null >> "Copied / Kunde inte kopiera" *@
                 @if (!string.IsNullOrWhiteSpace(_copyMessage))
                 {
                     <span id="copyGameCodeMessage" class="text-muted">@_copyMessage</span>
                 }
             </div>
 
-            @* <div><strong>Status:</strong> @_lobbyStatus?.Status</div>
-            <div><strong>Spelare:</strong> @_lobbyStatus?.PlayerCount / @_lobbyStatus?.MaxPlayers</div>
-            <div><strong>Kategori:</strong> @_lobbyStatus?.CategoryName</div>
-            <div><strong>Startsord:</strong> @_lobbyStatus?.StartWord</div>
-            *@
-
-
-           @*  After copied message, it will show lobby information: Status, Spelare, Katagori, Startord *@
-            @if (_lobbyStatus is not null)
-            {
-                <div id="lobbyStatus"><strong>Status:</strong> @_lobbyStatus.Status</div>
-                <div id="lobbyPlayers"><strong>Spelare:</strong> @_lobbyStatus.PlayerCount / @_lobbyStatus.MaxPlayers</div>
-                <div id="lobbyCategory"><strong>Kategori:</strong> @_lobbyStatus.CategoryName</div>
-                <div id="lobbyStartWord"><strong>Startsord:</strong> @_lobbyStatus.StartWord</div>
-            }
+            @*   Show the data from DTO *@
+            <div id="lobbyStatus"><strong>Status:</strong> @Status.Status</div>
+            <div id="lobbyPlayers"><strong>Spelare:</strong> @Status.PlayerCount / @Status.MaxPlayers</div>
+            <div id="lobbyCategory"><strong>Kategori:</strong> @Status.CategoryName</div>
+            <div id="lobbyStartWord"><strong>Startsord:</strong> @Status.StartWord</div>
         </div>
-    }
 
+        @* If IsReadyToStart= true >>> Show StartGame-button *@
+        @if (Status.IsReadyToStart)
+        {
+            <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
+                <span>Redo att starta! (@Status.PlayerCount/@Status.MaxPlayers)</span>
+                <button id="startGameButton"
+                        type="button"
+                        class="btn btn-success"
+                        @onclick="OnStartClicked">
+                    Starta
+                </button>
+            </div>
+        }
 
-    @* ifall no code(/lobby) > Show the msg and navigate to /game for creating "Join" *@
-    @if (string.IsNullOrWhiteSpace(Code))
-    {
-        <p id="lobbyNoCodeMessage" class="text-muted">Gå till spelsidan för att skapa eller joina ett spel.</p>
-        <button id="goToGameButton" class="btn btn-primary" @onclick="NavigateToGame">Till spelsidan</button>
-    }
-    @* After got code> is loading *@
-    else if (_isLoading)
-    {
-        <p class="text-muted">Laddar lobbystatus...</p>
-    }
-    else if (_lobbyStatus is null)
-    {
-        <p class="text-danger">Hittade ingen spelsession för den här koden.</p>
-    }
-    else if (_lobbyStatus.IsReadyToStart)
-    {
-        <div class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
-            <span>Redo att starta! (@_lobbyStatus.PlayerCount/@_lobbyStatus.MaxPlayers)</span>
-            <button class="btn btn-success" @onclick="StartGame">Starta</button>
-        </div>
-    }
-    else
-    {
-        <p class="text-muted">Väntar på spelare... (@_lobbyStatus.PlayerCount/@_lobbyStatus.MaxPlayers)</p>
+        @* If IsReadyToStart= false >>> Waiting for players*@
+        else
+        {
+            <p class="text-muted">Väntar på spelare... (@Status.PlayerCount/@Status.MaxPlayers)</p>
+        }
     }
 </div>
 
 
 
-
-
-
-
-
-
 @code {
+    [Parameter, EditorRequired]
+    public string GameCode { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public GameLobbyStatusDto? Status { get; set; }
+
     [Parameter]
-    public string? Code { get; set; } // Get from URL
+    public EventCallback OnStart { get; set; }
 
-    private GameLobbyStatusDto? _lobbyStatus;   // Holds the current lobby status from the API
-    private bool _isLoading = true;             // Used to show loading state while fetching lobby status
+    private string? _copyMessage;
 
-    private HubConnection? _hubConnection;      // Keeps the SignalR connection for real-time updates
-    private CancellationTokenSource? _pollCts;  // Used to cancel the polling loop if SignalR connection fails
-
-    private string? _copyMessage;               // Message to show after copying game code to clipboard (e.g., "Copied" or error message)
-
-
-
-    // 1. When accesing the page first time or when the URL parameter changes,
-    // we need to fetch the lobby status and set up the SignalR connection.
-    protected override async Task OnParametersSetAsync()
-    {
-        // Stop any existing polling and close existing SignalR connection before starting a new one
-        await StopPollingAsync();
-        await DisposeHubAsync();
-
-        // If there is no code in the URL, clear state
-        if (string.IsNullOrWhiteSpace(Code))
-        {
-            _lobbyStatus = null;
-            _isLoading = false;
-            return;
-        }
-
-        // If there is a code, fetch the lobby status from the API to show initial state in the UI
-        _isLoading = true;
-        // For status loading
-        await RefreshLobbyStatusAsync();
-        _isLoading = false;
-
-        if (_lobbyStatus is null)
-        {
-            return;
-        }
-
-        // If status is InProgress, navigate to game
-        if (_lobbyStatus?.Status == OrdSpel.Shared.Enums.GameStatus.InProgress)
-        {
-            Navigation.NavigateTo($"/game/{Uri.EscapeDataString(Code)}");
-            return;
-        }
-
-        if (_lobbyStatus?.Status == OrdSpel.Shared.Enums.GameStatus.GameFinished)
-        {
-            Navigation.NavigateTo($"/game/{Uri.EscapeDataString(Code)}/result");
-            return;
-        }
-
-        // Annars StartHubAsyn, the SignalR connection to receive real-time updates about the lobby status
-        // (If it fails, we will fall back to polling)
-        await StartHubAsync();
-    }
-
-
-
-
-    // 2. This method is used to fetch the latest lobby status from the API and update the UI accordingly.
-    private async Task RefreshLobbyStatusAsync(CancellationToken ct = default)
-    {
-        try
-        {
-            _lobbyStatus = await LobbyApi.GetLobbyStatusAsync(Code!, ct);
-        }
-        catch (HttpRequestException)
-        {
-            _lobbyStatus = null;
-        }
-
-        if (_lobbyStatus?.Status == OrdSpel.Shared.Enums.GameStatus.InProgress)
-        {
-            Navigation.NavigateTo($"/game/{Uri.EscapeDataString(Code!)}");
-        }
-
-        if (_lobbyStatus?.Status == OrdSpel.Shared.Enums.GameStatus.GameFinished)
-        {
-            Navigation.NavigateTo($"/game/{Uri.EscapeDataString(Code!)}/result");
-        }
-    }
-
-
-    // 3. This method is called when the "Copy" button is clicked, 
-    // and it tries to copy the game code to the user's clipboard using the JavaScript Clipboard API.
     private async Task CopyGameCodeAsync()
     {
-        if (string.IsNullOrWhiteSpace(Code))
-        {
+        if (string.IsNullOrWhiteSpace(GameCode))
             return;
-        }
 
         _copyMessage = null;
 
         try
         {
-            await JS.InvokeVoidAsync("navigator.clipboard.writeText", Code);
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", GameCode);
             _copyMessage = "Copied";
         }
         catch (JSException)
@@ -205,159 +110,12 @@
         });
     }
 
-
-
-    // 4. This method sets up the SignalR connection to the server and subscribes to lobby updates(listen to event).
-    private async Task StartHubAsync()
+    private async Task OnStartClicked()
     {
-        if (string.IsNullOrWhiteSpace(Code))
+        if (OnStart.HasDelegate)
         {
-            return;
+            await OnStart.InvokeAsync();
         }
-
-        // If there is code >  Create a new HubConnection to the server's "hubs/game" endpoint
-        // Try to reconnect automatically if the connection is lost
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(new Uri(new Uri(Navigation.BaseUri), "hubs/game"))
-            .WithAutomaticReconnect()
-            .Build();
-
-        // It listens to the "LobbyUpdated" event from the server, 
-        // and when it receives an update for the current lobby code, it fetches the latest lobby status from the API and updates the UI.
-        _hubConnection.On("LobbyUpdated", async (string gameCode) =>
-        {
-            // If code matches the current lobby code, fetch the latest lobby status and update the UI
-            if (string.Equals(gameCode, Code, StringComparison.OrdinalIgnoreCase))
-            {
-                await RefreshLobbyStatusAsync();
-                await InvokeAsync(StateHasChanged);
-            }
-        });
-
-
-        // When reconnected, stop any existing polling (in case it was running) 
-        // and fetch the latest lobby status to update the UI.
-        _hubConnection.Reconnected += async _ =>
-        {
-            await StopPollingAsync();
-            await RefreshLobbyStatusAsync();
-            await InvokeAsync(StateHasChanged);
-        };
-
-
-        // If the connection is lost  >  Start polling as a fallback to keep updating the lobby status 
-        // until the connection can be re-established.
-        _hubConnection.Closed += async _ =>
-        {
-            await StartPollingAsync();
-        };
-
-        try
-        {
-            // Try to start connection and join the lobby group on the server using the lobby code.
-            await _hubConnection.StartAsync();
-            await _hubConnection.InvokeAsync("JoinGame", Code);
-        }
-        catch (InvalidOperationException)
-        {
-            // If starting the connection or joining the lobby group fails, start polling as a fallback.
-            await StartPollingAsync();
-        }
-        catch (HttpRequestException)
-        {
-            await StartPollingAsync();
-        }
-    }
-
-
-
-    // 5. Close and dispose the SignalR connection when leaving the page or when the URL parameter changes,
-    //  to free up resources and stop receiving updates.
-    private async Task DisposeHubAsync()
-    {
-        if (_hubConnection is null)
-        {
-            return;
-        }
-
-        try
-        {
-            await _hubConnection.DisposeAsync();
-        }
-        finally
-        {
-            _hubConnection = null;
-        }
-    }
-
-
-    // 6. Stop Polling: Cancel loop and clear token
-    private Task StopPollingAsync()
-    {
-        _pollCts?.Cancel();
-        _pollCts?.Dispose();
-        _pollCts = null;
-        return Task.CompletedTask;
-    }
-
-
-    // 7. 
-    private async Task StartPollingAsync()
-    {
-        // If we are already polling, do not start another loop
-        if (_pollCts is not null)
-        {
-            return;
-        }
-
-        // Create CancellationTokenSource to control the loop, for stopping polling loop from other methods 
-        // (like when SignalR connection is re-established or when leaving the page)
-        _pollCts = new CancellationTokenSource();
-        var ct = _pollCts.Token;
-
-        try
-        {
-            // Wait  for 3 seconds btween each API call or until the token is cancelled, 
-            // and fetch the latest lobby status to update the UI.
-            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
-            while (await timer.WaitForNextTickAsync(ct))
-            {
-                await RefreshLobbyStatusAsync(ct);
-                await InvokeAsync(StateHasChanged);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            // Expected when the token is cancelled, just exit the loop and not throw an error
-        }
-    }
-
-
-    // 8. This method is called when the component is being disposed (e.g., when navigating away from the page).
-    public async ValueTask DisposeAsync()
-    {
-        await StopPollingAsync();
-        await DisposeHubAsync();
-    }
-
-
-    // 9. This method is called when the "Start Game" button is clicked.
-    private Task NavigateToGame()
-    {
-        Navigation.NavigateTo("/game");
-        return Task.CompletedTask;
-    }
-
-
-    // 10. This method is called when the "Start" button is clicked in the lobby, and it navigates to the game page for the current lobby code.
-    private Task StartGame()
-    {
-        if (string.IsNullOrWhiteSpace(Code))
-        {
-            return Task.CompletedTask;
-        }
-
-        Navigation.NavigateTo($"/game/{Uri.EscapeDataString(Code)}");
-        return Task.CompletedTask;
     }
 }
+
