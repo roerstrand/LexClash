@@ -1,6 +1,9 @@
 @page "/game"
 @page "/game/{Code}"
 @using OrdSpel.UI.Components.Game
+@using OrdSpel.UI.Services
+@inject AuthStateService AuthState
+@inject NavigationManager NavigationManager
 
 @if (string.IsNullOrEmpty(Code))
 {
@@ -12,6 +15,12 @@ else
 }
 
 @code {
+
     [Parameter]
     public string? Code { get; set; }
+    protected override void OnInitialized()
+    {
+        if (!AuthState.IsLoggedIn)
+            NavigationManager.NavigateTo("/");
+    }
 }

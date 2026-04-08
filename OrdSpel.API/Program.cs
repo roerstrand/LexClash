@@ -1,14 +1,10 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using OrdSpel.API.Services;
 using OrdSpel.BLL.Services;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Repositories;
 using OrdSpel.DAL.Data.SeededData;
 using OrdSpel.DAL.Repositories.Interfaces;
-using System.Text;
 using OrdSpel.BLL.Interfaces;
 
 
@@ -17,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// CORS – tillåt anrop från UI:t
+// CORS – tillåt anrop från UI:t, AllowCredentials krävs för att cookies ska skickas cross-origin
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowUI", policy =>
@@ -27,9 +23,22 @@ builder.Services.AddCors(options =>
               .AllowCredentials());
 });
 
-builder.Services.AddDbContext<AppDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnection")));
-builder.Services.AddDbContext<AuthDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection")));
+if (builder.Environment.IsEnvironment("Test"))
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseInMemoryDatabase("TestDb"));
 
+    builder.Services.AddDbContext<AuthDbContext>(options =>
+        options.UseInMemoryDatabase("AuthTestDb"));
+}
+else
+{
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnection")));
+
+    builder.Services.AddDbContext<AuthDbContext>(options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection")));
+}
 //lägg till identity + lösenordskrav:
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
@@ -42,7 +51,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<JwtService>();
 // Registrerat via interface så MockAuthService enkelt kan bytas in vid testning
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameLobbyService, GameLobbyService>();
@@ -62,28 +70,26 @@ builder.Services.AddScoped<ITurnRepository, TurnRepository>();
 
 builder.Services.AddSignalR();
 
-builder.Services.AddAuthentication(options =>
+// Konfigurera Identity-cookien för cookie-baserad autentisering
+// Identity sätter redan upp cookie-auth via AddIdentity ovan – här finjusterar vi cookiens beteende
+builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+    options.Cookie.HttpOnly = true;         // JavaScript kan inte läsa cookien
+    options.Cookie.SameSite = SameSiteMode.None;  // Krävs för cross-origin (UI och API på olika portar)
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Skickas bara över HTTPS
+    options.ExpireTimeSpan = TimeSpan.FromHours(8);
+    options.SlidingExpiration = true;       // Förlänger sessionen vid aktivitet
+
+    // API ska returnera 401/403, inte redirecta till en login-sida
+    options.Events.OnRedirectToLogin = context =>
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
-        ),
-
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-
-        ClockSkew = TimeSpan.Zero // strikt expiration
+        context.Response.StatusCode = 401;
+        return Task.CompletedTask;
+    };
+    options.Events.OnRedirectToAccessDenied = context =>
+    {
+        context.Response.StatusCode = 403;
+        return Task.CompletedTask;
     };
 });
 
@@ -121,18 +127,30 @@ app.MapHub<OrdSpel.API.Hubs.GameHub>("/hubs/game");
 //seeda standardanvändarna
 using (var scope = app.Services.CreateScope())
 {
-    //användare
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var services = scope.ServiceProvider;
+
+    // RESET endast i Test-mode
+    if (app.Environment.IsEnvironment("Test"))
+    {
+        var appDb = services.GetRequiredService<AppDbContext>();
+        var authDb = services.GetRequiredService<AuthDbContext>();
+
+        await appDb.Database.EnsureDeletedAsync();
+        await authDb.Database.EnsureDeletedAsync();
+
+        await appDb.Database.EnsureCreatedAsync();
+        await authDb.Database.EnsureCreatedAsync();
+    }
+
+    // 🟢 SEED (körs alltid efter ev reset)
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
     await SeededUserData.SeedUserAsync(userManager);
 
-    //kategorier
-    var appDb = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await SeededAppData.SeedCategoriesAsync(appDb);
-
-    //innehåll i kategorier
-    await SeededAppData.SeedCountriesAsync(appDb);
-    await SeededAppData.SeedAnimalsAsync(appDb);
-    await SeededAppData.SeedFruitsAndVegetablesAsync(appDb);
+    var appDbSeed = services.GetRequiredService<AppDbContext>();
+    await SeededAppData.SeedCategoriesAsync(appDbSeed);
+    await SeededAppData.SeedCountriesAsync(appDbSeed);
+    await SeededAppData.SeedAnimalsAsync(appDbSeed);
+    await SeededAppData.SeedFruitsAndVegetablesAsync(appDbSeed);
 }
 
 app.Run();

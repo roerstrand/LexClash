@@ -1,4 +1,3 @@
-﻿using System.Net.Http.Headers;
 using OrdSpel.Shared.AuthDTOs;
 using OrdSpel.UI.Interfaces;
 
@@ -7,18 +6,24 @@ namespace OrdSpel.UI.Services
     public class HttpService : IHttpService
     {
         public HttpClient _httpClient { get; }
+        private readonly AuthStateService _authState;
 
-        public HttpService(HttpClient httpClient)
+        public HttpService(HttpClient httpClient, AuthStateService authState)
         {
             _httpClient = httpClient;
+            _authState = authState;
         }
 
-        public void SetBearerToken(string token)
+        // Läser Set-Cookie-headern från API-svaret och sparar cookievärdet i AuthStateService
+        private void StoreAuthCookie(HttpResponseMessage response)
         {
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
+            if (response.Headers.TryGetValues("Set-Cookie", out var cookies))
+            {
+                var authCookie = cookies.FirstOrDefault(c => c.StartsWith(".AspNetCore.Identity.Application="));
+                if (authCookie != null)
+                    _authState.Login(authCookie.Split(';')[0]); // Spara bara "name=value", inte path/expires/etc
+            }
         }
-
 
         public async Task<AuthResult> LoginUser(LoginDto loginDto)
         {
@@ -26,13 +31,11 @@ namespace OrdSpel.UI.Services
 
             if (response.IsSuccessStatusCode)
             {
-
-                var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-                return new AuthResult { Success = true, Token = result?.Token, UserId = result?.UserId };
+                StoreAuthCookie(response);
+                return new AuthResult { Success = true };
             }
 
             var errorMessage = await response.Content.ReadAsStringAsync();
-
             return new AuthResult { Success = false, ErrorMessage = errorMessage };
         }
 
@@ -42,15 +45,22 @@ namespace OrdSpel.UI.Services
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadFromJsonAsync<TokenResponse>();
-                return new AuthResult { Success = true, Token = result?.Token, UserId = result?.UserId }; //Returnerar AuthResult-modell (modell i UI:t!)
+                StoreAuthCookie(response);
+                return new AuthResult { Success = true };
             }
 
             var errorMessage = await response.Content.ReadAsStringAsync();
-
             return new AuthResult { Success = false, ErrorMessage = errorMessage };
         }
 
-    }
+        public async Task LogoutUser()
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, "api/auth/logout");
+            if (_authState.CookieValue != null)
+                request.Headers.Add("Cookie", _authState.CookieValue);
 
+            await _httpClient.SendAsync(request);
+            _authState.Logout();
+        }
+    }
 }

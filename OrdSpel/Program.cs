@@ -7,22 +7,32 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// UseCookies = false så att vi manuellt kan läsa Set-Cookie-headern och hantera cookies per användarsession.
+// I development bypass:as SSL-validering eftersom API:et använder ett självsignerat dev-certifikat.
+HttpClientHandler CreateHandler() => new HttpClientHandler
+{
+    UseCookies = false,
+    ServerCertificateCustomValidationCallback = builder.Environment.IsDevelopment()
+        ? HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        : null
+};
+
 builder.Services.AddHttpClient<HttpService>(options =>
 {
     options.BaseAddress = new Uri(builder.Configuration["ConnectionStrings:ApiBaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
-});
+}).ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
 builder.Services.AddScoped<AppState>();
 
 builder.Services.AddHttpClient<GameService>((sp, options) =>
 {
     options.BaseAddress = new Uri(builder.Configuration["ConnectionStrings:ApiBaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
-});
+}).ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
 builder.Services.AddHttpClient<GameLobbyApiService>(options =>
 {
     options.BaseAddress = new Uri(builder.Configuration["ConnectionStrings:ApiBaseUrl"] ?? throw new InvalidOperationException("API base URL is not configured."));
-});
+}).ConfigurePrimaryHttpMessageHandler(CreateHandler);
 
 builder.Services.AddScoped<AuthStateService>();
 builder.Services.AddAntiforgery();

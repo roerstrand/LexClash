@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 using OrdSpel.Shared.DTOs;
 
 namespace OrdSpel.UI.Services
@@ -17,14 +16,9 @@ namespace OrdSpel.UI.Services
 
         private void SetAuthHeader()
         {
-            if (string.IsNullOrWhiteSpace(_authState.Token))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = null;
-                return;
-            }
-
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _authState.Token);
+            _httpClient.DefaultRequestHeaders.Remove("Cookie");
+            if (_authState.CookieValue != null)
+                _httpClient.DefaultRequestHeaders.Add("Cookie", _authState.CookieValue);
         }
 
         public async Task<GameLobbyStatusDto?> GetLobbyStatusAsync(string gameCode, 

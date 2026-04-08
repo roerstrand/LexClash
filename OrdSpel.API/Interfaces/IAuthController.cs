@@ -7,6 +7,7 @@ namespace OrdSpel.API.Interfaces
     {
         Task<IActionResult> Delete();
         Task<IActionResult> Login(LoginDto dto);
+        Task<IActionResult> Logout();
         IActionResult Me();
         Task<IActionResult> Register([FromBody] RegisterDto dto);
     }

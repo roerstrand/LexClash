@@ -1,10 +1,12 @@
 <Solution>
+
+
   <Project Path="OrdSpel.API.Test/OrdSpel.API.Test.csproj" Id="b3dea550-2f48-4477-b290-1ba70ba05153" />
   <Project Path="OrdSpel.API/OrdSpel.API.csproj" />
   <Project Path="OrdSpel.BLL.Test/OrdSpel.BLL.Test.csproj" />
   <Project Path="OrdSpel.BLL/OrdSpel.BLL.csproj" />
   <Project Path="OrdSpel.DAL.Test/OrdSpel.DAL.Test.csproj">
-    <Build Solution="Debug|*" Project="false" />
+    <Build Solution="Debug|*" Project="true" />
   </Project>
   <Project Path="OrdSpel.DAL/OrdSpel.DAL.csproj" />
 

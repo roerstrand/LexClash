@@ -1,7 +1,6 @@
 using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
 using OrdSpel.UI.Interfaces;
-using System.Net.Http.Headers;
 
 namespace OrdSpel.UI.Services
 {
@@ -18,8 +17,9 @@ namespace OrdSpel.UI.Services
 
         private void SetAuthHeader()
         {
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _authState.Token);
+            _httpClient.DefaultRequestHeaders.Remove("Cookie");
+            if (_authState.CookieValue != null)
+                _httpClient.DefaultRequestHeaders.Add("Cookie", _authState.CookieValue);
         }
 
         // OBS: Stäm av  när kategori-feature är pushad — säkerställ att hela

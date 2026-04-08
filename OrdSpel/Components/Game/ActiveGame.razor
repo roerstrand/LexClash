@@ -57,7 +57,7 @@ else
         </div>
 
         <div class="mb-4">
-            @if (_gameStatus.CurrentTurnUserId == AuthState.UserId)
+            @if (_gameStatus.CurrentTurnUserId == AuthState.CookieValue)
             {
                 <div class="alert alert-success">Din tur!</div>
                 <div class="input-group" style="max-width: 400px;">

@@ -1,4 +1,4 @@
-﻿using OrdSpel.Shared.AuthDTOs;
+using OrdSpel.Shared.AuthDTOs;
 
 namespace OrdSpel.UI.Interfaces
 {
@@ -8,6 +8,6 @@ namespace OrdSpel.UI.Interfaces
 
         Task<AuthResult> LoginUser(LoginDto loginDto);
         Task<AuthResult> RegisterUser(RegisterDto dto);
-        void SetBearerToken(string token);
+        Task LogoutUser();
     }
 }
