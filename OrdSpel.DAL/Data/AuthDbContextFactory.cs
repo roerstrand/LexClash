@@ -8,7 +8,8 @@ public sealed class AuthDbContextFactory : IDesignTimeDbContextFactory<AuthDbCon
     public AuthDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<AuthDbContext>();
-        optionsBuilder.UseSqlServer("Server=localhost;Database=ordspel;Integrated Security=True;TrustServerCertificate=True;MultipleActiveResultSets=True;");
+        optionsBuilder.UseSqlServer("Server=localhost;Database=ordspel;Integrated Security=True;" +
+            "TrustServerCertificate=True;MultipleActiveResultSets=True;");
         return new AuthDbContext(optionsBuilder.Options);
     }
 }

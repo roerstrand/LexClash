@@ -30,7 +30,6 @@ namespace OrdSpel.DAL.Data.SeededData
                 var user = new IdentityUser { UserName = "playwright_user", EmailConfirmed = true };
                 await userManager.CreateAsync(user, "Test123!");
             }
-
         }
     }
 }

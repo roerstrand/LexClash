@@ -27,7 +27,8 @@ namespace OrdSpel.UI.Services
                 new AuthenticationHeaderValue("Bearer", _authState.Token);
         }
 
-        public async Task<GameLobbyStatusDto?> GetLobbyStatusAsync(string gameCode, CancellationToken ct = default)
+        public async Task<GameLobbyStatusDto?> GetLobbyStatusAsync(string gameCode, 
+            CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(gameCode))
             {
