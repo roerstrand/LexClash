@@ -12,7 +12,6 @@ namespace OrdSpel.UI.Interfaces
         Task<(GameSessionResponseDto? Result, string? Error)> JoinGameAsync(JoinGameDto dto);
         Task<GameStatusDto?> GetGameStatusAsync(string gameCode);
         Task<GameResultDto?> GetGameResultAsync(string gameCode);
-        Task<GameStatusDto?> GetGameStatusAsync(string gameCode);
         Task<(TurnResponseDto? Result, string? Error)> SubmitTurnAsync(string gameCode, TurnRequestDto dto);
     }
 }
