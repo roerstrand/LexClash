@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using OrdSpel.API.Hubs;
 using OrdSpel.API.Interfaces;
 using OrdSpel.BLL.Interfaces;
 using OrdSpel.BLL.Services;
@@ -18,12 +20,14 @@ namespace OrdSpel.API.Controllers
         private readonly IGameService _gameService;
         private readonly IGameLobbyService _gameLobbyService;
         private readonly IGameStatusService _gameStatusService;
+        private readonly IHubContext<GameHub> _hubContext;
 
-        public GameController(IGameService gameService, IGameLobbyService gameLobbyService, IGameStatusService gameStatusService)
+        public GameController(IGameService gameService, IGameLobbyService gameLobbyService, IGameStatusService gameStatusService, IHubContext<GameHub> hubContext)
         {
             _gameService = gameService;
             _gameLobbyService = gameLobbyService;
             _gameStatusService = gameStatusService;
+            _hubContext = hubContext;
         }
 
         [HttpGet("{code}/lobby")]
@@ -66,6 +70,8 @@ namespace OrdSpel.API.Controllers
             var result = await _gameService.JoinGameAsync(dto, userId);
             if (!result.Success)
                 return BadRequest(result.Error);
+
+            await _hubContext.Clients.Group(dto.GameCode).SendAsync("LobbyUpdated", dto.GameCode);
 
             return Ok(result.Data);
         }
@@ -127,6 +133,17 @@ namespace OrdSpel.API.Controllers
             if (result == null)
                 return NotFound();
 
+            return Ok(result);
+        }
+
+        [HttpGet("history")]
+        public async Task<IActionResult> GetGameHistory()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized();
+
+            var result = await _gameService.GetGameHistoryAsync(userId);
             return Ok(result);
         }
 

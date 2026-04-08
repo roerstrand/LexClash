@@ -55,6 +55,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameLobbyService, GameLobbyService>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IUserNameResolver, OrdSpel.API.Services.UserNameResolver>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IGameStatusService, GameStatusService>();
 

@@ -15,6 +15,7 @@ namespace OrdSpel.Shared.DTOs
 
         public string StartWord { get; init; } = string.Empty;
         public string? LastWord { get; init; }
+        public bool LastTurnWasPass { get; init; }
 
         public IReadOnlyList<GamePlayerStatusDto> Players { get; init; } = [];
         //public IReadOnlyList<GameTurnDto> Turns { get; init; } = [];

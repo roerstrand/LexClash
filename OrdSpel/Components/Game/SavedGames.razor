@@ -1,0 +1,84 @@
+@using OrdSpel.Shared.DTOs
+@using OrdSpel.UI.Services
+@inject GameService GameService
+
+@if (_isLoading)
+{
+    <p class="text-muted">Laddar historik...</p>
+}
+else if (_games.Count == 0)
+{
+    <p class="text-muted">Inga avslutade spel hittades.</p>
+}
+else
+{
+    <div class="d-flex flex-column gap-3" style="max-width:560px;">
+        @foreach (var game in _games)
+        {
+            <div class="card">
+                <div class="card-body">
+
+                    @* Header: spelkod + datum *@
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="font-family:'JetBrains Mono',monospace;font-size:1.2rem;font-weight:700;letter-spacing:0.1em;">
+                            @game.GameCode
+                        </span>
+                        <small class="text-muted">@game.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</small>
+                    </div>
+
+                    @* Kategori *@
+                    <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:#999;margin-bottom:0.75rem;">
+                        @game.CategoryName
+                    </div>
+
+                    @* Vinnare *@
+                    @if (game.WinnerUserId == null)
+                    {
+                        <div class="alert alert-info py-1 mb-2">Oavgjort</div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success py-1 mb-2">
+                            @(game.WinnerUsername ?? "Okänd") vinner
+                        </div>
+                    }
+
+                    @* Spelare *@
+                    <ul class="list-group list-group-flush">
+                        @foreach (var player in game.Players.OrderByDescending(p => p.TotalScore))
+                        {
+                            var isWinner = player.UserId == game.WinnerUserId;
+                            <li class="list-group-item d-flex justify-content-between @(isWinner ? "list-group-item-success" : "")">
+                                <span style="font-weight:@(isWinner ? "700" : "400");">
+                                    @(player.Username ?? $"Spelare {player.PlayerOrder}")
+                                </span>
+                                <span class="badge @(isWinner ? "bg-success" : "bg-primary")"
+                                      style="font-family:'JetBrains Mono',monospace;">
+                                    @player.TotalScore p
+                                </span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<GameSummaryDto> _games = new();
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _games = await GameService.GetGameHistoryAsync();
+        }
+        catch { }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+}

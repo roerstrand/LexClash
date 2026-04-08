@@ -1,3 +1,4 @@
+@using OrdSpel.Shared.DTOs
 @using OrdSpel.Shared.GameDTOs
 @using OrdSpel.UI.Services
 
@@ -5,62 +6,61 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-<div>
-    <h3>Skapa spel</h3>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:640px;">
 
-    <select id="categorySelect" @bind="_categoryId">
-        <option value="0">Välj kategori...</option>
-        @foreach (var category in _categories)
+    <div style="background:#2a2a3e;border:1px solid #44445a;padding:1.5rem;">
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1.25rem;">Skapa spel</div>
+
+        <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Kategori</label>
+        <select id="categorySelect" @bind="_categoryId" class="form-control" style="margin-bottom:1rem;">
+            <option value="0">Välj kategori...</option>
+            @foreach (var category in _categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+
+        @if (!string.IsNullOrEmpty(_createError))
         {
-            <option value="@category.Id">@category.Name</option>
+            <div class="alert alert-danger" style="margin-bottom:0.75rem;font-size:0.82rem;" id="createError">@_createError</div>
         }
-    </select>
-    <button id="createGameButton" @onclick="CreateGame">Skapa</button>
 
-    @if (!string.IsNullOrEmpty(_createError))
-    {
-        <p id="createError">@_createError</p>
-    }
+        <button id="createGameButton" class="btn btn-primary" style="width:100%;" @onclick="CreateGame">Skapa</button>
+    </div>
 
-    @if (_createdSession != null)
-    {
-        <p>Spelet skapat! Spelkod: <strong id="gameCode">@_createdSession.GameCode</strong></p>
-    }
-</div>
+    <div style="background:#2a2a3e;border:1px solid #44445a;padding:1.5rem;">
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1.25rem;">Gå med i spel</div>
 
-<hr />
+        <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Spelkod</label>
+        <input id="gameCodeInput"
+               @bind="_joinCode"
+               type="text"
+               placeholder="123456"
+               maxlength="6"
+               class="form-control"
+               style="font-family:'JetBrains Mono',monospace;letter-spacing:0.15em;font-size:1.1rem;margin-bottom:1rem;" />
 
-<div>
-    <h3>Joina spel</h3>
+        @if (!string.IsNullOrEmpty(_joinError))
+        {
+            <div class="alert alert-danger" style="margin-bottom:0.75rem;font-size:0.82rem;" id="joinError">@_joinError</div>
+        }
 
-    <input id="gameCodeInput" @bind="_joinCode" type="text" placeholder="Spelkod" maxlength="6" />
-    <button id="joinGameButton" @onclick="JoinGame">Anslut</button>
+        <button id="joinGameButton" class="btn btn-outline-secondary" style="width:100%;" @onclick="JoinGame">Anslut</button>
+    </div>
 
-    @if (!string.IsNullOrEmpty(_joinError))
-    {
-        <p id="joinError">@_joinError</p>
-    }
 </div>
 
 @code {
-    // TODO: CategoryModel ska ersättas med CategoryDto från OrdSpel.Shared
-    // när kollegans kategori-feature (BLL-service & DAL-repository) är klar och mergad.
-    private class CategoryModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-    }
-
     private int _categoryId;
     private string _joinCode = string.Empty;
     private string _createError = string.Empty;
     private string _joinError = string.Empty;
     private GameSessionResponseDto? _createdSession;
-    private List<CategoryModel> _categories = new();
+    private List<CategoryDto> _categories = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _categories = await GameService.GetCategoriesAsync<CategoryModel>();
+        _categories = await GameService.GetCategoriesAsync<CategoryDto>();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

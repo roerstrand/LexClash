@@ -1,5 +1,6 @@
 @page "/game"
 @page "/game/{Code}"
+@page "/sparade-spel"
 @using OrdSpel.UI.Components.Game
 @using OrdSpel.UI.Services
 @using OrdSpel.Shared.DTOs
@@ -18,7 +19,33 @@
 }
 else if (string.IsNullOrEmpty(Code))
 {
-    <GameEntry />
+    @if (!string.IsNullOrEmpty(_activeGameCode))
+    {
+        <div class="alert alert-info d-flex justify-content-between align-items-center mb-3">
+            <span>Du har ett aktivt spel (kod: <strong>@_activeGameCode</strong>)</span>
+            <button class="btn btn-primary btn-sm" @onclick='() => NavigationManager.NavigateTo($"/game/{_activeGameCode}")'>
+                Gå till spelet
+            </button>
+        </div>
+    }
+
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <button class="nav-link @(_tab == "new" ? "active" : "")" @onclick='() => _tab = "new"'>Nytt spel</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(_tab == "history" ? "active" : "")" @onclick='() => _tab = "history"'>Sparade spel</button>
+        </li>
+    </ul>
+
+    @if (_tab == "new")
+    {
+        <GameEntry />
+    }
+    else
+    {
+        <SavedGames />
+    }
 }
 else if (_status == null && _loadError == null)
 {
@@ -30,14 +57,26 @@ else if (_status == null && _loadError != null)
 }
 else if (_status.Status == GameStatus.WaitingForPlayers)
 {
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
+        <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Lämna spel</button>
+    </div>
     <Lobby GameCode="@Code" Status="@_status" OnStart="HandleStart" />
 }
 else if (_status.Status == GameStatus.InProgress)
 {
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>Skapa/joina spel</button>
+        <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Lämna spel</button>
+    </div>
     <ActiveGame GameCode="@Code" />
 }
 else if (_status.Status == GameStatus.GameFinished)
 {
+    <div class="mb-4">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
+    </div>
     <GameResult GameCode="@Code" />
 }
 
@@ -51,11 +90,17 @@ else if (_status.Status == GameStatus.GameFinished)
     private CancellationTokenSource? _pollCts;
     private bool _checkingActiveGame;
     private string? _loadError;
+    private string? _activeGameCode;
+    private string _tab = "new";
 
     protected override void OnInitialized()
     {
         if (!AuthState.IsLoggedIn)
             NavigationManager.NavigateTo("/");
+
+        // Öppna rätt flik beroende på route
+        if (NavigationManager.Uri.Contains("/sparade-spel"))
+            _tab = "history";
     }
 
     protected override async Task OnParametersSetAsync()
@@ -68,6 +113,7 @@ else if (_status.Status == GameStatus.GameFinished)
         if (string.IsNullOrWhiteSpace(Code))
         {
             _status = null;
+            _activeGameCode = null;
 
             // Kolla om användaren redan har ett aktivt spel
             _checkingActiveGame = true;
@@ -75,11 +121,7 @@ else if (_status.Status == GameStatus.GameFinished)
             {
                 var activeGame = await GameService.GetActiveGameAsync();
                 if (activeGame != null)
-                {
-                    _checkingActiveGame = false;
-                    NavigationManager.NavigateTo($"/game/{activeGame.GameCode}");
-                    return;
-                }
+                    _activeGameCode = activeGame.GameCode;
             }
             catch { }
             _checkingActiveGame = false;
@@ -104,6 +146,23 @@ else if (_status.Status == GameStatus.GameFinished)
             _status = null;
             _loadError = $"{ex.GetType().Name}: {ex.Message}";
         }
+    }
+
+    private async Task LeaveGame()
+    {
+        if (string.IsNullOrWhiteSpace(Code))
+            return;
+
+        try
+        {
+            await GameService.EndGameAsync(Code);
+        }
+        catch { }
+
+        await StopPollingAsync();
+        await DisposeHubAsync();
+        _status = null;
+        NavigationManager.NavigateTo("/game", forceLoad: false, replace: true);
     }
 
     private async Task HandleStart()

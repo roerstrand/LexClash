@@ -10,11 +10,13 @@ namespace OrdSpel.BLL.Services
     public class GameService : IGameService
     {
         private readonly IGameRepository _gameRepository;
+        private readonly IUserNameResolver _userNameResolver;
         private readonly Random _random = new();
 
-        public GameService(IGameRepository gameRepository)
+        public GameService(IGameRepository gameRepository, IUserNameResolver userNameResolver)
         {
             _gameRepository = gameRepository;
+            _userNameResolver = userNameResolver;
         }
 
         public async Task<GameSessionResponseDto> CreateGameAsync(CreateGameDto dto, string userId)
@@ -71,12 +73,51 @@ namespace OrdSpel.BLL.Services
 
         public async Task<GameResultDto?> GetGameResultAsync(string gameCode)
         {
-            return await _gameRepository.GetGameResultAsync(gameCode);
+            var result = await _gameRepository.GetGameResultAsync(gameCode);
+            if (result == null)
+                return null;
+
+            // Lägg till usernames i spelardata
+            var userIds = result.Players.Select(p => p.UserId);
+            var usernames = await _userNameResolver.GetUsernamesAsync(userIds);
+
+            return result with
+            {
+                Players = result.Players.Select(p => p with
+                {
+                    Username = usernames.GetValueOrDefault(p.UserId)
+                }).ToList()
+            };
         }
 
         public async Task<GameSessionResponseDto?> GetActiveGameByUserAsync(string userId)
         {
             return await _gameRepository.GetActiveSessionByUserAsync(userId);
+        }
+
+        public async Task<List<GameSummaryDto>> GetGameHistoryAsync(string userId)
+        {
+            var summaries = await _gameRepository.GetFinishedSessionsByUserAsync(userId);
+
+            // Slå upp usernames för alla spelare i alla spel
+            var allUserIds = summaries.SelectMany(s => s.Players.Select(p => p.UserId)).Distinct();
+            var usernames = await _userNameResolver.GetUsernamesAsync(allUserIds);
+
+            return summaries.Select(s =>
+            {
+                var playersWithNames = s.Players.Select(p => p with
+                {
+                    Username = usernames.GetValueOrDefault(p.UserId)
+                }).ToList();
+
+                var winner = playersWithNames.FirstOrDefault(p => p.UserId == s.WinnerUserId);
+
+                return s with
+                {
+                    Players = playersWithNames,
+                    WinnerUsername = winner?.Username
+                };
+            }).ToList();
         }
 
         private async Task<string> GenerateUniqueCodeAsync()
