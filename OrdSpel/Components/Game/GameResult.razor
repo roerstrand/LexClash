@@ -1,0 +1,130 @@
+
+@using OrdSpel.Shared.DTOs
+@using OrdSpel.Shared.Enums
+@inject OrdSpel.UI.Services.GameService GameService
+@inject NavigationManager Navigation
+
+
+
+<div class="container mt-4">
+
+    @* Loading *@
+    @if (_isLoading)
+    {
+        <p id="gameResultLoading" class="text-muted">Laddar resultat...</p>
+    }
+
+    @* If error is not null, show error message >>> "BackToGame" *@
+    else if (_error is not null)
+    {
+        <div id="gameResultError" class="alert alert-danger">@_error</div>
+        <button id="gameResultBackButton" class="btn btn-outline-secondary" @onclick="BackToGame">
+            Tillbaka
+        </button>
+    }
+
+    @* No error, but Result is null >>> "Back to Game" *@
+    else if (_result is null)
+    {
+        <div id="gameResultError" class="alert alert-danger">Kunde inte ladda resultatet.</div>
+        <button id="gameResultBackButton" class="btn btn-outline-secondary" @onclick="BackToGame">
+            Tillbaka
+        </button>
+    }
+
+    @* Loading is completed, Result is not null && Error is null >> Show SpelSlut & Result *@
+    else
+    {
+        <h2 id="gameResultTitle">Spelslut & resultat</h2>
+
+        <div class="mb-3">
+            @* If WinnerUserId ís null >>> Oavgjort *@
+            @if (string.IsNullOrWhiteSpace(_result.WinnerUserId))
+            {
+                <div id="gameResultWinner" class="alert alert-info">Oavgjort!</div>
+            }
+
+            @* If WinnerUserId ís not null >>> Winner *@
+            else
+            {
+                <div id="gameResultWinner" class="alert alert-success">Vinnare: @_result.WinnerUserId</div>
+            }
+        </div>
+
+
+
+       @*  ScoreBoard *@
+        <h5 id="gameResultScoreboardTitle">Poängtabell</h5>
+        <ul id="gameResultScoreboard" class="list-group" style="max-width: 420px;">
+            @foreach (var player in _result.Players.OrderBy(p => p.PlayerOrder))
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center"
+                    id="gameResultPlayer-@player.PlayerOrder">
+                    <span>Spelare @player.PlayerOrder</span>
+                    <span class="badge bg-primary rounded-pill">@player.TotalScore p</span>
+                </li>
+            }
+        </ul>
+
+        <div class="mt-4">
+            <button id="gameResultBackButton" class="btn btn-primary" @onclick="BackToGame">
+                Tillbaka till spelet
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string GameCode { get; set; } = string.Empty;
+
+    private GameResultDto? _result;
+    private bool _isLoading = true;
+    private string? _error;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (string.IsNullOrWhiteSpace(GameCode))
+        {
+            _error = "Game code saknas.";
+            _isLoading = false;
+            return;
+        }
+
+        _isLoading = true;
+        _error = null;
+        _result = null;
+
+        try
+        {
+            // Call API 
+            _result = await GameService.GetGameResultAsync(GameCode);
+
+            // If result is not null, but game has finished yet 
+            if (_result is not null && _result.Status != GameStatus.GameFinished)
+            {
+                _error = "Spelet är inte avslutat ännu.";
+            }
+        }
+        // Trow execption when calling API 
+        catch (HttpRequestException)
+        {
+            _error = "Kunde inte hämta resultat från servern.";
+        }
+
+        // Keep Working even error occurs, but show error message to user and "Back to Game" button
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+
+
+    private void BackToGame()
+    {
+        Navigation.NavigateTo($"/game/{Uri.EscapeDataString(GameCode)}");
+    }
+}

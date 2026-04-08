@@ -5,6 +5,7 @@ using OrdSpel.BLL.Interfaces;
 using OrdSpel.BLL.Services;
 using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
+using OrdSpel.Shared.Enums;
 using System.Security.Claims;
 
 namespace OrdSpel.API.Controllers
@@ -16,11 +17,13 @@ namespace OrdSpel.API.Controllers
     {
         private readonly IGameService _gameService;
         private readonly IGameLobbyService _gameLobbyService;
+        private readonly IGameStatusService _gameStatusService;
 
-        public GameController(IGameService gameService, IGameLobbyService gameLobbyService)
+        public GameController(IGameService gameService, IGameLobbyService gameLobbyService, IGameStatusService gameStatusService)
         {
             _gameService = gameService;
             _gameLobbyService = gameLobbyService;
+            _gameStatusService = gameStatusService;
         }
 
         [HttpGet("{code}/lobby")]
@@ -85,6 +88,39 @@ namespace OrdSpel.API.Controllers
         public async Task<IActionResult> GetGame(string gameCode)
         {
             var result = await _gameService.GetGameAsync(gameCode);
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpGet("{code}/result")]
+        public async Task<ActionResult<GameResultDto>> GetResult(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return BadRequest("Game code is required.");
+            }
+
+            var result = await _gameService.GetGameResultAsync(code);
+            if (result is null)
+            {
+                return NotFound("Game session was not found.");
+            }
+
+            if (result.Status != GameStatus.GameFinished)
+            {
+                return Conflict("Game is not finished yet.");
+            }
+
+            return Ok(result);
+        }
+
+        [HttpGet("{code}/status")]
+        public async Task<ActionResult<GameStatusDto>> GetGameStatus(string code)
+        {
+            var result = await _gameStatusService.GetGameStatusAsync(code);
+
             if (result == null)
                 return NotFound();
 

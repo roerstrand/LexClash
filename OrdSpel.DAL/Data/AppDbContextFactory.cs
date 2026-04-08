@@ -8,7 +8,8 @@ public sealed class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbConte
     public AppDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        optionsBuilder.UseSqlServer("Server=localhost;Database=ordspel;Integrated Security=True;TrustServerCertificate=True;MultipleActiveResultSets=True;");
+        optionsBuilder.UseSqlServer("Server=localhost;Database=ordspel;Integrated Security=True;" +
+            "TrustServerCertificate=True;MultipleActiveResultSets=True;");
         return new AppDbContext(optionsBuilder.Options);
     }
 }

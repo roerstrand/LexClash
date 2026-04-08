@@ -21,7 +21,8 @@ namespace OrdSpel.UI.Services
                 _httpClient.DefaultRequestHeaders.Add("Cookie", _authState.CookieValue);
         }
 
-        public async Task<GameLobbyStatusDto?> GetLobbyStatusAsync(string gameCode, CancellationToken ct = default)
+        public async Task<GameLobbyStatusDto?> GetLobbyStatusAsync(string gameCode, 
+            CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(gameCode))
             {
@@ -30,11 +31,21 @@ namespace OrdSpel.UI.Services
 
             SetAuthHeader();
 
+            if (_httpClient.DefaultRequestHeaders.Authorization is null)
+            {
+                return null;
+            }
+
             // Call the API to get the lobby status for the specified game code
             // Uri.EscapeDataString(gameCode) for encoding the game code in case it contains special characters
             using var response = await _httpClient.GetAsync($"api/game/{Uri.EscapeDataString(gameCode)}/lobby", ct);
 
             if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+
+            if (response.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden)
             {
                 return null;
             }

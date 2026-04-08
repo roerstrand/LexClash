@@ -56,6 +56,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameLobbyService, GameLobbyService>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IGameStatusService, GameStatusService>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -64,6 +65,10 @@ builder.Services.AddScoped<IGameSessionRepository, GameSessionRepository>();
 
 builder.Services.AddScoped<IWordRepository, WordRepository>();
 builder.Services.AddScoped<IWordService, WordService>();
+builder.Services.AddScoped<ITurnService, TurnService>();
+builder.Services.AddScoped<ITurnRepository, TurnRepository>();
+
+builder.Services.AddSignalR();
 
 // Konfigurera Identity-cookien för cookie-baserad autentisering
 // Identity sätter redan upp cookie-auth via AddIdentity ovan – här finjusterar vi cookiens beteende
@@ -116,6 +121,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<OrdSpel.API.Hubs.GameHub>("/hubs/game");
 
 //seeda standardanvändarna
 using (var scope = app.Services.CreateScope())

@@ -1,3 +1,4 @@
+using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
 using OrdSpel.UI.Interfaces;
 
@@ -69,6 +70,43 @@ namespace OrdSpel.UI.Services
                 return null;
 
             return await response.Content.ReadFromJsonAsync<GameSessionResponseDto>();
+        }
+
+        public async Task<GameStatusDto?> GetGameStatusAsync(string gameCode)
+        {
+            SetAuthHeader();
+            var response = await _httpClient.GetAsync($"api/game/{gameCode}/status");
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<GameStatusDto>();
+        }
+
+        public async Task<GameResultDto?> GetGameResultAsync(string gameCode)
+        {
+            SetAuthHeader();
+            var response = await _httpClient.GetAsync($"api/game/{gameCode}/result");
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<GameResultDto>();
+        }
+
+        public async Task<(TurnResponseDto? Result, string? Error)> SubmitTurnAsync(string gameCode, TurnRequestDto dto)
+        {
+            SetAuthHeader();
+            var response = await _httpClient.PostAsJsonAsync($"api/games/{gameCode}/turns", dto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<TurnResponseDto>();
+                return (result, null);
+            }
+
+            var error = await response.Content.ReadAsStringAsync();
+            return (null, error);
         }
     }
 }

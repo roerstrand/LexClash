@@ -90,6 +90,7 @@
         }
 
         _createdSession = result;
+        NavigationManager.NavigateTo($"/lobby/{result.GameCode}");
     }
 
     private async Task JoinGame()

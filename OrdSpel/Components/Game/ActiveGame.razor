@@ -1,0 +1,265 @@
+@*
+    BEROENDEN SOM BEHÖVER IMPLEMENTERAS INNAN DENNA KOMPONENT ÄR FULLT FUNGERANDE:
+
+    1. GET /api/games/{code}/status  (TEAM-6 eller backend-ansvarig)
+       - Ska returnera GameStatusDto (finns redan i OrdSpel.Shared/DTOs/GameStatusDto.cs)
+       - Behöver implementeras i: GamesController + IGameLobbyService/ny BLL-service + repository-metod
+       - GameStatusDto innehåller: CurrentRound, CurrentTurnUserId, StartWord, LastWord, Players (med poäng)
+
+    2. POST /api/games/{code}/turns  (TEAM-6)
+       - Tar emot det spelade ordet och validerar det (bokstavsregel, ordbank, dubletter)
+       - Ska returnera uppdaterad spelstatus eller felmeddelande
+       - När endpointen finns: implementera GameService.SubmitTurnAsync() och koppla in i SubmitWord() nedan
+
+    3. SignalR-event "TurnUpdated"  (TEAM-6 eller den som bygger hub)
+       - Komponenten lyssnar redan på "TurnUpdated"-eventet (se StartHubAsync)
+       - Hubben på servern behöver skicka detta event när en tur är spelad
+       - Faller tillbaka på polling (var 3:e sekund) om SignalR inte finns/fungerar
+*@
+@using OrdSpel.Shared
+@using OrdSpel.Shared.DTOs
+@using OrdSpel.UI.Services
+@using Microsoft.AspNetCore.SignalR.Client
+
+@inject GameService GameService
+@inject AuthStateService AuthState
+@inject NavigationManager Navigation
+
+@implements IAsyncDisposable
+
+@if (_isLoading)
+{
+    <div class="container mt-4">
+        <p class="text-muted">Laddar spelet...</p>
+    </div>
+}
+else if (_gameStatus is null)
+{
+    <div class="container mt-4">
+        <p class="text-danger">Kunde inte ladda spelet. Kontrollera spelkoden och försök igen.</p>
+    </div>
+}
+else
+{
+    <div class="container mt-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2>Ordspelet</h2>
+            <span class="badge bg-secondary fs-6">Runda @_gameStatus.CurrentRound</span>
+        </div>
+
+        <div class="mb-3">
+            <strong>Startsord:</strong> @_gameStatus.StartWord
+            @if (!string.IsNullOrEmpty(_gameStatus.LastWord))
+            {
+                <span class="ms-3"><strong>Senaste ord:</strong> @_gameStatus.LastWord</span>
+            }
+        </div>
+
+        <div class="mb-4">
+            @if (_gameStatus.CurrentTurnUserId == AuthState.CookieValue)
+            {
+                <div class="alert alert-success">Din tur!</div>
+                <div class="input-group" style="max-width: 400px;">
+                    <input class="form-control"
+                           placeholder="Skriv ett ord..."
+                           @bind="_wordInput"
+                           @bind:event="oninput"
+                           @onkeydown="HandleKeyDown"
+                           disabled="@_isSubmitting" />
+                    <button class="btn btn-primary"
+                            @onclick="SubmitWord"
+                            disabled="@(string.IsNullOrWhiteSpace(_wordInput) || _isSubmitting)">
+                        Skicka
+                    </button>
+                </div>
+                @if (!string.IsNullOrEmpty(_submitError))
+                {
+                    <p class="text-danger mt-2">@_submitError</p>
+                }
+            }
+            else
+            {
+                <div class="alert alert-secondary">Väntar på motspelaren...</div>
+            }
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Poäng</h5>
+                <ul class="list-group">
+                    @foreach (var player in _gameStatus.Players)
+                    {
+                        var isCurrentTurn = player.UserId == _gameStatus.CurrentTurnUserId;
+                        <li class="list-group-item d-flex justify-content-between align-items-center @(isCurrentTurn ? "active" : "")">
+                            <span>
+                                @if (isCurrentTurn)
+                                {
+                                    <strong>&#9654; </strong>
+                                }
+                                Spelare @player.PlayerOrder
+                            </span>
+                            <span class="badge bg-primary rounded-pill">@player.TotalScore p</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+    </div>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public string GameCode { get; set; } = string.Empty;
+
+    private GameStatusDto? _gameStatus;
+    private bool _isLoading = true;
+
+    private string _wordInput = string.Empty;
+    private string _submitError = string.Empty;
+    private bool _isSubmitting = false;
+
+    private HubConnection? _hubConnection;
+    private CancellationTokenSource? _pollCts;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await StopPollingAsync();
+        await DisposeHubAsync();
+
+        _isLoading = true;
+        _gameStatus = await GameService.GetGameStatusAsync(GameCode);
+        _isLoading = false;
+
+        await StartHubAsync();
+    }
+
+    private async Task StartHubAsync()
+    {
+        if (string.IsNullOrWhiteSpace(GameCode))
+            return;
+
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(new Uri(new Uri(Navigation.BaseUri), "hubs/game"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On("TurnUpdated", async (string gameCode) =>
+        {
+            if (string.Equals(gameCode, GameCode, StringComparison.OrdinalIgnoreCase))
+            {
+                _gameStatus = await GameService.GetGameStatusAsync(GameCode);
+                await InvokeAsync(StateHasChanged);
+            }
+        });
+
+        _hubConnection.Reconnected += async _ =>
+        {
+            await StopPollingAsync();
+            _gameStatus = await GameService.GetGameStatusAsync(GameCode);
+            await InvokeAsync(StateHasChanged);
+        };
+
+        _hubConnection.Closed += async _ =>
+        {
+            await StartPollingAsync();
+        };
+
+        try
+        {
+            await _hubConnection.StartAsync();
+            await _hubConnection.InvokeAsync("JoinGame", GameCode);
+        }
+        catch
+        {
+            await StartPollingAsync();
+        }
+    }
+
+    private async Task StartPollingAsync()
+    {
+        if (_pollCts is not null)
+            return;
+
+        _pollCts = new CancellationTokenSource();
+        var ct = _pollCts.Token;
+
+        try
+        {
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
+            while (await timer.WaitForNextTickAsync(ct))
+            {
+                _gameStatus = await GameService.GetGameStatusAsync(GameCode);
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (OperationCanceledException) { }
+    }
+
+    private Task StopPollingAsync()
+    {
+        _pollCts?.Cancel();
+        _pollCts?.Dispose();
+        _pollCts = null;
+        return Task.CompletedTask;
+    }
+
+    private async Task DisposeHubAsync()
+    {
+        if (_hubConnection is null)
+            return;
+
+        try
+        {
+            await _hubConnection.DisposeAsync();
+        }
+        finally
+        {
+            _hubConnection = null;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await StopPollingAsync();
+        await DisposeHubAsync();
+    }
+
+    private async Task SubmitWord()
+    {
+        if (string.IsNullOrWhiteSpace(_wordInput) || _isSubmitting)
+            return;
+
+        _submitError = string.Empty;
+        _isSubmitting = true;
+
+        // TODO (TEAM-6): Anropa POST /api/games/{GameCode}/turns med det inmatade ordet.
+        // Förväntat request-body: { "word": _wordInput.Trim() }
+        // Förväntat svar: uppdaterad GameStatusDto (eller ServiceResult med felmeddelande vid ogiltigt ord).
+        // Vid fel (ogiltigt ord, inte din tur, etc.) ska _submitError sättas med felmeddelandet.
+        // Lägg till GameService.SubmitTurnAsync(string gameCode, string word) som anropar endpointen.
+        // var result = await GameService.SubmitTurnAsync(GameCode, _wordInput.Trim());
+        // if (!result.Success) { _submitError = result.Error; return; }
+
+        var dto = new TurnRequestDto { Word = _wordInput.Trim(), PassedTurn = false };
+        var (result, error) = await GameService.SubmitTurnAsync(GameCode, dto);
+
+        if (error != null)
+        {
+            _submitError = error;
+        }
+        else
+        {
+            _wordInput = string.Empty;
+        }
+        
+        _isSubmitting = false;
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await SubmitWord();
+    }
+}
