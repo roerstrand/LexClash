@@ -23,7 +23,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowUI", policy =>
         policy.WithOrigins("https://localhost:7265", "http://localhost:5235")
               .AllowAnyHeader()
-              .AllowAnyMethod());
+              .AllowAnyMethod()
+              .AllowCredentials());
 });
 
 builder.Services.AddDbContext<AppDbContext>(Options => Options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnection")));
@@ -47,6 +48,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameLobbyService, GameLobbyService>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IGameStatusService, GameStatusService>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -55,6 +57,10 @@ builder.Services.AddScoped<IGameSessionRepository, GameSessionRepository>();
 
 builder.Services.AddScoped<IWordRepository, WordRepository>();
 builder.Services.AddScoped<IWordService, WordService>();
+builder.Services.AddScoped<ITurnService, TurnService>();
+builder.Services.AddScoped<ITurnRepository, TurnRepository>();
+
+builder.Services.AddSignalR();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -109,6 +115,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<OrdSpel.API.Hubs.GameHub>("/hubs/game");
 
 //seeda standardanvändarna
 using (var scope = app.Services.CreateScope())

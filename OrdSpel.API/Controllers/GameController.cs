@@ -17,11 +17,13 @@ namespace OrdSpel.API.Controllers
     {
         private readonly IGameService _gameService;
         private readonly IGameLobbyService _gameLobbyService;
+        private readonly IGameStatusService _gameStatusService;
 
-        public GameController(IGameService gameService, IGameLobbyService gameLobbyService)
+        public GameController(IGameService gameService, IGameLobbyService gameLobbyService, IGameStatusService gameStatusService)
         {
             _gameService = gameService;
             _gameLobbyService = gameLobbyService;
+            _gameStatusService = gameStatusService;
         }
 
         [HttpGet("{code}/lobby")]
@@ -110,6 +112,17 @@ namespace OrdSpel.API.Controllers
             {
                 return Conflict("Game is not finished yet.");
             }
+
+            return Ok(result);
+        }
+
+        [HttpGet("{code}/status")]
+        public async Task<ActionResult<GameStatusDto>> GetGameStatus(string code)
+        {
+            var result = await _gameStatusService.GetGameStatusAsync(code);
+
+            if (result == null)
+                return NotFound();
 
             return Ok(result);
         }

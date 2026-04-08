@@ -38,5 +38,17 @@ namespace OrdSpel.DAL.Repositories
                 .Include(s => s.Players)
                 .FirstOrDefaultAsync(s => s.GameCode == gameCode);
         }
+        public Task<GameSession?> GetByGameCodeWithDetailsAsync(string gameCode)
+        {
+            if (string.IsNullOrWhiteSpace(gameCode))
+            {
+                return Task.FromResult<GameSession?>(null);
+            }
+
+            return _context.GameSessions
+                .Include(s => s.Players)
+                .Include(s => s.Turns)
+                .FirstOrDefaultAsync(s => s.GameCode == gameCode);
+        }
     }
 }

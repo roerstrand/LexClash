@@ -242,7 +242,18 @@ else
         // var result = await GameService.SubmitTurnAsync(GameCode, _wordInput.Trim());
         // if (!result.Success) { _submitError = result.Error; return; }
 
-        _wordInput = string.Empty;
+        var dto = new TurnRequestDto { Word = _wordInput.Trim(), PassedTurn = false };
+        var (result, error) = await GameService.SubmitTurnAsync(GameCode, dto);
+
+        if (error != null)
+        {
+            _submitError = error;
+        }
+        else
+        {
+            _wordInput = string.Empty;
+        }
+        
         _isSubmitting = false;
     }
 
