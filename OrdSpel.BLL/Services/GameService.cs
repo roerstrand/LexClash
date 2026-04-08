@@ -95,6 +95,31 @@ namespace OrdSpel.BLL.Services
             return await _gameRepository.GetActiveSessionByUserAsync(userId);
         }
 
+        public async Task<List<GameSummaryDto>> GetGameHistoryAsync(string userId)
+        {
+            var summaries = await _gameRepository.GetFinishedSessionsByUserAsync(userId);
+
+            // Slå upp usernames för alla spelare i alla spel
+            var allUserIds = summaries.SelectMany(s => s.Players.Select(p => p.UserId)).Distinct();
+            var usernames = await _userNameResolver.GetUsernamesAsync(allUserIds);
+
+            return summaries.Select(s =>
+            {
+                var playersWithNames = s.Players.Select(p => p with
+                {
+                    Username = usernames.GetValueOrDefault(p.UserId)
+                }).ToList();
+
+                var winner = playersWithNames.FirstOrDefault(p => p.UserId == s.WinnerUserId);
+
+                return s with
+                {
+                    Players = playersWithNames,
+                    WinnerUsername = winner?.Username
+                };
+            }).ToList();
+        }
+
         private async Task<string> GenerateUniqueCodeAsync()
         {
             string code;

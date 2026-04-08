@@ -1,4 +1,5 @@
 using Moq;
+using OrdSpel.BLL.Interfaces;
 using OrdSpel.BLL.Services;
 using OrdSpel.DAL.Repositories.Interfaces;
 using OrdSpel.Shared.Enums;
@@ -13,7 +14,11 @@ namespace OrdSpel.BLL.Test
         private (GameService service, Mock<IGameRepository> mockRepo) CreateService()
         {
             var mockRepo = new Mock<IGameRepository>();
-            var service = new GameService(mockRepo.Object);
+            var mockUserNameResolver = new Mock<IUserNameResolver>();
+            mockUserNameResolver
+                .Setup(r => r.GetUsernamesAsync(It.IsAny<IEnumerable<string>>()))
+                .ReturnsAsync(new Dictionary<string, string>());
+            var service = new GameService(mockRepo.Object, mockUserNameResolver.Object);
             return (service, mockRepo);
         }
 

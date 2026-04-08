@@ -44,7 +44,7 @@ else
     <div class="container mt-4">
 
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Ordspelet</h2>
+            <h4 style="margin:0;color:#9999bb;font-weight:500;letter-spacing:0.04em;">Pågående spel</h4>
             <span class="badge bg-secondary fs-6">Runda @_gameStatus.CurrentRound</span>
         </div>
 
@@ -60,12 +60,14 @@ else
             </div>
         }
 
-        <div class="mb-3">
-            <strong>Startsord:</strong> @_gameStatus.StartWord
-            <span class="ms-3">
-                <strong>Ordet att utgå från:</strong> @currentWord
-                <span class="text-muted">(nästa ord måste börja på '<strong>@requiredLetter</strong>')</span>
-            </span>
+        <div class="mb-4 p-3" style="background:#2a2a3e;border:1px solid #44445a;border-radius:8px;">
+            <div style="font-size:0.78rem;color:#9999bb;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Aktiva ordet</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:#e8e8f0;margin-bottom:0.75rem;">@currentWord</div>
+            <div style="font-size:1rem;color:#c8c8e0;">
+                Nästa ord måste börja på
+                <span style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:#ffcc44;margin-left:0.4rem;">'@requiredLetter'</span>
+            </div>
+            <div style="margin-top:0.5rem;font-size:0.85rem;color:#6666aa;">Startord: @_gameStatus.StartWord</div>
         </div>
 
         <div class="mb-4">

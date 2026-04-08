@@ -189,6 +189,43 @@ namespace OrdSpel.DAL.Repositories
             return MapToDto(session);
         }
 
+        public async Task<List<GameSummaryDto>> GetFinishedSessionsByUserAsync(string userId)
+        {
+            var sessions = await _db.GameSessions
+                .Include(s => s.Players)
+                .Include(s => s.Category)
+                .Where(s => s.Players.Any(p => p.UserId == userId))
+                .Where(s => s.Status == GameStatus.GameFinished)
+                .OrderByDescending(s => s.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return sessions.Select(session =>
+            {
+                var players = session.Players
+                    .OrderBy(p => p.PlayerOrder)
+                    .Select(p => new GamePlayerStatusDto(p.UserId, null, p.PlayerOrder, p.TotalScore))
+                    .ToList();
+
+                string? winnerUserId = null;
+                if (players.Count > 0)
+                {
+                    var maxScore = players.Max(p => p.TotalScore);
+                    var top = players.Where(p => p.TotalScore == maxScore).ToList();
+                    winnerUserId = top.Count == 1 ? top[0].UserId : null;
+                }
+
+                return new GameSummaryDto
+                {
+                    GameCode = session.GameCode,
+                    CategoryName = session.Category?.Name ?? "Okänd",
+                    CreatedAt = session.CreatedAt,
+                    Players = players,
+                    WinnerUserId = winnerUserId
+                };
+            }).ToList();
+        }
+
         private static GameSessionResponseDto MapToDto(GameSession session)
         {
             return new GameSessionResponseDto

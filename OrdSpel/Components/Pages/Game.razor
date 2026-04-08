@@ -1,5 +1,6 @@
 @page "/game"
 @page "/game/{Code}"
+@page "/sparade-spel"
 @using OrdSpel.UI.Components.Game
 @using OrdSpel.UI.Services
 @using OrdSpel.Shared.DTOs
@@ -27,7 +28,24 @@ else if (string.IsNullOrEmpty(Code))
             </button>
         </div>
     }
-    <GameEntry />
+
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item">
+            <button class="nav-link @(_tab == "new" ? "active" : "")" @onclick='() => _tab = "new"'>Nytt spel</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link @(_tab == "history" ? "active" : "")" @onclick='() => _tab = "history"'>Sparade spel</button>
+        </li>
+    </ul>
+
+    @if (_tab == "new")
+    {
+        <GameEntry />
+    }
+    else
+    {
+        <SavedGames />
+    }
 }
 else if (_status == null && _loadError == null)
 {
@@ -39,19 +57,26 @@ else if (_status == null && _loadError != null)
 }
 else if (_status.Status == GameStatus.WaitingForPlayers)
 {
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
+        <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Lämna spel</button>
+    </div>
     <Lobby GameCode="@Code" Status="@_status" OnStart="HandleStart" />
-    <button class="btn btn-outline-danger btn-sm mt-3" @onclick="LeaveGame">Lämna spel</button>
 }
 else if (_status.Status == GameStatus.InProgress)
 {
-    <ActiveGame GameCode="@Code" />
-    <div class="mt-3 d-flex gap-2">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
         <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>Skapa/joina spel</button>
         <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Lämna spel</button>
     </div>
+    <ActiveGame GameCode="@Code" />
 }
 else if (_status.Status == GameStatus.GameFinished)
 {
+    <div class="mb-4">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
+    </div>
     <GameResult GameCode="@Code" />
 }
 
@@ -66,11 +91,16 @@ else if (_status.Status == GameStatus.GameFinished)
     private bool _checkingActiveGame;
     private string? _loadError;
     private string? _activeGameCode;
+    private string _tab = "new";
 
     protected override void OnInitialized()
     {
         if (!AuthState.IsLoggedIn)
             NavigationManager.NavigateTo("/");
+
+        // Öppna rätt flik beroende på route
+        if (NavigationManager.Uri.Contains("/sparade-spel"))
+            _tab = "history";
     }
 
     protected override async Task OnParametersSetAsync()

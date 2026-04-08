@@ -1,5 +1,6 @@
 using OrdSpel.Shared.GameDTOs;
 using OrdSpel.Shared.DTOs;
+using OrdSpel.Shared.Enums;
 
 namespace OrdSpel.DAL.Repositories.Interfaces
 {
@@ -14,5 +15,6 @@ namespace OrdSpel.DAL.Repositories.Interfaces
         Task SetSessionActiveAsync(string gameCode);
         Task SetSessionFinishedAsync(string gameCode);
         Task<GameSessionResponseDto?> GetActiveSessionByUserAsync(string userId);
+        Task<List<GameSummaryDto>> GetFinishedSessionsByUserAsync(string userId);
     }
 }

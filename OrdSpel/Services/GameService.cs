@@ -1,5 +1,6 @@
 using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
+using OrdSpel.Shared.Enums;
 using OrdSpel.UI.Interfaces;
 
 namespace OrdSpel.UI.Services
@@ -109,6 +110,17 @@ namespace OrdSpel.UI.Services
                 return null;
 
             return await response.Content.ReadFromJsonAsync<GameResultDto>();
+        }
+
+        public async Task<List<GameSummaryDto>> GetGameHistoryAsync()
+        {
+            SetAuthHeader();
+            var response = await _httpClient.GetAsync("api/game/history");
+
+            if (!response.IsSuccessStatusCode)
+                return new List<GameSummaryDto>();
+
+            return await response.Content.ReadFromJsonAsync<List<GameSummaryDto>>() ?? new List<GameSummaryDto>();
         }
 
         public async Task<(TurnResponseDto? Result, string? Error)> SubmitTurnAsync(string gameCode, TurnRequestDto dto)

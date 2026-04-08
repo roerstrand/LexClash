@@ -35,44 +35,50 @@
     @* Loading is completed, Result is not null && Error is null >> Show SpelSlut & Result *@
     else
     {
-        <h2 id="gameResultTitle" class="mb-4">Spelslut & resultat</h2>
+        <div class="mb-4">
+            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.12em;color:#999;margin-bottom:0.25rem;">Spelslut</div>
+            <h2 id="gameResultTitle" style="font-size:1.8rem;font-weight:700;letter-spacing:-0.02em;margin:0;">Resultat</h2>
+        </div>
 
+        @* Vinnarbanner *@
         <div class="mb-4">
             @if (string.IsNullOrWhiteSpace(_result.WinnerUserId))
             {
                 <div id="gameResultWinner" class="alert alert-info text-center fs-4">
-                    <strong>Oavgjort!</strong>
+                    <strong>Oavgjort</strong>
                 </div>
             }
             else
             {
                 <div id="gameResultWinner" class="alert alert-success text-center fs-4">
-                    🏆 <strong>@(GetWinnerName()) vinner!</strong>
+                    <strong>@(GetWinnerName()) vinner</strong>
                 </div>
             }
         </div>
 
-        <h5 id="gameResultScoreboardTitle">Poängtabell</h5>
-        <ul id="gameResultScoreboard" class="list-group" style="max-width: 420px;">
+        @* Poängtabell *@
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#999;margin-bottom:0.75rem;" id="gameResultScoreboardTitle">
+            Slutresultat
+        </div>
+        <ul id="gameResultScoreboard" class="list-group" style="max-width:420px;margin-bottom:2rem;">
             @foreach (var player in _result.Players.OrderByDescending(p => p.TotalScore))
             {
                 var isWinner = player.UserId == _result.WinnerUserId;
                 <li class="list-group-item d-flex justify-content-between align-items-center @(isWinner ? "list-group-item-success" : "")"
                     id="gameResultPlayer-@player.PlayerOrder">
-                    <span>
-                        @if (isWinner) { <strong>🏆 @(player.Username ?? $"Spelare {player.PlayerOrder}")</strong> }
-                        else { <span>@(player.Username ?? $"Spelare {player.PlayerOrder}")</span> }
+                    <span style="font-weight:@(isWinner ? "700" : "400");">
+                        @(player.Username ?? $"Spelare {player.PlayerOrder}")
                     </span>
-                    <span class="badge @(isWinner ? "bg-success" : "bg-primary") rounded-pill fs-6">@player.TotalScore p</span>
+                    <span class="badge @(isWinner ? "bg-success" : "bg-primary")" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;">
+                        @player.TotalScore p
+                    </span>
                 </li>
             }
         </ul>
 
-        <div class="mt-4">
-            <button id="gameResultBackButton" class="btn btn-primary" @onclick="BackToGame">
-                Nytt spel
-            </button>
-        </div>
+        <button id="gameResultBackButton" class="btn btn-primary" @onclick="BackToGame">
+            Nytt spel
+        </button>
     }
 </div>
 
@@ -133,6 +139,6 @@
 
     private void BackToGame()
     {
-        Navigation.NavigateTo($"/game/{Uri.EscapeDataString(GameCode)}");
+        Navigation.NavigateTo("/game");
     }
 }
