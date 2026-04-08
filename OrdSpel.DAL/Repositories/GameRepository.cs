@@ -175,6 +175,20 @@ namespace OrdSpel.DAL.Repositories
             await _db.SaveChangesAsync();
         }
 
+        public async Task<GameSessionResponseDto?> GetActiveSessionByUserAsync(string userId)
+        {
+            var session = await _db.GameSessions
+                .Include(s => s.Players)
+                .Where(s => s.Players.Any(p => p.UserId == userId))
+                .Where(s => s.Status == GameStatus.WaitingForPlayers || s.Status == GameStatus.InProgress)
+                .OrderByDescending(s => s.CreatedAt)
+                .FirstOrDefaultAsync();
+
+            if (session == null) return null;
+
+            return MapToDto(session);
+        }
+
         private static GameSessionResponseDto MapToDto(GameSession session)
         {
             return new GameSessionResponseDto
