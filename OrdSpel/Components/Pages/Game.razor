@@ -31,10 +31,12 @@ else if (_status == null && _loadError != null)
 else if (_status.Status == GameStatus.WaitingForPlayers)
 {
     <Lobby GameCode="@Code" Status="@_status" OnStart="HandleStart" />
+    <button class="btn btn-outline-danger btn-sm mt-3" @onclick="LeaveGame">Lämna spel</button>
 }
 else if (_status.Status == GameStatus.InProgress)
 {
     <ActiveGame GameCode="@Code" />
+    <button class="btn btn-outline-danger btn-sm mt-3" @onclick="LeaveGame">Lämna spel</button>
 }
 else if (_status.Status == GameStatus.GameFinished)
 {
@@ -104,6 +106,23 @@ else if (_status.Status == GameStatus.GameFinished)
             _status = null;
             _loadError = $"{ex.GetType().Name}: {ex.Message}";
         }
+    }
+
+    private async Task LeaveGame()
+    {
+        if (string.IsNullOrWhiteSpace(Code))
+            return;
+
+        try
+        {
+            await GameService.EndGameAsync(Code);
+        }
+        catch { }
+
+        await StopPollingAsync();
+        await DisposeHubAsync();
+        _status = null;
+        NavigationManager.NavigateTo("/game", forceLoad: false, replace: true);
     }
 
     private async Task HandleStart()

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using OrdSpel.Shared.AuthDTOs;
 using OrdSpel.UI.Interfaces;
 
@@ -14,14 +15,31 @@ namespace OrdSpel.UI.Services
             _authState = authState;
         }
 
-        // Läser Set-Cookie-headern från API-svaret och sparar cookievärdet i AuthStateService
-        private void StoreAuthCookie(HttpResponseMessage response)
+        // Läser Set-Cookie-headern och response-body från API-svaret
+        private async Task StoreAuthCookieAsync(HttpResponseMessage response)
         {
+            string? userId = null;
+            string? username = null;
+
+            // Läs userId och username från response-body via JsonDocument
+            try
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+
+                if (root.TryGetProperty("userId", out var idProp))
+                    userId = idProp.GetString();
+                if (root.TryGetProperty("username", out var nameProp))
+                    username = nameProp.GetString();
+            }
+            catch { }
+
             if (response.Headers.TryGetValues("Set-Cookie", out var cookies))
             {
                 var authCookie = cookies.FirstOrDefault(c => c.StartsWith(".AspNetCore.Identity.Application="));
                 if (authCookie != null)
-                    _authState.Login(authCookie.Split(';')[0]); // Spara bara "name=value", inte path/expires/etc
+                    _authState.Login(authCookie.Split(';')[0], userId, username);
             }
         }
 
@@ -31,7 +49,7 @@ namespace OrdSpel.UI.Services
 
             if (response.IsSuccessStatusCode)
             {
-                StoreAuthCookie(response);
+                await StoreAuthCookieAsync(response);
                 return new AuthResult { Success = true };
             }
 
@@ -45,7 +63,7 @@ namespace OrdSpel.UI.Services
 
             if (response.IsSuccessStatusCode)
             {
-                StoreAuthCookie(response);
+                await StoreAuthCookieAsync(response);
                 return new AuthResult { Success = true };
             }
 
