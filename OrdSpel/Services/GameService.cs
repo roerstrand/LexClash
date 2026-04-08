@@ -75,12 +75,23 @@ namespace OrdSpel.UI.Services
         public async Task<GameStatusDto?> GetGameStatusAsync(string gameCode)
         {
             SetAuthHeader();
-            var response = await _httpClient.GetAsync($"api/games/{gameCode}/status");
+            var response = await _httpClient.GetAsync($"api/game/{gameCode}/status");
 
             if (!response.IsSuccessStatusCode)
                 return null;
 
             return await response.Content.ReadFromJsonAsync<GameStatusDto>();
+        }
+
+        public async Task<GameResultDto?> GetGameResultAsync(string gameCode)
+        {
+            SetAuthHeader();
+            var response = await _httpClient.GetAsync($"api/game/{gameCode}/result");
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            return await response.Content.ReadFromJsonAsync<GameResultDto>();
         }
 
         public async Task<(TurnResponseDto? Result, string? Error)> SubmitTurnAsync(string gameCode, TurnRequestDto dto)

@@ -1,6 +1,7 @@
 using OrdSpel.BLL.Interfaces;
 using OrdSpel.DAL.Repositories.Interfaces;
 using OrdSpel.Shared;
+using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.Enums;
 using OrdSpel.Shared.GameDTOs;
 
@@ -66,6 +67,11 @@ namespace OrdSpel.BLL.Services
         public async Task<GameSessionResponseDto?> GetGameAsync(string gameCode)
         {
             return await _gameRepository.GetSessionByCodeAsync(gameCode);
+        }
+
+        public async Task<GameResultDto?> GetGameResultAsync(string gameCode)
+        {
+            return await _gameRepository.GetGameResultAsync(gameCode);
         }
 
         private async Task<string> GenerateUniqueCodeAsync()

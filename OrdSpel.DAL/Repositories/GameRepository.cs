@@ -3,6 +3,7 @@ using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Models;
 using OrdSpel.DAL.Repositories.Interfaces;
 using OrdSpel.Shared.Enums;
+using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
 
 namespace OrdSpel.DAL.Repositories
@@ -25,6 +26,56 @@ namespace OrdSpel.DAL.Repositories
             if (session == null) return null;
 
             return MapToDto(session);
+        }
+
+        public async Task<GameResultDto?> GetGameResultAsync(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return null;
+            }
+
+            var session = await _db.GameSessions
+                .Include(s => s.Players)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.GameCode == code);
+
+            if (session is null)
+            {
+                return null;
+            }
+
+            if (session.Status != GameStatus.GameFinished)
+            {
+                return new GameResultDto
+                {
+                    GameCode = session.GameCode,
+                    Status = session.Status,
+                    Players = [],
+                    WinnerUserId = null
+                };
+            }
+
+            var players = session.Players
+                .OrderBy(p => p.PlayerOrder)
+                .Select(p => new GamePlayerStatusDto(p.UserId, p.PlayerOrder, p.TotalScore))
+                .ToList();
+
+            string? winnerUserId = null;
+            if (players.Count > 0)
+            {
+                var maxScore = players.Max(p => p.TotalScore);
+                var topPlayers = players.Where(p => p.TotalScore == maxScore).ToList();
+                winnerUserId = topPlayers.Count == 1 ? topPlayers[0].UserId : null;
+            }
+
+            return new GameResultDto
+            {
+                GameCode = session.GameCode,
+                Status = session.Status,
+                Players = players,
+                WinnerUserId = winnerUserId
+            };
         }
 
         public async Task<bool> CodeExistsAsync(string code)
@@ -90,11 +141,26 @@ namespace OrdSpel.DAL.Repositories
         public async Task SetSessionActiveAsync(string gameCode)
         {
             var session = await _db.GameSessions
+                .Include(s => s.Players)
                 .FirstOrDefaultAsync(s => s.GameCode == gameCode);
 
             if (session == null) return;
 
             session.Status = GameStatus.InProgress;
+            if (session.CurrentRound <= 0)
+            {
+                session.CurrentRound = 1;
+            }
+
+            var firstPlayerId = session.Players
+                .OrderBy(p => p.PlayerOrder)
+                .Select(p => p.UserId)
+                .FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(firstPlayerId))
+            {
+                session.CurrentTurnUserId = firstPlayerId;
+            }
             await _db.SaveChangesAsync();
         }
 

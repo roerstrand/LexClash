@@ -5,6 +5,7 @@ using OrdSpel.BLL.Interfaces;
 using OrdSpel.BLL.Services;
 using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
+using OrdSpel.Shared.Enums;
 using System.Security.Claims;
 
 namespace OrdSpel.API.Controllers
@@ -89,6 +90,28 @@ namespace OrdSpel.API.Controllers
             var result = await _gameService.GetGameAsync(gameCode);
             if (result == null)
                 return NotFound();
+
+            return Ok(result);
+        }
+
+        [HttpGet("{code}/result")]
+        public async Task<ActionResult<GameResultDto>> GetResult(string code)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                return BadRequest("Game code is required.");
+            }
+
+            var result = await _gameService.GetGameResultAsync(code);
+            if (result is null)
+            {
+                return NotFound("Game session was not found.");
+            }
+
+            if (result.Status != GameStatus.GameFinished)
+            {
+                return Conflict("Game is not finished yet.");
+            }
 
             return Ok(result);
         }
