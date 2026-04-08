@@ -48,6 +48,11 @@ else
             <span class="badge bg-secondary fs-6">Runda @_gameStatus.CurrentRound</span>
         </div>
 
+        @* DEBUG - ta bort efter felsökning *@
+        <div class="alert alert-warning small">
+            DEBUG: AuthState.UserId = "@(AuthState.UserId ?? "NULL")" | CurrentTurnUserId = "@(_gameStatus.CurrentTurnUserId ?? "NULL")" | Match = @(_gameStatus.CurrentTurnUserId == AuthState.UserId)
+        </div>
+
         <div class="mb-3">
             <strong>Startsord:</strong> @_gameStatus.StartWord
             @if (!string.IsNullOrEmpty(_gameStatus.LastWord))
@@ -57,7 +62,7 @@ else
         </div>
 
         <div class="mb-4">
-            @if (_gameStatus.CurrentTurnUserId == AuthState.CookieValue)
+            @if (_gameStatus.CurrentTurnUserId == AuthState.UserId)
             {
                 <div class="alert alert-success">Din tur!</div>
                 <div class="input-group" style="max-width: 400px;">
