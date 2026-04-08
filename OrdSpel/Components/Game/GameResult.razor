@@ -133,6 +133,6 @@
 
     private void BackToGame()
     {
-        Navigation.NavigateTo("/game", forceLoad: false, replace: true);
+        Navigation.NavigateTo($"/game/{Uri.EscapeDataString(GameCode)}");
     }
 }
