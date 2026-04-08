@@ -48,17 +48,24 @@ else
             <span class="badge bg-secondary fs-6">Runda @_gameStatus.CurrentRound</span>
         </div>
 
-        @* DEBUG - ta bort efter felsökning *@
-        <div class="alert alert-warning small">
-            DEBUG: AuthState.UserId = "@(AuthState.UserId ?? "NULL")" | CurrentTurnUserId = "@(_gameStatus.CurrentTurnUserId ?? "NULL")" | Match = @(_gameStatus.CurrentTurnUserId == AuthState.UserId)
-        </div>
+        @{
+            var currentWord = string.IsNullOrEmpty(_gameStatus.LastWord) ? _gameStatus.StartWord : _gameStatus.LastWord;
+            var requiredLetter = currentWord[^1];
+        }
+
+        @if (_gameStatus.LastTurnWasPass)
+        {
+            <div class="alert alert-warning mb-3">
+                <strong>Motspelaren stod över!</strong> Nytt slumpat ord: <strong>@_gameStatus.LastWord</strong>
+            </div>
+        }
 
         <div class="mb-3">
             <strong>Startsord:</strong> @_gameStatus.StartWord
-            @if (!string.IsNullOrEmpty(_gameStatus.LastWord))
-            {
-                <span class="ms-3"><strong>Senaste ord:</strong> @_gameStatus.LastWord</span>
-            }
+            <span class="ms-3">
+                <strong>Ordet att utgå från:</strong> @currentWord
+                <span class="text-muted">(nästa ord måste börja på '<strong>@requiredLetter</strong>')</span>
+            </span>
         </div>
 
         <div class="mb-4">
@@ -76,6 +83,11 @@ else
                             @onclick="SubmitWord"
                             disabled="@(string.IsNullOrWhiteSpace(_wordInput) || _isSubmitting)">
                         Skicka
+                    </button>
+                    <button class="btn btn-outline-warning"
+                            @onclick="PassTurn"
+                            disabled="@_isSubmitting">
+                        Stå över (-5p)
                     </button>
                 </div>
                 @if (!string.IsNullOrEmpty(_submitError))
@@ -102,7 +114,7 @@ else
                                 {
                                     <strong>&#9654; </strong>
                                 }
-                                Spelare @player.PlayerOrder
+                                @(player.Username ?? $"Spelare {player.PlayerOrder}")
                             </span>
                             <span class="badge bg-primary rounded-pill">@player.TotalScore p</span>
                         </li>
@@ -259,6 +271,23 @@ else
             _wordInput = string.Empty;
         }
         
+        _isSubmitting = false;
+    }
+
+    private async Task PassTurn()
+    {
+        if (_isSubmitting)
+            return;
+
+        _submitError = string.Empty;
+        _isSubmitting = true;
+
+        var dto = new TurnRequestDto { Word = null, PassedTurn = true };
+        var (result, error) = await GameService.SubmitTurnAsync(GameCode, dto);
+
+        if (error != null)
+            _submitError = error;
+
         _isSubmitting = false;
     }
 

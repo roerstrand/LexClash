@@ -10,10 +10,12 @@ namespace OrdSpel.BLL.Services
     public class GameStatusService : IGameStatusService
     {
         private readonly IGameSessionRepository _gameSessionRepository;
+        private readonly IUserNameResolver _userNameResolver;
 
-        public GameStatusService(IGameSessionRepository gameSessionRepository)
+        public GameStatusService(IGameSessionRepository gameSessionRepository, IUserNameResolver userNameResolver)
         {
             _gameSessionRepository = gameSessionRepository;
+            _userNameResolver = userNameResolver;
         }
 
         public async Task<GameStatusDto?> GetGameStatusAsync(string gameCode)
@@ -27,7 +29,7 @@ namespace OrdSpel.BLL.Services
             if (session == null)
                 return null;
 
-            //hämta senaste rundan
+            // Hämta senaste tur
             var lastTurn = session.Turns
                 .OrderByDescending(t => t.CreatedAt)
                 .FirstOrDefault();
@@ -42,10 +44,22 @@ namespace OrdSpel.BLL.Services
                 CurrentTurnUserId = session.CurrentTurnUserId,
                 StartWord = session.StartWord,
                 LastWord = lastTurn?.Word,
-                Players = session.Players
-                .Select(p => new GamePlayerStatusDto(p.UserId, p.PlayerOrder, p.TotalScore))
-                .ToList()
+                LastTurnWasPass = lastTurn?.PassedTurn ?? false,
+                Players = await MapPlayersWithUsernamesAsync(session.Players)
             };
+        }
+
+        private async Task<List<GamePlayerStatusDto>> MapPlayersWithUsernamesAsync(IEnumerable<DAL.Models.GamePlayer> players)
+        {
+            var userIds = players.Select(p => p.UserId);
+            var usernames = await _userNameResolver.GetUsernamesAsync(userIds);
+
+            return players.Select(p => new GamePlayerStatusDto(
+                p.UserId,
+                usernames.GetValueOrDefault(p.UserId),
+                p.PlayerOrder,
+                p.TotalScore
+            )).ToList();
         }
     }
 }

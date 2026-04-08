@@ -10,6 +10,7 @@ namespace OrdSpel.DAL.Repositories.Interfaces
         Task<GameSession?> GetSessionWithDetailsAsync(string gameCode);
         Task<Word?> GetWordAsync(string text, int categoryId);
         Task AddTurnAsync(GameTurn turn);
+        Task<Word?> GetRandomWordAsync(int categoryId, IEnumerable<string> excludeWords);
         Task SaveChangesAsync();
     }
 }

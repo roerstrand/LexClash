@@ -36,6 +36,22 @@ namespace OrdSpel.DAL.Repositories
             await _context.GameTurns.AddAsync(turn);
         }
 
+        public async Task<Word?> GetRandomWordAsync(int categoryId, IEnumerable<string> excludeWords)
+        {
+            // Hämta ett slumpmässigt ord från kategorin som inte redan använts
+            var query = _context.Words.Where(w => w.CategoryId == categoryId);
+
+            if (excludeWords.Any())
+                query = query.Where(w => !excludeWords.Contains(w.Text));
+
+            var count = await query.CountAsync();
+            if (count == 0)
+                return null;
+
+            var skip = Random.Shared.Next(count);
+            return await query.Skip(skip).FirstOrDefaultAsync();
+        }
+
         //separat spara-metod för att kunna göra flera ändringar men bara spara en gång (unit of work), kontrollerar sparandet i service-lagret
         public async Task SaveChangesAsync()
         {

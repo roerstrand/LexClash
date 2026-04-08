@@ -45,6 +45,11 @@ namespace OrdSpel.BLL.Services
             if (dto.PassedTurn)
             {
                 score = GameRules.PassPenalty; // -5p för att passa
+
+                // Slumpa ett nytt ord från kategorin som ersätter det svåra ordet
+                var usedWords = session.Turns.Where(t => t.Word != null).Select(t => t.Word!).ToHashSet();
+                var randomWord = await _turnRepository.GetRandomWordAsync(session.CategoryId, usedWords);
+                dto.Word = randomWord?.Text; // Sparas som turens ord så nästa spelare har nytt att utgå från
             }
             else
             {
@@ -115,7 +120,7 @@ namespace OrdSpel.BLL.Services
                 SessionId = session.Id,
                 Round = session.CurrentRound,
                 UserId = userId,
-                Word = dto.PassedTurn ? null : dto.Word,
+                Word = dto.Word,
                 Score = score,
                 PassedTurn = dto.PassedTurn,
                 CreatedAt = DateTime.UtcNow

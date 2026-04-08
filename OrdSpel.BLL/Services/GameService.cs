@@ -10,11 +10,13 @@ namespace OrdSpel.BLL.Services
     public class GameService : IGameService
     {
         private readonly IGameRepository _gameRepository;
+        private readonly IUserNameResolver _userNameResolver;
         private readonly Random _random = new();
 
-        public GameService(IGameRepository gameRepository)
+        public GameService(IGameRepository gameRepository, IUserNameResolver userNameResolver)
         {
             _gameRepository = gameRepository;
+            _userNameResolver = userNameResolver;
         }
 
         public async Task<GameSessionResponseDto> CreateGameAsync(CreateGameDto dto, string userId)
@@ -71,7 +73,21 @@ namespace OrdSpel.BLL.Services
 
         public async Task<GameResultDto?> GetGameResultAsync(string gameCode)
         {
-            return await _gameRepository.GetGameResultAsync(gameCode);
+            var result = await _gameRepository.GetGameResultAsync(gameCode);
+            if (result == null)
+                return null;
+
+            // Lägg till usernames i spelardata
+            var userIds = result.Players.Select(p => p.UserId);
+            var usernames = await _userNameResolver.GetUsernamesAsync(userIds);
+
+            return result with
+            {
+                Players = result.Players.Select(p => p with
+                {
+                    Username = usernames.GetValueOrDefault(p.UserId)
+                }).ToList()
+            };
         }
 
         public async Task<GameSessionResponseDto?> GetActiveGameByUserAsync(string userId)

@@ -1,3 +1,4 @@
+@using OrdSpel.Shared.DTOs
 @using OrdSpel.Shared.GameDTOs
 @using OrdSpel.UI.Services
 
@@ -43,24 +44,16 @@
 </div>
 
 @code {
-    // TODO: CategoryModel ska ersättas med CategoryDto från OrdSpel.Shared
-    // när kollegans kategori-feature (BLL-service & DAL-repository) är klar och mergad.
-    private class CategoryModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-    }
-
     private int _categoryId;
     private string _joinCode = string.Empty;
     private string _createError = string.Empty;
     private string _joinError = string.Empty;
     private GameSessionResponseDto? _createdSession;
-    private List<CategoryModel> _categories = new();
+    private List<CategoryDto> _categories = new();
 
     protected override async Task OnInitializedAsync()
     {
-        _categories = await GameService.GetCategoriesAsync<CategoryModel>();
+        _categories = await GameService.GetCategoriesAsync<CategoryDto>();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

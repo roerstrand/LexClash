@@ -58,7 +58,7 @@ namespace OrdSpel.DAL.Repositories
 
             var players = session.Players
                 .OrderBy(p => p.PlayerOrder)
-                .Select(p => new GamePlayerStatusDto(p.UserId, p.PlayerOrder, p.TotalScore))
+                .Select(p => new GamePlayerStatusDto(p.UserId, null, p.PlayerOrder, p.TotalScore))
                 .ToList();
 
             string? winnerUserId = null;
