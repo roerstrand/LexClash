@@ -1,6 +1,5 @@
 ﻿using OrdSpel.Shared.DTOs;
 using OrdSpel.Shared.GameDTOs;
-using OrdSpel.Shared.DTOs;
 
 namespace OrdSpel.UI.Interfaces
 {

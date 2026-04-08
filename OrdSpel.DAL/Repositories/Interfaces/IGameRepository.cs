@@ -13,5 +13,6 @@ namespace OrdSpel.DAL.Repositories.Interfaces
         Task AddPlayerAsync(string gameCode, string userId, int playerOrder);
         Task SetSessionActiveAsync(string gameCode);
         Task SetSessionFinishedAsync(string gameCode);
+        Task<GameSessionResponseDto?> GetActiveSessionByUserAsync(string userId);
     }
 }

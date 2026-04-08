@@ -116,6 +116,20 @@ namespace OrdSpel.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("active")]
+        public async Task<IActionResult> GetActiveGame()
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized();
+
+            var result = await _gameService.GetActiveGameByUserAsync(userId);
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
         [HttpGet("{code}/status")]
         public async Task<ActionResult<GameStatusDto>> GetGameStatus(string code)
         {

@@ -31,11 +31,6 @@ namespace OrdSpel.UI.Services
 
             SetAuthHeader();
 
-            if (_httpClient.DefaultRequestHeaders.Authorization is null)
-            {
-                return null;
-            }
-
             // Call the API to get the lobby status for the specified game code
             // Uri.EscapeDataString(gameCode) for encoding the game code in case it contains special characters
             using var response = await _httpClient.GetAsync($"api/game/{Uri.EscapeDataString(gameCode)}/lobby", ct);

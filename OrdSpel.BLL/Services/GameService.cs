@@ -74,6 +74,11 @@ namespace OrdSpel.BLL.Services
             return await _gameRepository.GetGameResultAsync(gameCode);
         }
 
+        public async Task<GameSessionResponseDto?> GetActiveGameByUserAsync(string userId)
+        {
+            return await _gameRepository.GetActiveSessionByUserAsync(userId);
+        }
+
         private async Task<string> GenerateUniqueCodeAsync()
         {
             string code;

@@ -4,21 +4,33 @@
 @using OrdSpel.UI.Services
 @using OrdSpel.Shared.DTOs
 @using OrdSpel.Shared.Enums
+@using Microsoft.AspNetCore.SignalR.Client
 @inject AuthStateService AuthState
 @inject NavigationManager NavigationManager
 @inject GameLobbyApiService LobbyService
+@inject GameService GameService
 
-@if (string.IsNullOrEmpty(Code))
-{
-    <GameEntry />
-}
-else if (_status == null)
+@implements IAsyncDisposable
+
+@if (_checkingActiveGame)
 {
     <p>Loading...</p>
 }
+else if (string.IsNullOrEmpty(Code))
+{
+    <GameEntry />
+}
+else if (_status == null && _loadError == null)
+{
+    <p>Loading...</p>
+}
+else if (_status == null && _loadError != null)
+{
+    <p class="text-danger">Fel vid laddning: @_loadError</p>
+}
 else if (_status.Status == GameStatus.WaitingForPlayers)
 {
-    <Lobby GameCode="@Code" />
+    <Lobby GameCode="@Code" Status="@_status" OnStart="HandleStart" />
 }
 else if (_status.Status == GameStatus.InProgress)
 {
@@ -35,6 +47,10 @@ else if (_status.Status == GameStatus.GameFinished)
     public string? Code { get; set; }
 
     private GameLobbyStatusDto? _status;
+    private HubConnection? _hubConnection;
+    private CancellationTokenSource? _pollCts;
+    private bool _checkingActiveGame;
+    private string? _loadError;
 
     protected override void OnInitialized()
     {
@@ -44,17 +60,152 @@ else if (_status.Status == GameStatus.GameFinished)
 
     protected override async Task OnParametersSetAsync()
     {
-        if (!string.IsNullOrWhiteSpace(Code))
+        await StopPollingAsync();
+        await DisposeHubAsync();
+
+        _checkingActiveGame = false;
+
+        if (string.IsNullOrWhiteSpace(Code))
         {
+            _status = null;
+
+            // Kolla om användaren redan har ett aktivt spel
+            _checkingActiveGame = true;
             try
             {
-                _status = await LobbyService.GetLobbyStatusAsync(Code);
+                var activeGame = await GameService.GetActiveGameAsync();
+                if (activeGame != null)
+                {
+                    _checkingActiveGame = false;
+                    NavigationManager.NavigateTo($"/game/{activeGame.GameCode}");
+                    return;
+                }
             }
-            catch
+            catch { }
+            _checkingActiveGame = false;
+            return;
+        }
+
+        await RefreshStatusAsync();
+        await StartHubAsync();
+    }
+
+    private async Task RefreshStatusAsync()
+    {
+        try
+        {
+            _loadError = null;
+            _status = await LobbyService.GetLobbyStatusAsync(Code!);
+            if (_status == null)
+                _loadError = $"Lobby-API returnerade null för kod '{Code}'. Kontrollera att spelet finns.";
+        }
+        catch (Exception ex)
+        {
+            _status = null;
+            _loadError = $"{ex.GetType().Name}: {ex.Message}";
+        }
+    }
+
+    private async Task HandleStart()
+    {
+        // Uppdatera status så att rätt komponent visas
+        await RefreshStatusAsync();
+        StateHasChanged();
+    }
+
+    // --- SignalR med polling-fallback ---
+
+    private async Task StartHubAsync()
+    {
+        if (string.IsNullOrWhiteSpace(Code))
+            return;
+
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(new Uri(new Uri(NavigationManager.BaseUri), "hubs/game"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        _hubConnection.On("LobbyUpdated", async (string gameCode) =>
+        {
+            if (string.Equals(gameCode, Code, StringComparison.OrdinalIgnoreCase))
             {
-                // swallow here to avoid breaking UI; consider logging
-                _status = null;
+                await RefreshStatusAsync();
+                await InvokeAsync(StateHasChanged);
+            }
+        });
+
+        _hubConnection.On("TurnUpdated", async (string gameCode) =>
+        {
+            if (string.Equals(gameCode, Code, StringComparison.OrdinalIgnoreCase))
+            {
+                await RefreshStatusAsync();
+                await InvokeAsync(StateHasChanged);
+            }
+        });
+
+        _hubConnection.Reconnected += async _ =>
+        {
+            await StopPollingAsync();
+            await RefreshStatusAsync();
+            await InvokeAsync(StateHasChanged);
+        };
+
+        _hubConnection.Closed += async _ =>
+        {
+            await StartPollingAsync();
+        };
+
+        try
+        {
+            await _hubConnection.StartAsync();
+            await _hubConnection.InvokeAsync("JoinGame", Code);
+        }
+        catch
+        {
+            await StartPollingAsync();
+        }
+    }
+
+    private async Task StartPollingAsync()
+    {
+        if (_pollCts is not null)
+            return;
+
+        _pollCts = new CancellationTokenSource();
+        var ct = _pollCts.Token;
+
+        try
+        {
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
+            while (await timer.WaitForNextTickAsync(ct))
+            {
+                await RefreshStatusAsync();
+                await InvokeAsync(StateHasChanged);
             }
         }
+        catch (OperationCanceledException) { }
+    }
+
+    private Task StopPollingAsync()
+    {
+        _pollCts?.Cancel();
+        _pollCts?.Dispose();
+        _pollCts = null;
+        return Task.CompletedTask;
+    }
+
+    private async Task DisposeHubAsync()
+    {
+        if (_hubConnection is null)
+            return;
+
+        try { await _hubConnection.DisposeAsync(); }
+        finally { _hubConnection = null; }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await StopPollingAsync();
+        await DisposeHubAsync();
     }
 }
