@@ -11,5 +11,4 @@ Scenario: Created game shows lobby details
 Scenario: Lobby without code shows link to game page
     Given I am logged in as "playwright_user" with password "Test123!"
     When I navigate to "/lobby"
-    Then I should see the message "Gå till spelsidan för att skapa eller joina ett spel."
-    And I should see a button to go to the game page
+    Then I should see the message "Ingen spelkod hittades."

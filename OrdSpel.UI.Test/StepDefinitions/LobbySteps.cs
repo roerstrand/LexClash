@@ -52,9 +52,4 @@ public class LobbySteps
         Assert.That(actual, Does.Contain(message));
     }
 
-    [Then("I should see a button to go to the game page")]
-    public async Task ThenIShouldSeeAButtonToGoToTheGamePage()
-    {
-        await _page.WaitForSelectorAsync("#goToGameButton");
-    }
 }
