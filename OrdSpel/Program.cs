@@ -3,6 +3,14 @@ using OrdSpel.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Om LAN-skriptet körs sätts API_BASE_URL som miljövariabel med nätverks-IP:n
+// Annars används värdet från appsettings.json (localhost)
+var lanApiUrl = Environment.GetEnvironmentVariable("API_BASE_URL");
+if (!string.IsNullOrEmpty(lanApiUrl))
+{
+    builder.Configuration["ConnectionStrings:ApiBaseUrl"] = lanApiUrl;
+}
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

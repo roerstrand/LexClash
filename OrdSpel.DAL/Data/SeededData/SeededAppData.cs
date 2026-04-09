@@ -259,7 +259,7 @@ namespace OrdSpel.DAL.Data.SeededData
             {
                 // A
                 "abborre", "addax", "alpacka", "albatross", "antilop", "apa", "armadillo", "asp",
-                "anka", "alligator", "axolotl", "ara", "asna", "andalusisk häst",
+                "anka", "alligator", "axolotl", "ara", "asna", "andalusisk häst", "and",
                 // B
                 "bagge", "bäver", "bi", "bläckfisk", "blomfluga", "bison", "björn", "blåmes", "brungås", "berguv",
                 "bisamråtta", "blåval", "buffel", "brunbjörn", "barracuda", "blåsfisk", "bergsget", "boafink",
@@ -326,7 +326,7 @@ namespace OrdSpel.DAL.Data.SeededData
                 // Z
                 "zebra",
                 // Å
-                "ål",
+                "ål", "åsna",
                 // Ä
                 "älg", "ängspiplärka", "ängshök",
                 "ärtsångare",

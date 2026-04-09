@@ -14,10 +14,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // CORS – tillåt anrop från UI:t, AllowCredentials krävs för att cookies ska skickas cross-origin
+// Läser LAN_IP från miljövariabel om skriptet Starta-LAN.ps1 används
+var allowedOrigins = new List<string>
+{
+    "https://localhost:7265",
+    "http://localhost:5235"
+};
+
+var lanIp = Environment.GetEnvironmentVariable("LAN_IP");
+var uiPort = Environment.GetEnvironmentVariable("UI_PORT") ?? "5235";
+if (!string.IsNullOrEmpty(lanIp))
+{
+    allowedOrigins.Add($"http://{lanIp}:{uiPort}");
+}
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowUI", policy =>
-        policy.WithOrigins("https://localhost:7265", "http://localhost:5235")
+        policy.WithOrigins(allowedOrigins.ToArray())
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials());
