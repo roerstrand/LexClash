@@ -25,7 +25,7 @@ public class LobbySteps
     [Then("I should be on a lobby page")]
     public async Task ThenIShouldBeOnALobbyPage()
     {
-        await _page.WaitForURLAsync(new Regex(@"/lobby/[A-Za-z0-9]{6}$"), new PageWaitForURLOptions { Timeout = 10000 });
+        await _page.WaitForURLAsync(new Regex(@"/game/[A-Za-z0-9]{6}$"), new PageWaitForURLOptions { Timeout = 10000 });
     }
 
     [Then("I should see the lobby game code")]
