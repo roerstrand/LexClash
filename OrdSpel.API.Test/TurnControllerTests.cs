@@ -25,6 +25,14 @@ namespace OrdSpel.API.Test
         {
             _serviceMock = new Mock<ITurnService>();
             _hubContextMock = new Mock<IHubContext<GameHub>>();
+            // setup HubContext clients to avoid NullReference when controller calls SendAsync
+            var clientsMock = new Mock<IHubClients>();
+            var groupMock = new Mock<IClientProxy>();
+
+            groupMock.Setup(g => g.SendCoreAsync(It.IsAny<string>(), It.IsAny<object?[]>(), It.IsAny<CancellationToken>()))
+                .Returns(Task.CompletedTask);
+            clientsMock.Setup(c => c.Group(It.IsAny<string>())).Returns(groupMock.Object);
+            _hubContextMock.Setup(h => h.Clients).Returns(clientsMock.Object);
             _controller = new TurnController(_serviceMock.Object, _hubContextMock.Object);
 
             //simulerar en inloggad användare, detta görs automatiskt av asp.net och jwt i verkligeheten, men eftersom tester inte kör riktiga requests måste man själv simulera en användare med controllercontext
