@@ -265,12 +265,15 @@ namespace OrdSpel.API.Test
             Assert.Equal(session, ok.Value);
         }
 
-        // GetResult: empty code -> BadRequest
-        [Fact]
-        public async Task GetResult_Returns_BadRequest_When_CodeEmpty()
+        // GetResult: null/empty/whitespace code -> BadRequest
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task GetResult_Returns_BadRequest_When_CodeInvalid(string? code)
         {
             // Act
-            var result = await _controller.GetResult("" );
+            var result = await _controller.GetResult(code!);
 
             // Assert
             Assert.IsType<BadRequestObjectResult>(result.Result);
