@@ -41,11 +41,11 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
         public async Task ThenIShouldSeeAGameCodeOnTheScreen()
         {
             // Efter att spelet skapats navigeras användaren till /lobby/{spelkod}
-            await _page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@"/lobby/[A-Za-z0-9]{6}$"),
+            await _page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@"/game/[A-Za-z0-9]{6}$"),
                 new PageWaitForURLOptions { Timeout = 10000 });
 
             var url = _page.Url;
-            var gameCode = url.Split("/lobby/").Last();
+            var gameCode = url.Split("/game/").Last();
             Assert.That(gameCode, Is.Not.Null.And.Not.Empty);
             Assert.That(gameCode.Length, Is.EqualTo(6));
         }

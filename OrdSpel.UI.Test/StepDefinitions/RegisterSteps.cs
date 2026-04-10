@@ -1,6 +1,5 @@
-﻿using Microsoft.Playwright;
+using Microsoft.Playwright;
 using Reqnroll;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -22,6 +21,7 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
         {
             try
             {
+                // API:t använder cookie-auth, inte JWT – samma HttpClient-instans bevarar cookien
                 var handler = new HttpClientHandler { ServerCertificateCustomValidationCallback = (_, _, _, _) => true };
                 using var client = new HttpClient(handler);
 
@@ -31,10 +31,7 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
 
                 if (!loginResponse.IsSuccessStatusCode) return;
 
-                var json = JsonDocument.Parse(await loginResponse.Content.ReadAsStringAsync());
-                var token = json.RootElement.GetProperty("token").GetString();
-
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                // Auth-cookien sätts automatiskt av HttpClientHandler, skickas med i delete-anropet
                 await client.DeleteAsync($"{_apiBaseUrl}/api/auth/delete");
             }
             catch { /* testanvändaren finns inte, inget att städa */ }
@@ -58,8 +55,9 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
         [Then("I should be redirected to the login page")]
         public async Task ThenIShouldBeRedirectedToTheLoginPage()
         {
-            await _page.WaitForURLAsync("https://localhost:7265/");
-            Assert.That(_page.Url, Is.EqualTo("https://localhost:7265/"));
+            // Register.razor kör Navigation.NavigateTo("/") = klient-side-navigation till startsidan
+            await _page.WaitForURLAsync(new System.Text.RegularExpressions.Regex(@"localhost:7265/$"),
+                new PageWaitForURLOptions { Timeout = 10000 });
         }
     }
 }
