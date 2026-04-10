@@ -15,8 +15,8 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
         public LoginSteps(Hooks.Hooks hooks)
         {
             _page = hooks.Page;
-            _authHelper = new AuthHelper(_page, _baseUrl);
             _baseUrl = hooks.BaseUrl;
+            _authHelper = new AuthHelper(_page, _baseUrl);
         }
 
         [Given("I am on the login page")]
