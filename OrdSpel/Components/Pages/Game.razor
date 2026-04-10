@@ -1,6 +1,7 @@
 @page "/game"
 @page "/game/{Code}"
 @page "/sparade-spel"
+@using OrdSpel.Shared.Constraints
 @using OrdSpel.UI.Components.Game
 @using OrdSpel.UI.Services
 @using OrdSpel.Shared.DTOs
@@ -80,6 +81,7 @@ else if (_status.Status == GameStatus.GameFinished)
     <GameResult GameCode="@Code" />
 }
 
+<LetterScoreCard Scores="@LetterScores.Scores" ShowRules="@_showRules" />
 
 @code {
     [Parameter]
@@ -92,6 +94,7 @@ else if (_status.Status == GameStatus.GameFinished)
     private string? _loadError;
     private string? _activeGameCode;
     private string _tab = "new";
+    private bool _showRules = true;
 
     protected override void OnInitialized()
     {
@@ -105,6 +108,8 @@ else if (_status.Status == GameStatus.GameFinished)
 
     protected override async Task OnParametersSetAsync()
     {
+        _showRules = string.IsNullOrWhiteSpace(Code);
+
         await StopPollingAsync();
         await DisposeHubAsync();
 
@@ -266,5 +271,10 @@ else if (_status.Status == GameStatus.GameFinished)
     {
         await StopPollingAsync();
         await DisposeHubAsync();
+    }
+
+    private void HandleGameCreated()
+    {
+        _showRules = false;
     }
 }
