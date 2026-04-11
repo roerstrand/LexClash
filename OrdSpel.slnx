@@ -3,8 +3,12 @@
   <Project Path="OrdSpel.API/OrdSpel.API.csproj" />
   <Project Path="OrdSpel.BLL.Test/OrdSpel.BLL.Test.csproj" />
   <Project Path="OrdSpel.BLL/OrdSpel.BLL.csproj" />
-  <Project Path="OrdSpel.DAL.Test.BDD/OrdSpel.DAL.Test.BDD.csproj" Id="47133b3b-a19a-4838-be10-2fd8cebd5fd2" />
-  <Project Path="OrdSpel.DAL.Test.xUnit/OrdSpel.DAL.Test.xUnit.csproj" Id="fb38b7b8-6102-41e2-a53b-408aa559af40" />
+  <Project Path="OrdSpel.DAL.Test.BDD/OrdSpel.DAL.Test.BDD.csproj" Id="47133b3b-a19a-4838-be10-2fd8cebd5fd2">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
+  <Project Path="OrdSpel.DAL.Test.xUnit/OrdSpel.DAL.Test.xUnit.csproj" Id="fb38b7b8-6102-41e2-a53b-408aa559af40">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="OrdSpel.DAL/OrdSpel.DAL.csproj" />
   <Project Path="OrdSpel.Shared/OrdSpel.Shared.csproj" />
   <Project Path="OrdSpel.UI.Test/OrdSpel.UI.Test.csproj" Id="b2ffee56-e48b-4af6-bd53-ac2d2b6f37e7" />
