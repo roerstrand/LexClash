@@ -1003,428 +1003,187 @@
       "info": {
         "_postman_id": "43339a97-af90-4789-a23c-19f4d8d0411b",
         "name": "OrdSpel",
-        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-        "_exporter_id": "53362184",
-        "_collection_link": "https://go.postman.co/collection/53362184-43339a97-af90-4789-a23c-19f4d8d0411b?source=collection_link"
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
       },
       "item": [
         {
           "name": "TurnController",
           "item": [
             {
-              "name": "DELETE {{baseUrl}}/api/dev/reset Copy",
+              "name": "DELETE {{baseUrl}}/api/dev/reset",
               "request": {
                 "method": "DELETE",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
                   "raw": "{{baseUrl}}/api/dev/reset",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "dev",
-                    "reset"
-                  ]
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "dev", "reset" ]
                 }
-              },
-              "response": []
+              }
             },
+
             {
-              "name": "POST {{baseUrl}}/api/auth/register spelare1",
+              "name": "POST register spelare1",
               "event": [
                 {
                   "listen": "prerequest",
                   "script": {
                     "exec": [
-                      "var ts = Date.now();\r",
-                      "pm.collectionVariables.set(\"testUser1\", \"testspelare1_\" + ts);"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                      "var ts = Date.now();",
+                      "pm.collectionVariables.set('testUser1', 'testspelare1_' + ts);"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "2c09e2b5-6b90-44f8-8652-07980e120e51",
-                      "type": "string"
-                    }
-                  ]
-                },
                 "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"username\": \"{{testUser1}}\",\r\n    \"password\": \"test123\",\r\n    \"confirmPassword\" : \"test123\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
                   "raw": "{{baseUrl}}/api/auth/register",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "auth",
-                    "register"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "POST {{baseUrl}}/api/auth/login spelare1",
-              "request": {
-                "method": "POST",
-                "header": [],
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "auth", "register" ]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"username\": \"{{turn_user1}}\",\r\n    \"password\": \"Test123!\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/auth/login ",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "auth",
-                    "login "
-                  ]
+                  "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\",\n  \"confirmPassword\": \"test123\"\n}"
                 }
-              },
-              "response": []
+              }
             },
+
             {
-              "name": "POST {{baseUrl}}/api/Game/create",
+              "name": "POST login spelare1",
+              "request": {
+                "method": "POST",
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/login",
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "auth", "login" ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+
+            {
+              "name": "POST create game",
               "event": [
                 {
                   "listen": "test",
                   "script": {
                     "exec": [
-                      "var json = pm.response.json();\r",
-                      "pm.environment.set(\"gameCode\", json.gameCode);"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                      "var json = pm.response.json();",
+                      "pm.collectionVariables.set('gameCode', json.gameCode);"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjJjMDllMmI1LTZiOTAtNDRmOC04NjUyLTA3OTgwZTEyMGU1MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzcGVsYXJlMSIsImV4cCI6MTc3NTU5MTc3NSwiaXNzIjoiT3JkU3BlbC5BUEkiLCJhdWQiOiJPcmRTcGVsLlVJIn0.WpYzLY9uoypU2HJXcHP4nwByJu6HyukHEdmQu50LJxw",
-                      "type": "string"
-                    }
-                  ]
-                },
                 "method": "POST",
-                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/game/create",
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "game", "create" ]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"CategoryId\": 1\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/Game/create",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "Game",
-                    "create"
-                  ]
+                  "raw": "{\n  \"CategoryId\": 1\n}"
                 }
-              },
-              "response": []
+              }
             },
+
             {
-              "name": "POST {{baseUrl}}/api/auth/register spelare2",
+              "name": "POST register spelare2",
               "event": [
                 {
-                  "listen": "test",
+                  "listen": "prerequest",
                   "script": {
                     "exec": [
-                      "var json = pm.response.json();\r",
-                      "pm.collectionVariables.set(\"token2\", json.token);"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                      "var ts = Date.now();",
+                      "pm.collectionVariables.set('testUser2', 'testspelare2_' + ts);"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "b5b236c6-5194-4310-9b3b-8b7d0636bce0",
-                      "type": "string"
-                    }
-                  ]
-                },
                 "method": "POST",
-                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/auth/register",
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "auth", "register" ]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"username\": \"spelare2\",\r\n    \"password\": \"123\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
+                  "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\",\n  \"confirmPassword\": \"test123\"\n}"
+                }
+              }
+            },
+
+            {
+              "name": "POST login spelare2",
+              "request": {
+                "method": "POST",
                 "url": {
                   "raw": "{{baseUrl}}/api/auth/login",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "auth",
-                    "login"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "POST {{baseUrl}}/api/auth/login spelare2",
-              "request": {
-                "method": "POST",
-                "header": [],
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "auth", "login" ]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"username\": \"testspelare2_{{$timestamp}}\",\r\n    \"password\": \"test123\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
+                  "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+
+            {
+              "name": "POST join game (spelare2)",
+              "request": {
+                "method": "POST",
                 "url": {
-                  "raw": "{{baseUrl}}/api/auth/login ",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "auth",
-                    "login "
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "POST {{baseUrl}}/api/Game/join",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImI1YjIzNmM2LTUxOTQtNDMxMC05YjNiLThiN2QwNjM2YmNlMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzcGVsYXJlMiIsImV4cCI6MTc3NTU5MTc4OCwiaXNzIjoiT3JkU3BlbC5BUEkiLCJhdWQiOiJPcmRTcGVsLlVJIn0.YvPhIdHD79NHH-c3BhXU5bwA5tiFaf5Oh5PdtAEP7N4",
-                      "type": "string"
-                    }
-                  ]
+                  "raw": "{{baseUrl}}/api/game/join",
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "game", "join" ]
                 },
-                "method": "POST",
-                "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"gamecode\": \"{{gameCode}}\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/Game/join",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "Game",
-                    "join"
-                  ]
+                  "raw": "{\n  \"gamecode\": \"{{gameCode}}\"\n}"
                 }
-              },
-              "response": []
+              }
             },
+
             {
-              "name": "måste logga in igen för att få rätt cookie spelare1",
+              "name": "POST turn spelare1",
               "request": {
                 "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"username\": \"{{testUser1}}\",\r\n    \"password\": \"test123\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/auth/login",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "auth",
-                    "login"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "POST {{baseUrl}}/api/games/{{gameCode}}/turns spelare1",
-              "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjJjMDllMmI1LTZiOTAtNDRmOC04NjUyLTA3OTgwZTEyMGU1MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzcGVsYXJlMSIsImV4cCI6MTc3NTU5MTc3NSwiaXNzIjoiT3JkU3BlbC5BUEkiLCJhdWQiOiJPcmRTcGVsLlVJIn0.WpYzLY9uoypU2HJXcHP4nwByJu6HyukHEdmQu50LJxw",
-                      "type": "string"
-                    }
-                  ]
-                },
-                "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"word\": \"Albanien\",\r\n    \"passedTurn\": false\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
                   "raw": "{{baseUrl}}/api/games/{{gameCode}}/turns",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "games",
-                    "{{gameCode}}",
-                    "turns"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "måste logga in igen för att få rätt cookie spelare2",
-              "request": {
-                "method": "POST",
-                "header": [],
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "games", "{{gameCode}}", "turns" ]
+                },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"username\": \"testspelare2_{{$timestamp}}\",\r\n    \"password\": \"test123\"\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/auth/login ",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "auth",
-                    "login "
-                  ]
+                  "raw": "{\n  \"word\": \"Albanien\",\n  \"passedTurn\": false\n}"
                 }
-              },
-              "response": []
+              }
             },
+
             {
-              "name": "POST {{baseUrl}}/api/games/{{gameCode}}/turns spelare2",
+              "name": "POST turn spelare2",
               "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImI1YjIzNmM2LTUxOTQtNDMxMC05YjNiLThiN2QwNjM2YmNlMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzcGVsYXJlMiIsImV4cCI6MTc3NTU5MTc4OCwiaXNzIjoiT3JkU3BlbC5BUEkiLCJhdWQiOiJPcmRTcGVsLlVJIn0.YvPhIdHD79NHH-c3BhXU5bwA5tiFaf5Oh5PdtAEP7N4",
-                      "type": "string"
-                    }
-                  ]
-                },
                 "method": "POST",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\r\n    \"word\": \"Albanien\",\r\n    \"passedTurn\": false\r\n}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
                 "url": {
                   "raw": "{{baseUrl}}/api/games/{{gameCode}}/turns",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "games",
-                    "{{gameCode}}",
-                    "turns"
-                  ]
+                  "host": [ "{{baseUrl}}" ],
+                  "path": [ "api", "games", "{{gameCode}}", "turns" ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"word\": \"Albanien\",\n  \"passedTurn\": false\n}"
                 }
-              },
-              "response": []
+              }
             }
           ]
         },
+
         {
           "name": "WordController + CategoryController",
           "item": [
@@ -1432,192 +1191,60 @@
               "name": "GET all categories",
               "request": {
                 "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/category",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "category"
-                  ]
-                }
-              },
-              "response": []
+                "url": "{{baseUrl}}/api/category"
+              }
             },
             {
-              "name": "GET non existing category",
+              "name": "GET category words",
               "request": {
                 "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/category/4/words",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "category",
-                    "4",
-                    "words"
-                  ]
-                }
-              },
-              "response": []
+                "url": "{{baseUrl}}/api/category/1/words"
+              }
             },
             {
-              "name": "GET all words for category 1",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
+              "name": "GET all words",
               "request": {
                 "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/category/1/words",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "category",
-                    "1",
-                    "words"
-                  ]
-                }
-              },
-              "response": []
-            },
-            {
-              "name": "GET all words in all categories",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{baseUrl}}/api/word",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "word"
-                  ]
-                }
-              },
-              "response": []
+                "url": "{{baseUrl}}/api/word"
+              }
             }
           ]
         },
+
         {
           "name": "GameController",
           "item": [
             {
-              "name": "GET {{baseUrl}}/api/game/{{gameCode}}/status",
-              "protocolProfileBehavior": {
-                "disableBodyPruning": true
-              },
+              "name": "GET game status",
               "request": {
-                "auth": {
-                  "type": "bearer",
-                  "bearer": [
-                    {
-                      "key": "token",
-                      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjJjMDllMmI1LTZiOTAtNDRmOC04NjUyLTA3OTgwZTEyMGU1MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzcGVsYXJlMSIsImV4cCI6MTc3NTUxMDY0NSwiaXNzIjoiT3JkU3BlbC5BUEkiLCJhdWQiOiJPcmRTcGVsLlVJIn0.ykWO2cx13phYzsOdAo-p5CSKbyKPDKH6oJspQ6AppaY",
-                      "type": "string"
-                    }
-                  ]
-                },
                 "method": "GET",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/game/{{gameCode}}/status",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "game",
-                    "{{gameCode}}",
-                    "status"
-                  ]
-                }
-              },
-              "response": []
+                "url": "{{baseUrl}}/api/game/{{gameCode}}/status"
+              }
             }
           ]
         },
+
         {
-          "name": "Testing completed",
+          "name": "Reset",
           "item": [
             {
-              "name": "DELETE {{baseUrl}}/api/dev/reset",
+              "name": "DELETE reset",
               "request": {
                 "method": "DELETE",
-                "header": [],
-                "body": {
-                  "mode": "raw",
-                  "raw": "",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                },
-                "url": {
-                  "raw": "{{baseUrl}}/api/dev/reset",
-                  "host": [
-                    "{{baseUrl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "dev",
-                    "reset"
-                  ]
-                }
-              },
-              "response": []
+                "url": "{{baseUrl}}/api/dev/reset"
+              }
             }
           ]
         }
       ],
+
       "variable": [
         {
+          "key": "baseUrl",
+          "value": ""
+        },
+        {
           "key": "gameCode",
-          "value": ""
-        },
-        {
-          "key": "token2",
-          "value": ""
-        },
-        {
-          "key": "testUser1",
-          "value": ""
-        },
-        {
-          "key": "testUser2",
-          "value": ""
-        },
-        {
-          "key": "turn_user1",
           "value": ""
         }
       ]
