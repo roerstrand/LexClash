@@ -24,6 +24,7 @@
 @inject GameService GameService
 @inject AuthStateService AuthState
 @inject NavigationManager Navigation
+@inject IConfiguration Configuration
 
 @implements IAsyncDisposable
 
@@ -160,7 +161,7 @@ else
             return;
 
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl(new Uri(new Uri(Navigation.BaseUri), "hubs/game"))
+            .WithUrl(new Uri(new Uri(Configuration["ConnectionStrings:ApiBaseUrl"]!), "hubs/game"))
             .WithAutomaticReconnect()
             .Build();
 
