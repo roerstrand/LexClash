@@ -10,7 +10,6 @@ namespace OrdSpel.BLL.Test
 {
     public class GameServiceTests
     {
-        // Hjälpmetod för att skapa en GameService med ett mockat repository
         private (GameService service, Mock<IGameRepository> mockRepo) CreateService()
         {
             var mockRepo = new Mock<IGameRepository>();
@@ -22,7 +21,6 @@ namespace OrdSpel.BLL.Test
             return (service, mockRepo);
         }
 
-        // Hjälpmetod för att skapa en enkel GameSessionResponseDto
         private GameSessionResponseDto MakeSession(string code, GameStatus status, List<string>? playerIds = null)
         {
             return new GameSessionResponseDto
@@ -38,7 +36,6 @@ namespace OrdSpel.BLL.Test
 
         // ─── CreateGameAsync ───────────────────────────────────────────────────
 
-        // Test 1: Skapar spel och returnerar korrekt DTO
         [Fact]
         public async Task CreateGameAsync_ReturnsDto_WhenValidInput()
         {
@@ -63,7 +60,6 @@ namespace OrdSpel.BLL.Test
             Assert.Contains(userId, result.PlayerIds);
         }
 
-        // Test 2: Genererar ny spelkod om koden redan finns
         [Fact]
         public async Task CreateGameAsync_RetriesCode_WhenCodeAlreadyExists()
         {
@@ -72,7 +68,6 @@ namespace OrdSpel.BLL.Test
             var dto = new CreateGameDto { CategoryId = 1 };
             var callCount = 0;
 
-            // Första anropet returnerar true (kod finns), andra false (unik kod)
             mockRepo.Setup(r => r.CodeExistsAsync(It.IsAny<string>()))
                     .ReturnsAsync(() => callCount++ == 0);
 
@@ -83,14 +78,13 @@ namespace OrdSpel.BLL.Test
             // Act
             await service.CreateGameAsync(dto, "user1");
 
-            // Assert – CodeExistsAsync ska ha anropats minst 2 gånger
+            // Assert
             mockRepo.Verify(r => r.CodeExistsAsync(It.IsAny<string>()), Times.AtLeast(2));
         }
 
 
         // ─── JoinGameAsync ─────────────────────────────────────────────────────
 
-        // Test 3: Returnerar fel om spelet inte hittas
         [Fact]
         public async Task JoinGameAsync_ReturnsFail_WhenSessionNotFound()
         {
@@ -103,10 +97,9 @@ namespace OrdSpel.BLL.Test
 
             // Assert
             Assert.False(result.Success);
-            Assert.Equal("Spelet hittades inte.", result.Error);
+            Assert.Equal("Game not found.", result.Error);
         }
 
-        // Test 4: Returnerar fel om användaren redan är med i spelet
         [Fact]
         public async Task JoinGameAsync_ReturnsFail_WhenUserAlreadyInGame()
         {
@@ -120,10 +113,9 @@ namespace OrdSpel.BLL.Test
 
             // Assert
             Assert.False(result.Success);
-            Assert.Equal("Du är redan med i det här spelet.", result.Error);
+            Assert.Equal("You are already in this game.", result.Error);
         }
 
-        // Test 5: Returnerar fel om spelet är fullt (2 spelare)
         [Fact]
         public async Task JoinGameAsync_ReturnsFail_WhenGameIsFull()
         {
@@ -137,10 +129,9 @@ namespace OrdSpel.BLL.Test
 
             // Assert
             Assert.False(result.Success);
-            Assert.Equal("Spelet är fullt.", result.Error);
+            Assert.Equal("Game is full.", result.Error);
         }
 
-        // Test 6: Returnerar fel om spelet redan har startat
         [Fact]
         public async Task JoinGameAsync_ReturnsFail_WhenGameAlreadyStarted()
         {
@@ -154,10 +145,9 @@ namespace OrdSpel.BLL.Test
 
             // Assert
             Assert.False(result.Success);
-            Assert.Equal("Spelet har redan startat.", result.Error);
+            Assert.Equal("Game has already started.", result.Error);
         }
 
-        // Test 7: Lyckat join – uppdaterad session returneras
         [Fact]
         public async Task JoinGameAsync_ReturnsSuccess_WhenValidJoin()
         {
@@ -186,7 +176,6 @@ namespace OrdSpel.BLL.Test
 
         // ─── GetGameAsync ──────────────────────────────────────────────────────
 
-        // Test 8: Returnerar null om spelet inte hittas
         [Fact]
         public async Task GetGameAsync_ReturnsNull_WhenNotFound()
         {
@@ -201,7 +190,6 @@ namespace OrdSpel.BLL.Test
             Assert.Null(result);
         }
 
-        // Test 9: Returnerar korrekt DTO om spelet hittas
         [Fact]
         public async Task GetGameAsync_ReturnsDto_WhenFound()
         {

@@ -18,13 +18,13 @@ namespace OrdSpel.BLL.Services
         {
             var existing = await _userManager.FindByNameAsync(dto.Username);
             if (existing != null)
-                return ServiceResult<IdentityUser>.Fail("Användarnamnet är redan taget.");
+                return ServiceResult<IdentityUser>.Fail("Username is already taken.");
 
             var user = new IdentityUser { UserName = dto.Username };
             var result = await _userManager.CreateAsync(user, dto.Password);
 
             if (!result.Succeeded)
-                return ServiceResult<IdentityUser>.Fail("Något gick fel vid registrering.");
+                return ServiceResult<IdentityUser>.Fail("Something went wrong during registration.");
 
             return ServiceResult<IdentityUser>.Ok(user);
         }

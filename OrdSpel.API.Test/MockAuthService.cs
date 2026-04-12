@@ -12,7 +12,7 @@ namespace OrdSpel.API.Test
             if (dto.Username == "testuser" && dto.Password == "Test123!")
                 return Task.FromResult(ServiceResult<IdentityUser>.Ok(new IdentityUser { UserName = dto.Username }));
 
-            return Task.FromResult(ServiceResult<IdentityUser>.Fail("Användarnamnet är redan taget."));
+            return Task.FromResult(ServiceResult<IdentityUser>.Fail("Username is already taken."));
         }
 
         public Task<IdentityUser?> LoginAsync(LoginDto dto)

@@ -3,60 +3,121 @@
 @inject OrdSpel.UI.Services.AuthStateService AuthState
 @inject NavigationManager Nav
 
-<nav style="position:fixed;top:0;left:0;width:220px;height:100vh;background:#2a2a3e;border-right:1px solid #44445a;display:flex;flex-direction:column;padding:1.5rem 1.25rem;gap:0.25rem;z-index:100;">
+@* ── Desktop sidebar ─────────────────────────────────────────── *@
+<nav class="sidebar">
 
-    @* Logo + namn *@
-    <a href="/game" style="display:flex;align-items:center;gap:0.6rem;text-decoration:none;margin-bottom:1.75rem;">
+    <a href="/game" class="topbar-logo" style="margin-bottom:1.75rem;">
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="28" height="28" rx="6" fill="#7c7cff"/>
-            <text x="5" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="white">L</text>
-            <text x="15" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="rgba(255,255,255,0.5)">D</text>
+            <rect width="28" height="28" rx="6" fill="#66101f"/>
+            <text x="5" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#eeffdb">L</text>
+            <text x="15" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#b8d4e3">C</text>
         </svg>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:1.25rem;font-weight:700;color:#e8e8f0;letter-spacing:0.04em;">LexDuel</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:1.25rem;font-weight:700;color:var(--text);letter-spacing:0.04em;">LexClash</span>
     </a>
 
     @if (AuthState.IsLoggedIn)
     {
         <NavLink href="/game"
                  Match="NavLinkMatch.All"
-                 style="display:flex;align-items:center;gap:0.6rem;color:#9999bb;text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.55rem 0.75rem;border-radius:6px;transition:background 0.15s,color 0.15s;"
+                 style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
                  activeClass="nav-active">
-            <span>🏠</span> Hem
+            <span>🏠</span> Home
         </NavLink>
 
-        <NavLink href="/sparade-spel"
-                 style="display:flex;align-items:center;gap:0.6rem;color:#9999bb;text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.55rem 0.75rem;border-radius:6px;transition:background 0.15s,color 0.15s;"
+        <NavLink href="/game?tab=active"
+                 Match="NavLinkMatch.All"
+                 style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
                  activeClass="nav-active">
-            <span>📋</span> Sparade spel
+            <span>🎮</span> Active games
         </NavLink>
 
-        <div style="margin-top:auto;border-top:1px solid #44445a;padding-top:1rem;">
-            <div style="font-size:0.72rem;color:#6666aa;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Inloggad som</div>
-            <div style="font-size:0.88rem;color:#c8c8e0;margin-bottom:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;">@AuthState.Username</div>
+        <NavLink href="/game?tab=history" "
+                 Match="NavLinkMatch.All"
+                 style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
+                 activeClass="nav-active">
+            <span>📋</span> Saved games
+        </NavLink>
+
+        <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:1rem;">
+            <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Logged in as</div>
+            <div style="font-size:0.9rem;color:var(--text);margin-bottom:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;">@AuthState.Username</div>
             <button class="btn btn-outline-danger btn-sm" style="width:100%;" @onclick="Logout">
-                Logga ut
+                Log out
             </button>
         </div>
     }
     else
     {
         <NavLink href="/" class="btn btn-outline-light btn-sm" style="margin-bottom:0.5rem;text-align:left;">
-            Logga in
+            Log in
         </NavLink>
         <NavLink href="/register" class="btn btn-outline-light btn-sm" style="text-align:left;">
-            Registrera
+            Register
         </NavLink>
     }
 </nav>
 
-<style>
-    .nav-active {
-        background: rgba(124,124,255,0.15) !important;
-        color: #a0a0ff !important;
-    }
-</style>
+@* ── Mobile top bar ───────────────────────────────────────────── *@
+<header class="topbar">
+    <a href="/game" class="topbar-logo">
+        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="28" height="28" rx="6" fill="#66101f"/>
+            <text x="5" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#eeffdb">L</text>
+            <text x="15" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#b8d4e3">C</text>
+        </svg>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:0.04em;">LexClash</span>
+    </a>
 
-<div style="margin-left:220px;padding:2rem;min-height:100vh;background:#1e1e2e;">
+    @if (AuthState.IsLoggedIn)
+    {
+        <span class="topbar-user">@AuthState.Username</span>
+    }
+    else
+    {
+        <a href="/" style="font-size:0.85rem;color:var(--muted);text-decoration:none;">Log in</a>
+    }
+</header>
+
+@* ── Mobile bottom navigation ─────────────────────────────────── *@
+<nav class="bottom-nav">
+    @if (AuthState.IsLoggedIn)
+    {
+        <NavLink href="/game" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+            <span class="bottom-nav-icon">🏠</span>
+            <span>Home</span>
+        </NavLink>
+
+        <NavLink href="/aktiva-spel" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+            <span class="bottom-nav-icon">🎮</span>
+            <span>Active</span>
+        </NavLink>
+
+        <NavLink href="/sparade-spel" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+            <span class="bottom-nav-icon">📋</span>
+            <span>Saved</span>
+        </NavLink>
+
+        <button class="bottom-nav-item" @onclick="Logout">
+            <span class="bottom-nav-icon">🚪</span>
+            <span>Log out</span>
+        </button>
+    }
+    else
+    {
+        <NavLink href="/" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+            <span class="bottom-nav-icon">🔑</span>
+            <span>Log in</span>
+        </NavLink>
+
+        <NavLink href="/register" class="bottom-nav-item" activeClass="nav-active">
+            <span class="bottom-nav-icon">✏️</span>
+            <span>Register</span>
+        </NavLink>
+    }
+</nav>
+
+@* ── Main content ─────────────────────────────────────────────── *@
+<div class="main-content">
     @Body
 </div>
 

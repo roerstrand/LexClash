@@ -13,8 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// CORS – tillåt anrop från UI:t, AllowCredentials krävs för att cookies ska skickas cross-origin
-// Läser LAN_IP från miljövariabel om skriptet Starta-LAN.ps1 används
 var allowedOrigins = new List<string>
 {
     "https://localhost:7265",
@@ -53,7 +51,7 @@ else
     builder.Services.AddDbContext<AuthDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("AuthDbConnection")));
 }
-//lägg till identity + lösenordskrav:
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.Password.RequireDigit = false;
@@ -65,7 +63,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     .AddEntityFrameworkStores<AuthDbContext>()
     .AddDefaultTokenProviders();
 
-// Registrerat via interface så MockAuthService enkelt kan bytas in vid testning
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGameLobbyService, GameLobbyService>();
 builder.Services.AddScoped<IGameRepository, GameRepository>();
@@ -85,17 +82,14 @@ builder.Services.AddScoped<ITurnRepository, TurnRepository>();
 
 builder.Services.AddSignalR();
 
-// Konfigurera Identity-cookien för cookie-baserad autentisering
-// Identity sätter redan upp cookie-auth via AddIdentity ovan – här finjusterar vi cookiens beteende
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.HttpOnly = true;         // JavaScript kan inte läsa cookien
-    options.Cookie.SameSite = SameSiteMode.None;  // Krävs för cross-origin (UI och API på olika portar)
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Skickas bara över HTTPS
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     options.ExpireTimeSpan = TimeSpan.FromHours(8);
-    options.SlidingExpiration = true;       // Förlänger sessionen vid aktivitet
+    options.SlidingExpiration = true;
 
-    // API ska returnera 401/403, inte redirecta till en login-sida
     options.Events.OnRedirectToLogin = context =>
     {
         context.Response.StatusCode = 401;
@@ -112,7 +106,6 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Global felhanterare för bubblande fel från backend
 app.UseExceptionHandler(errorApp =>
 {
     errorApp.Run(async context =>
@@ -139,25 +132,22 @@ app.MapControllers();
 
 app.MapHub<OrdSpel.API.Hubs.GameHub>("/hubs/game");
 
-//seeda standardanvändarna
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    // RESET endast i Test-mode
+    var appDb = services.GetRequiredService<AppDbContext>();
+    var authDb = services.GetRequiredService<AuthDbContext>();
+
     if (app.Environment.IsEnvironment("Test"))
     {
-        var appDb = services.GetRequiredService<AppDbContext>();
-        var authDb = services.GetRequiredService<AuthDbContext>();
-
         await appDb.Database.EnsureDeletedAsync();
         await authDb.Database.EnsureDeletedAsync();
-
-        await appDb.Database.EnsureCreatedAsync();
-        await authDb.Database.EnsureCreatedAsync();
     }
 
-    // 🟢 SEED (körs alltid efter ev reset)
+    await appDb.Database.MigrateAsync();
+    await authDb.Database.MigrateAsync();
+
     var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
     await SeededUserData.SeedUserAsync(userManager);
 

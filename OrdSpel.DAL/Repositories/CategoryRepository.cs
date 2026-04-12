@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OrdSpel.DAL.Data;
 using OrdSpel.DAL.Models;
 using OrdSpel.DAL.Repositories.Interfaces;
@@ -17,17 +17,17 @@ namespace OrdSpel.DAL.Repositories
         }
         public async Task<List<Category>> GetAllAsync()
         {
-            return await _context.Categories.ToListAsync(); //hämta categories från databasen
+            return await _context.Categories.ToListAsync();
         }
 
         public async Task<Category?> GetByIdAsync(int id)
         {
-            return await _context.Categories.FindAsync(id); //hämta en specifik category från databasen
+            return await _context.Categories.FindAsync(id);
         }
 
         public async Task<List<Word>> GetWordsByCategoryIdAsync(int id)
         {
-            return await _context.Words.Where(w => w.CategoryId == id).ToListAsync(); //hämta alla ord från databasen som tillhör en category
+            return await _context.Words.Where(w => w.CategoryId == id).ToListAsync();
         }
     }
 }

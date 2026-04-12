@@ -34,13 +34,13 @@ namespace OrdSpel.BLL.Services
             var session = await _gameRepository.GetSessionByCodeAsync(dto.GameCode);
 
             if (session == null)
-                return ServiceResult<GameSessionResponseDto>.Fail("Spelet hittades inte.");
+                return ServiceResult<GameSessionResponseDto>.Fail("Game not found.");
             if (session.PlayerIds.Contains(userId))
-                return ServiceResult<GameSessionResponseDto>.Fail("Du är redan med i det här spelet.");
+                return ServiceResult<GameSessionResponseDto>.Fail("You are already in this game.");
             if (session.PlayerIds.Count >= 2)
-                return ServiceResult<GameSessionResponseDto>.Fail("Spelet är fullt.");
+                return ServiceResult<GameSessionResponseDto>.Fail("Game is full.");
             if (session.Status != GameStatus.WaitingForPlayers)
-                return ServiceResult<GameSessionResponseDto>.Fail("Spelet har redan startat.");
+                return ServiceResult<GameSessionResponseDto>.Fail("Game has already started.");
 
             await _gameRepository.AddPlayerAsync(dto.GameCode, userId, 2);
             await _gameRepository.SetSessionActiveAsync(dto.GameCode);
@@ -54,11 +54,11 @@ namespace OrdSpel.BLL.Services
             var session = await _gameRepository.GetSessionByCodeAsync(gameCode);
 
             if (session == null)
-                return ServiceResult<GameSessionResponseDto>.Fail("Spelet hittades inte.");
+                return ServiceResult<GameSessionResponseDto>.Fail("Game not found.");
             if (!session.PlayerIds.Contains(userId))
-                return ServiceResult<GameSessionResponseDto>.Fail("Du är inte med i det här spelet.");
+                return ServiceResult<GameSessionResponseDto>.Fail("You are not in this game.");
             if (session.Status == GameStatus.GameFinished)
-                return ServiceResult<GameSessionResponseDto>.Fail("Spelet är redan avslutat.");
+                return ServiceResult<GameSessionResponseDto>.Fail("Game is already finished.");
 
             await _gameRepository.SetSessionFinishedAsync(gameCode);
 
@@ -77,7 +77,6 @@ namespace OrdSpel.BLL.Services
             if (result == null)
                 return null;
 
-            // Lägg till usernames i spelardata
             var userIds = result.Players.Select(p => p.UserId);
             var usernames = await _userNameResolver.GetUsernamesAsync(userIds);
 
@@ -99,7 +98,6 @@ namespace OrdSpel.BLL.Services
         {
             var summaries = await _gameRepository.GetFinishedSessionsByUserAsync(userId);
 
-            // Slå upp usernames för alla spelare i alla spel
             var allUserIds = summaries.SelectMany(s => s.Players.Select(p => p.UserId)).Distinct();
             var usernames = await _userNameResolver.GetUsernamesAsync(allUserIds);
 
@@ -118,6 +116,22 @@ namespace OrdSpel.BLL.Services
                     WinnerUsername = winner?.Username
                 };
             }).ToList();
+        }
+
+        public async Task<ServiceResult<bool>> DeleteGameAsync(string gameCode, string userId)
+        {
+            var session = await _gameRepository.GetSessionByCodeAsync(gameCode);
+
+            if (session == null)
+                return ServiceResult<bool>.Fail("Game not found.");
+            if (!session.PlayerIds.Contains(userId))
+                return ServiceResult<bool>.Fail("You are not in this game.");
+
+            var deleted = await _gameRepository.DeleteSessionAsync(gameCode, userId);
+            if (!deleted)
+                return ServiceResult<bool>.Fail("Only finished games can be deleted.");
+
+            return ServiceResult<bool>.Ok(true);
         }
 
         private async Task<string> GenerateUniqueCodeAsync()

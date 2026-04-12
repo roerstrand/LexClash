@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrdSpel.API.Interfaces;
 using OrdSpel.BLL.Interfaces;
@@ -18,20 +18,20 @@ namespace OrdSpel.API.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet] //endpoint för att hämta categories
+        [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
             var categories = await _categoryService.GetAllAsync();
             return Ok(categories);
         }
 
-        [HttpGet("{id}/words")] //endpoint för att hämta orden i en specifik category
+        [HttpGet("{id}/words")]
         public async Task<IActionResult> GetCategoriesContent(int id)
         {
             var words = await _categoryService.GetWordsByCategoryIdAsync(id);
             if (words == null || !words.Any())
             {
-                return NotFound("Kategorin finns inte");
+                return NotFound("Category not found");
             }
 
             return Ok(words);

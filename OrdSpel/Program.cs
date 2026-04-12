@@ -3,8 +3,6 @@ using OrdSpel.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Om LAN-skriptet körs sätts API_BASE_URL som miljövariabel med nätverks-IP:n
-// Annars används värdet från appsettings.json (localhost)
 var lanApiUrl = Environment.GetEnvironmentVariable("API_BASE_URL");
 if (!string.IsNullOrEmpty(lanApiUrl))
 {
@@ -15,8 +13,6 @@ if (!string.IsNullOrEmpty(lanApiUrl))
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// UseCookies = false så att vi manuellt kan läsa Set-Cookie-headern och hantera cookies per användarsession.
-// I development bypass:as SSL-validering eftersom API:et använder ett självsignerat dev-certifikat.
 HttpClientHandler CreateHandler() => new HttpClientHandler
 {
     UseCookies = false,

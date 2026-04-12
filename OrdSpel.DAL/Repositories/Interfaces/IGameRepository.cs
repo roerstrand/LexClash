@@ -16,5 +16,6 @@ namespace OrdSpel.DAL.Repositories.Interfaces
         Task SetSessionFinishedAsync(string gameCode);
         Task<GameSessionResponseDto?> GetActiveSessionByUserAsync(string userId);
         Task<List<GameSummaryDto>> GetFinishedSessionsByUserAsync(string userId);
+        Task<bool> DeleteSessionAsync(string gameCode, string userId);
     }
 }

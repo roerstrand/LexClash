@@ -28,7 +28,6 @@ namespace OrdSpel.API.Controllers
             var user = await _authService.LoginAsync(dto);
             if (user == null) return Unauthorized();
 
-            // Sätter auth-cookien i svaret – webbläsaren lagrar den automatiskt
             await _signInManager.SignInAsync(user, isPersistent: false);
             return Ok(new { userId = user.Id, username = user.UserName });
         }
@@ -44,7 +43,6 @@ namespace OrdSpel.API.Controllers
             if (!result.Success)
                 return BadRequest(result.Error);
 
-            // Logga in direkt efter registrering
             await _signInManager.SignInAsync(result.Data!, isPersistent: false);
             return Ok(new { userId = result.Data!.Id, username = result.Data.UserName });
         }
@@ -75,10 +73,10 @@ namespace OrdSpel.API.Controllers
             if (userId == null) return Unauthorized();
 
             var success = await _authService.DeleteAsync(userId);
-            if (!success) return BadRequest("Något gick fel vid borttagning av konto.");
+            if (!success) return BadRequest("Something went wrong while deleting the account.");
 
             await _signInManager.SignOutAsync();
-            return Ok("Kontot har tagits bort.");
+            return Ok("Account has been deleted.");
         }
     }
 }

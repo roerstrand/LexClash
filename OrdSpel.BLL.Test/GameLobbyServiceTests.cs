@@ -48,10 +48,10 @@ namespace OrdSpel.BLL.Test
             // Arrange
             var context = CreateContext();
 
-            // Create a category "Djur"
+            // Create a category "Animals"
             var category = new Category
             {
-                Name = "Djur"
+                Name = "Animals"
             };
 
             context.Categories.Add(category);
@@ -97,7 +97,7 @@ namespace OrdSpel.BLL.Test
             // Assert
             Assert.NotNull(result);
             Assert.Equal("ABC123", result!.GameCode);
-            Assert.Equal("Djur", result.CategoryName);
+            Assert.Equal("Animals", result.CategoryName);
             Assert.Equal("hund", result.StartWord);
             Assert.Equal(GameStatus.WaitingForPlayers, result.Status);
             Assert.Equal(1, result.PlayerCount);
@@ -117,7 +117,7 @@ namespace OrdSpel.BLL.Test
             // create a category (for GameSession can refer to CategoryId)
             var category = new Category
             {
-                Name = "Djur"
+                Name = "Animals"
             };
 
             context.Categories.Add(category);

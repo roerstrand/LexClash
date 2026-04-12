@@ -87,19 +87,19 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
         [Then("I should be on the active game page")]
         public async Task ThenIShouldBeOnTheActiveGamePage()
         {
-            await _page.WaitForSelectorAsync("text=Pågående spel", new PageWaitForSelectorOptions { Timeout = 10000 });
+            await _page.WaitForSelectorAsync("text=Game in progress", new PageWaitForSelectorOptions { Timeout = 10000 });
         }
 
         [Then("I should see the current word")]
         public async Task ThenIShouldSeeTheCurrentWord()
         {
-            await _page.WaitForSelectorAsync("text=Aktiva ordet");
+            await _page.WaitForSelectorAsync("text=Current word");
         }
 
         [Then("I should see the required letter")]
         public async Task ThenIShouldSeeTheRequiredLetter()
         {
-            await _page.WaitForSelectorAsync("text=Nästa ord måste börja på");
+            await _page.WaitForSelectorAsync("text=Next word must start with");
         }
 
         [Then("I should see the scoreboard")]

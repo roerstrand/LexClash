@@ -15,13 +15,11 @@ namespace OrdSpel.UI.Services
             _authState = authState;
         }
 
-        // Läser Set-Cookie-headern och response-body från API-svaret
         private async Task StoreAuthCookieAsync(HttpResponseMessage response)
         {
             string? userId = null;
             string? username = null;
 
-            // Läs userId och username från response-body via JsonDocument
             try
             {
                 var json = await response.Content.ReadAsStringAsync();

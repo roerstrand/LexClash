@@ -1,4 +1,4 @@
-﻿using OrdSpel.BLL.Interfaces;
+using OrdSpel.BLL.Interfaces;
 using OrdSpel.DAL.Repositories.Interfaces;
 using OrdSpel.Shared.DTOs;
 using System;
@@ -20,21 +20,17 @@ namespace OrdSpel.BLL.Services
 
         public async Task<GameStatusDto?> GetGameStatusAsync(string gameCode)
         {
-            //om gamecode inte finns, avbryt
             if (string.IsNullOrWhiteSpace(gameCode))
                 return null;
 
-            //hämta session, om den inte finns, avbryt
             var session = await _gameSessionRepository.GetByGameCodeWithDetailsAsync(gameCode);
             if (session == null)
                 return null;
 
-            // Hämta senaste tur
             var lastTurn = session.Turns
                 .OrderByDescending(t => t.CreatedAt)
                 .FirstOrDefault();
 
-            //mappa till GameStatusDto
             return new GameStatusDto
             {
                 SessionId = session.Id,

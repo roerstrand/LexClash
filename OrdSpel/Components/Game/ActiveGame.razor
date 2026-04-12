@@ -1,20 +1,9 @@
 @*
-    BEROENDEN SOM BEHÖVER IMPLEMENTERAS INNAN DENNA KOMPONENT ÄR FULLT FUNGERANDE:
+    DEPENDENCIES NEEDED BEFORE THIS COMPONENT IS FULLY FUNCTIONAL:
 
-    1. GET /api/games/{code}/status  (TEAM-6 eller backend-ansvarig)
-       - Ska returnera GameStatusDto (finns redan i OrdSpel.Shared/DTOs/GameStatusDto.cs)
-       - Behöver implementeras i: GamesController + IGameLobbyService/ny BLL-service + repository-metod
-       - GameStatusDto innehåller: CurrentRound, CurrentTurnUserId, StartWord, LastWord, Players (med poäng)
-
+    1. GET /api/games/{code}/status  (TEAM-6 or backend responsible)
     2. POST /api/games/{code}/turns  (TEAM-6)
-       - Tar emot det spelade ordet och validerar det (bokstavsregel, ordbank, dubletter)
-       - Ska returnera uppdaterad spelstatus eller felmeddelande
-       - När endpointen finns: implementera GameService.SubmitTurnAsync() och koppla in i SubmitWord() nedan
-
-    3. SignalR-event "TurnUpdated"  (TEAM-6 eller den som bygger hub)
-       - Komponenten lyssnar redan på "TurnUpdated"-eventet (se StartHubAsync)
-       - Hubben på servern behöver skicka detta event när en tur är spelad
-       - Faller tillbaka på polling (var 3:e sekund) om SignalR inte finns/fungerar
+    3. SignalR event "TurnUpdated"   (TEAM-6 or hub builder)
 *@
 @using OrdSpel.Shared
 @using OrdSpel.Shared.DTOs
@@ -30,102 +19,120 @@
 
 @if (_isLoading)
 {
-    <div class="container mt-4">
-        <p class="text-muted">Laddar spelet...</p>
-    </div>
+    <p class="text-muted">Loading game...</p>
 }
 else if (_gameStatus is null)
 {
-    <div class="container mt-4">
-        <p class="text-danger">Kunde inte ladda spelet. Kontrollera spelkoden och försök igen.</p>
-    </div>
+    <p class="text-danger">Could not load game. Check the game code and try again.</p>
 }
 else
 {
-    <div class="container mt-4">
+    @* Header *@
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h4 style="margin:0;color:var(--muted);font-weight:500;letter-spacing:0.04em;font-size:0.9rem;text-transform:uppercase;">Game in progress</h4>
+        <span class="badge bg-secondary" style="font-size:0.9rem;">Round @_gameStatus.CurrentRound</span>
+    </div>
 
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 style="margin:0;color:#9999bb;font-weight:500;letter-spacing:0.04em;">Pågående spel</h4>
-            <span class="badge bg-secondary fs-6">Runda @_gameStatus.CurrentRound</span>
+    @if (_gameStatus.LastTurnWasPass)
+    {
+        <div class="alert alert-warning" style="margin-bottom:1.25rem;">
+            <strong>Opponent passed!</strong> New random word: <strong>@_gameStatus.LastWord</strong>
         </div>
+    }
 
-        @{
-            var currentWord = string.IsNullOrEmpty(_gameStatus.LastWord) ? _gameStatus.StartWord : _gameStatus.LastWord;
-            var requiredLetter = currentWord[^1];
-        }
+    @* Current word panel *@
+    <div style="
+        background:
+            radial-gradient(ellipse 120% 80% at 50% -10%, rgba(184,212,227,0.45) 0%, transparent 65%),
+            rgba(255,255,255,0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.72);
+        border-radius: var(--radius);
+        padding: 1.75rem 1.5rem;
+        margin-bottom: 1.25rem;
+        text-align: center;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(102,16,31,0.09), 0 8px 28px rgba(102,16,31,0.12), 0 20px 44px rgba(102,16,31,0.07);
+        transition: box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);
+    ">
+        <div style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;font-weight:600;">Current word</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;color:var(--text);margin-bottom:0.75rem;word-break:break-all;letter-spacing:0.04em;">@CurrentWord</div>
+        <div style="font-size:1rem;color:var(--muted);">
+            Next word must start with
+            <span style="
+                font-family:'JetBrains Mono',monospace;
+                font-size:1.6rem;
+                font-weight:700;
+                color:var(--warning);
+                margin-left:0.4rem;
+                display:inline-block;
+                background: radial-gradient(ellipse 120% 100% at 50% 50%, rgba(138,96,16,0.1) 0%, transparent 70%);
+                padding: 0 0.3rem;
+                border-radius: 6px;
+            ">'@RequiredLetter'</span>
+        </div>
+        <div style="margin-top:0.6rem;font-size:0.8rem;color:var(--muted);opacity:0.7;">Start word: @_gameStatus.StartWord</div>
+    </div>
 
-        @if (_gameStatus.LastTurnWasPass)
+    @* Input or waiting *@
+    <div style="margin-bottom:1.5rem;">
+        @if (_gameStatus.CurrentTurnUserId == AuthState.UserId)
         {
-            <div class="alert alert-warning mb-3">
-                <strong>Motspelaren stod över!</strong> Nytt slumpat ord: <strong>@_gameStatus.LastWord</strong>
+            <div class="alert alert-success" style="margin-bottom:1rem;text-align:center;font-size:1.05rem;">
+                <strong>Your turn!</strong>
+            </div>
+
+            <input class="form-control"
+                   style="width:100%;margin-bottom:0.75rem;font-size:1.1rem;text-align:center;letter-spacing:0.02em;"
+                   placeholder="Type a word..."
+                   @bind="_wordInput"
+                   @bind:event="oninput"
+                   @onkeydown="HandleKeyDown"
+                   disabled="@_isSubmitting" />
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
+                <button class="btn btn-primary"
+                        style="width:100%;"
+                        @onclick="SubmitWord"
+                        disabled="@(string.IsNullOrWhiteSpace(_wordInput) || _isSubmitting)">
+                    Submit
+                </button>
+                <button class="btn btn-outline-warning"
+                        style="width:100%;"
+                        @onclick="PassTurn"
+                        disabled="@_isSubmitting">
+                    Pass (-5p)
+                </button>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_submitError))
+            {
+                <p class="text-danger" style="margin-top:0.75rem;text-align:center;">@_submitError</p>
+            }
+        }
+        else
+        {
+            <div class="alert alert-secondary" style="text-align:center;font-size:1.05rem;">
+                Waiting for opponent...
             </div>
         }
+    </div>
 
-        <div class="mb-4 p-3" style="background:#2a2a3e;border:1px solid #44445a;border-radius:8px;">
-            <div style="font-size:0.78rem;color:#9999bb;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Aktiva ordet</div>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;color:#e8e8f0;margin-bottom:0.75rem;">@currentWord</div>
-            <div style="font-size:1rem;color:#c8c8e0;">
-                Nästa ord måste börja på
-                <span style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;font-weight:700;color:#ffcc44;margin-left:0.4rem;">'@requiredLetter'</span>
-            </div>
-            <div style="margin-top:0.5rem;font-size:0.85rem;color:#6666aa;">Startord: @_gameStatus.StartWord</div>
-        </div>
-
-        <div class="mb-4">
-            @if (_gameStatus.CurrentTurnUserId == AuthState.UserId)
+    @* Scoreboard *@
+    <div>
+        <h5 style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.75rem;font-weight:600;">Score</h5>
+        <ul class="list-group">
+            @foreach (var player in _gameStatus.Players)
             {
-                <div class="alert alert-success">Din tur!</div>
-                <div class="input-group" style="max-width: 400px;">
-                    <input class="form-control"
-                           placeholder="Skriv ett ord..."
-                           @bind="_wordInput"
-                           @bind:event="oninput"
-                           @onkeydown="HandleKeyDown"
-                           disabled="@_isSubmitting" />
-                    <button class="btn btn-primary"
-                            @onclick="SubmitWord"
-                            disabled="@(string.IsNullOrWhiteSpace(_wordInput) || _isSubmitting)">
-                        Skicka
-                    </button>
-                    <button class="btn btn-outline-warning"
-                            @onclick="PassTurn"
-                            disabled="@_isSubmitting">
-                        Stå över (-5p)
-                    </button>
-                </div>
-                @if (!string.IsNullOrEmpty(_submitError))
-                {
-                    <p class="text-danger mt-2">@_submitError</p>
-                }
+                var isCurrentTurn = player.UserId == _gameStatus.CurrentTurnUserId;
+                <li class="list-group-item d-flex justify-content-between align-items-center @(isCurrentTurn ? "active" : "")">
+                    <span>
+                        @if (isCurrentTurn) { <strong>▶ </strong> }
+                        @(player.Username ?? $"Player {player.PlayerOrder}")
+                    </span>
+                    <span class="badge bg-primary rounded-pill" style="font-size:0.95rem;">@player.TotalScore p</span>
+                </li>
             }
-            else
-            {
-                <div class="alert alert-secondary">Väntar på motspelaren...</div>
-            }
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <h5>Poäng</h5>
-                <ul class="list-group">
-                    @foreach (var player in _gameStatus.Players)
-                    {
-                        var isCurrentTurn = player.UserId == _gameStatus.CurrentTurnUserId;
-                        <li class="list-group-item d-flex justify-content-between align-items-center @(isCurrentTurn ? "active" : "")">
-                            <span>
-                                @if (isCurrentTurn)
-                                {
-                                    <strong>&#9654; </strong>
-                                }
-                                @(player.Username ?? $"Spelare {player.PlayerOrder}")
-                            </span>
-                            <span class="badge bg-primary rounded-pill">@player.TotalScore p</span>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
-
+        </ul>
     </div>
 }
 
@@ -139,6 +146,12 @@ else
     private string _wordInput = string.Empty;
     private string _submitError = string.Empty;
     private bool _isSubmitting = false;
+
+    private string CurrentWord => _gameStatus == null ? string.Empty
+        : string.IsNullOrEmpty(_gameStatus.LastWord) ? _gameStatus.StartWord
+        : _gameStatus.LastWord;
+
+    private char RequiredLetter => CurrentWord.Length > 0 ? CurrentWord[^1] : '?';
 
     private HubConnection? _hubConnection;
     private CancellationTokenSource? _pollCts;
@@ -181,30 +194,21 @@ else
             await InvokeAsync(StateHasChanged);
         };
 
-        _hubConnection.Closed += async _ =>
-        {
-            await StartPollingAsync();
-        };
+        _hubConnection.Closed += async _ => { await StartPollingAsync(); };
 
         try
         {
             await _hubConnection.StartAsync();
             await _hubConnection.InvokeAsync("JoinGame", GameCode);
         }
-        catch
-        {
-            await StartPollingAsync();
-        }
+        catch { await StartPollingAsync(); }
     }
 
     private async Task StartPollingAsync()
     {
-        if (_pollCts is not null)
-            return;
-
+        if (_pollCts is not null) return;
         _pollCts = new CancellationTokenSource();
         var ct = _pollCts.Token;
-
         try
         {
             using var timer = new PeriodicTimer(TimeSpan.FromSeconds(3));
@@ -227,17 +231,9 @@ else
 
     private async Task DisposeHubAsync()
     {
-        if (_hubConnection is null)
-            return;
-
-        try
-        {
-            await _hubConnection.DisposeAsync();
-        }
-        finally
-        {
-            _hubConnection = null;
-        }
+        if (_hubConnection is null) return;
+        try { await _hubConnection.DisposeAsync(); }
+        finally { _hubConnection = null; }
     }
 
     public async ValueTask DisposeAsync()
@@ -248,55 +244,29 @@ else
 
     private async Task SubmitWord()
     {
-        if (string.IsNullOrWhiteSpace(_wordInput) || _isSubmitting)
-            return;
-
+        if (string.IsNullOrWhiteSpace(_wordInput) || _isSubmitting) return;
         _submitError = string.Empty;
         _isSubmitting = true;
-
-        // TODO (TEAM-6): Anropa POST /api/games/{GameCode}/turns med det inmatade ordet.
-        // Förväntat request-body: { "word": _wordInput.Trim() }
-        // Förväntat svar: uppdaterad GameStatusDto (eller ServiceResult med felmeddelande vid ogiltigt ord).
-        // Vid fel (ogiltigt ord, inte din tur, etc.) ska _submitError sättas med felmeddelandet.
-        // Lägg till GameService.SubmitTurnAsync(string gameCode, string word) som anropar endpointen.
-        // var result = await GameService.SubmitTurnAsync(GameCode, _wordInput.Trim());
-        // if (!result.Success) { _submitError = result.Error; return; }
-
         var dto = new TurnRequestDto { Word = _wordInput.Trim(), PassedTurn = false };
         var (result, error) = await GameService.SubmitTurnAsync(GameCode, dto);
-
-        if (error != null)
-        {
-            _submitError = error;
-        }
-        else
-        {
-            _wordInput = string.Empty;
-        }
-        
+        if (error != null) _submitError = error;
+        else _wordInput = string.Empty;
         _isSubmitting = false;
     }
 
     private async Task PassTurn()
     {
-        if (_isSubmitting)
-            return;
-
+        if (_isSubmitting) return;
         _submitError = string.Empty;
         _isSubmitting = true;
-
         var dto = new TurnRequestDto { Word = null, PassedTurn = true };
         var (result, error) = await GameService.SubmitTurnAsync(GameCode, dto);
-
-        if (error != null)
-            _submitError = error;
-
+        if (error != null) _submitError = error;
         _isSubmitting = false;
     }
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        if (e.Key == "Enter")
-            await SubmitWord();
+        if (e.Key == "Enter") await SubmitWord();
     }
 }

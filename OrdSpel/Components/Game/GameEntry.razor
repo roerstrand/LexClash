@@ -6,14 +6,25 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;max-width:640px;">
+<div style="display:flex;flex-direction:column;gap:1.25rem;">
 
-    <div style="background:#2a2a3e;border:1px solid #44445a;padding:1.5rem;">
-        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1.25rem;">Skapa spel</div>
+    @* Create game *@
+    <div style="
+        background:
+            radial-gradient(ellipse 130% 70% at 50% -10%, rgba(184,212,227,0.4) 0%, transparent 60%),
+            rgba(255,255,255,0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.72);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(102,16,31,0.09), 0 8px 28px rgba(102,16,31,0.12), 0 20px 44px rgba(102,16,31,0.07);
+        transition: box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);
+    ">
+        <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:1.25rem;font-weight:600;">Create game</div>
 
-        <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Kategori</label>
-        <select id="categorySelect" @bind="_categoryId" class="form-control" style="margin-bottom:1rem;">
-            <option value="0">Välj kategori...</option>
+        <label class="form-label" style="display:block;margin-bottom:0.4rem;">Category</label>
+        <select id="categorySelect" @bind="_categoryId" class="form-control" style="margin-bottom:1.1rem;">
+            <option value="0">Choose category...</option>
             @foreach (var category in _categories)
             {
                 <option value="@category.Id">@category.Name</option>
@@ -22,30 +33,42 @@
 
         @if (!string.IsNullOrEmpty(_createError))
         {
-            <div class="alert alert-danger" style="margin-bottom:0.75rem;font-size:0.82rem;" id="createError">@_createError</div>
+            <div class="alert alert-danger" style="margin-bottom:0.75rem;" id="createError">@_createError</div>
         }
 
-        <button id="createGameButton" class="btn btn-primary" style="width:100%;" @onclick="CreateGame">Skapa</button>
+        <button id="createGameButton" class="btn btn-primary" style="width:100%;" @onclick="CreateGame">Create game</button>
     </div>
 
-    <div style="background:#2a2a3e;border:1px solid #44445a;padding:1.5rem;">
-        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1.25rem;">Gå med i spel</div>
+    @* Join game *@
+    <div style="
+        background:
+            radial-gradient(ellipse 130% 70% at 50% -10%, rgba(184,212,227,0.4) 0%, transparent 60%),
+            rgba(255,255,255,0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.72);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(102,16,31,0.09), 0 8px 28px rgba(102,16,31,0.12), 0 20px 44px rgba(102,16,31,0.07);
+        transition: box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);
+    ">
+        <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:1.25rem;font-weight:600;">Join game</div>
 
-        <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Spelkod</label>
+        <label class="form-label" style="display:block;margin-bottom:0.4rem;">Game code</label>
         <input id="gameCodeInput"
                @bind="_joinCode"
                type="text"
+               inputmode="numeric"
                placeholder="123456"
                maxlength="6"
                class="form-control"
-               style="font-family:'JetBrains Mono',monospace;letter-spacing:0.15em;font-size:1.1rem;margin-bottom:1rem;" />
+               style="font-family:'JetBrains Mono',monospace;letter-spacing:0.18em;font-size:1.3rem;text-align:center;margin-bottom:1.1rem;" />
 
         @if (!string.IsNullOrEmpty(_joinError))
         {
-            <div class="alert alert-danger" style="margin-bottom:0.75rem;font-size:0.82rem;" id="joinError">@_joinError</div>
+            <div class="alert alert-danger" style="margin-bottom:0.75rem;" id="joinError">@_joinError</div>
         }
 
-        <button id="joinGameButton" class="btn btn-outline-secondary" style="width:100%;" @onclick="JoinGame">Anslut</button>
+        <button id="joinGameButton" class="btn btn-outline-secondary" style="width:100%;" @onclick="JoinGame">Join</button>
     </div>
 
 </div>
@@ -76,7 +99,7 @@
 
         if (_categoryId <= 0)
         {
-            _createError = "Välj en kategori.";
+            _createError = "Please select a category.";
             return;
         }
 
@@ -85,7 +108,7 @@
 
         if (result == null)
         {
-            _createError = "Något gick fel. Försök igen.";
+            _createError = "Something went wrong. Please try again.";
             return;
         }
 
@@ -99,7 +122,7 @@
 
         if (string.IsNullOrWhiteSpace(_joinCode))
         {
-            _joinError = "Ange en spelkod.";
+            _joinError = "Please enter a game code.";
             return;
         }
 
