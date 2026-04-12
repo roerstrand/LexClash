@@ -1001,7 +1001,6 @@
     },
     {
       "info": {
-        "_postman_id": "43339a97-af90-4789-a23c-19f4d8d0411b",
         "name": "OrdSpel",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
       },
@@ -1013,16 +1012,11 @@
               "name": "DELETE {{baseUrl}}/api/dev/reset",
               "request": {
                 "method": "DELETE",
-                "url": {
-                  "raw": "{{baseUrl}}/api/dev/reset",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "dev", "reset" ]
-                }
+                "url": "{{baseUrl}}/api/dev/reset"
               }
             },
-
             {
-              "name": "POST register spelare1",
+              "name": "POST {{baseUrl}}/api/auth/register spelare1",
               "event": [
                 {
                   "listen": "prerequest",
@@ -1036,36 +1030,26 @@
               ],
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/auth/register",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "auth", "register" ]
-                },
+                "url": "{{baseUrl}}/api/auth/register",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\",\n  \"confirmPassword\": \"test123\"\n}"
                 }
               }
             },
-
             {
-              "name": "POST login spelare1",
+              "name": "POST {{baseUrl}}/api/auth/login spelare1",
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/auth/login",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "auth", "login" ]
-                },
+                "url": "{{baseUrl}}/api/auth/login",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\"\n}"
                 }
               }
             },
-
             {
-              "name": "POST create game",
+              "name": "POST {{baseUrl}}/api/Game/create",
               "event": [
                 {
                   "listen": "test",
@@ -1079,20 +1063,15 @@
               ],
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/game/create",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "game", "create" ]
-                },
+                "url": "{{baseUrl}}/api/Game/create",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"CategoryId\": 1\n}"
+                  "raw": "{\n  \"categoryId\": 1\n}"
                 }
               }
             },
-
             {
-              "name": "POST register spelare2",
+              "name": "POST {{baseUrl}}/api/auth/register spelare2",
               "event": [
                 {
                   "listen": "prerequest",
@@ -1106,75 +1085,73 @@
               ],
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/auth/register",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "auth", "register" ]
-                },
+                "url": "{{baseUrl}}/api/auth/register",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\",\n  \"confirmPassword\": \"test123\"\n}"
                 }
               }
             },
-
             {
-              "name": "POST login spelare2",
+              "name": "POST {{baseUrl}}/api/auth/login spelare2",
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/auth/login",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "auth", "login" ]
-                },
+                "url": "{{baseUrl}}/api/auth/login",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\"\n}"
                 }
               }
             },
-
             {
-              "name": "POST join game (spelare2)",
+              "name": "POST {{baseUrl}}/api/Game/join",
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/game/join",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "game", "join" ]
-                },
+                "url": "{{baseUrl}}/api/Game/join",
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"gamecode\": \"{{gameCode}}\"\n}"
+                  "raw": "{\n  \"gameCode\": \"{{gameCode}}\"\n}"
                 }
               }
             },
-
             {
-              "name": "POST turn spelare1",
+              "name": "POST måste logga in igen för att få rätt cookie spelare1",
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/games/{{gameCode}}/turns",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "games", "{{gameCode}}", "turns" ]
-                },
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/games/{{gameCode}}/turns spelare1",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/games/{{gameCode}}/turns",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"word\": \"Albanien\",\n  \"passedTurn\": false\n}"
                 }
               }
             },
-
             {
-              "name": "POST turn spelare2",
+              "name": "POST måste logga in igen för att få rätt cookie spelare2",
               "request": {
                 "method": "POST",
-                "url": {
-                  "raw": "{{baseUrl}}/api/games/{{gameCode}}/turns",
-                  "host": [ "{{baseUrl}}" ],
-                  "path": [ "api", "games", "{{gameCode}}", "turns" ]
-                },
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/games/{{gameCode}}/turns spelare2",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/games/{{gameCode}}/turns",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"word\": \"Albanien\",\n  \"passedTurn\": false\n}"
@@ -1183,7 +1160,6 @@
             }
           ]
         },
-
         {
           "name": "WordController + CategoryController",
           "item": [
@@ -1195,14 +1171,21 @@
               }
             },
             {
-              "name": "GET category words",
+              "name": "GET non existing category",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/category/4/words"
+              }
+            },
+            {
+              "name": "GET all words for category 1",
               "request": {
                 "method": "GET",
                 "url": "{{baseUrl}}/api/category/1/words"
               }
             },
             {
-              "name": "GET all words",
+              "name": "GET all words in all categories",
               "request": {
                 "method": "GET",
                 "url": "{{baseUrl}}/api/word"
@@ -1210,12 +1193,11 @@
             }
           ]
         },
-
         {
           "name": "GameController",
           "item": [
             {
-              "name": "GET game status",
+              "name": "GET {{baseUrl}}/api/game/{{gameCode}}/status",
               "request": {
                 "method": "GET",
                 "url": "{{baseUrl}}/api/game/{{gameCode}}/status"
@@ -1223,12 +1205,11 @@
             }
           ]
         },
-
         {
-          "name": "Reset",
+          "name": "Testing completed",
           "item": [
             {
-              "name": "DELETE reset",
+              "name": "DELETE {{baseUrl}}/api/dev/reset",
               "request": {
                 "method": "DELETE",
                 "url": "{{baseUrl}}/api/dev/reset"
@@ -1237,7 +1218,6 @@
           ]
         }
       ],
-
       "variable": [
         {
           "key": "baseUrl",
