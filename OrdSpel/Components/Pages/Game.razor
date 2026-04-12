@@ -15,28 +15,30 @@
 
 @implements IAsyncDisposable
 
+<div class="page-wrapper">
+
 @if (_checkingActiveGame)
 {
-    <p>Loading...</p>
+    <p class="text-muted">Loading...</p>
 }
 else if (string.IsNullOrEmpty(Code))
 {
     @if (!string.IsNullOrEmpty(_activeGameCode))
     {
-        <div class="alert alert-info d-flex justify-content-between align-items-center mb-3">
-            <span>Du har ett aktivt spel (kod: <strong>@_activeGameCode</strong>)</span>
+        <div class="alert alert-info d-flex justify-content-between align-items-center mb-3" style="flex-wrap:wrap;gap:0.75rem;">
+            <span>You have an active game (code: <strong>@_activeGameCode</strong>)</span>
             <button class="btn btn-primary btn-sm" @onclick='() => NavigationManager.NavigateTo($"/game/{_activeGameCode}")'>
-                Gå till spelet
+                Go to game
             </button>
         </div>
     }
 
-    <ul class="nav nav-tabs mb-3">
+    <ul class="nav nav-tabs mb-4">
         <li class="nav-item">
-            <button class="nav-link @(_tab == "new" ? "active" : "")" @onclick='() => _tab = "new"'>Nytt spel</button>
+            <button class="nav-link @(_tab == "new" ? "active" : "")" @onclick='() => _tab = "new"'>New game</button>
         </li>
         <li class="nav-item">
-            <button class="nav-link @(_tab == "history" ? "active" : "")" @onclick='() => _tab = "history"'>Sparade spel</button>
+            <button class="nav-link @(_tab == "history" ? "active" : "")" @onclick='() => _tab = "history"'>Saved games</button>
         </li>
     </ul>
 
@@ -51,38 +53,39 @@ else if (string.IsNullOrEmpty(Code))
 }
 else if (_status == null && _loadError == null)
 {
-    <p>Loading...</p>
+    <p class="text-muted">Loading...</p>
 }
 else if (_status == null && _loadError != null)
 {
-    <p class="text-danger">Fel vid laddning: @_loadError</p>
+    <p class="text-danger">Error loading: @_loadError</p>
 }
 else if (_status.Status == GameStatus.WaitingForPlayers)
 {
-    <div class="d-flex align-items-center gap-3 mb-4">
-        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
-        <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Lämna spel</button>
+    <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Home</button>
+        <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Leave game</button>
     </div>
     <Lobby GameCode="@Code" Status="@_status" OnStart="HandleStart" />
 }
 else if (_status.Status == GameStatus.InProgress)
 {
-    <div class="d-flex align-items-center gap-3 mb-4">
-        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
-        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>Skapa/joina spel</button>
-        <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Lämna spel</button>
+    <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Home</button>
+        <button class="btn btn-outline-danger btn-sm" @onclick="LeaveGame">Leave game</button>
     </div>
     <ActiveGame GameCode="@Code" />
 }
 else if (_status.Status == GameStatus.GameFinished)
 {
-    <div class="mb-4">
-        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Hem</button>
+    <div style="margin-bottom:1.5rem;">
+        <button class="btn btn-outline-secondary btn-sm" @onclick='() => NavigationManager.NavigateTo("/game")'>← Home</button>
     </div>
     <GameResult GameCode="@Code" />
 }
 
 <LetterScoreCard Scores="@LetterScores.Scores" ShowRules="@_showRules" />
+
+</div>
 
 @code {
     [Parameter]
@@ -145,7 +148,7 @@ else if (_status.Status == GameStatus.GameFinished)
             _loadError = null;
             _status = await LobbyService.GetLobbyStatusAsync(Code!);
             if (_status == null)
-                _loadError = $"Lobby-API returnerade null för kod '{Code}'. Kontrollera att spelet finns.";
+                _loadError = $"Lobby API returned null for code '{Code}'.";
         }
         catch (Exception ex)
         {

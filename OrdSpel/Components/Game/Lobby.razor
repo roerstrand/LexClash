@@ -1,89 +1,122 @@
-
 @using OrdSpel.Shared.DTOs
 @using Microsoft.JSInterop
 
 @inject IJSRuntime JS
 
-@* For showing GameCode, Status, Number of Players, Category, StartWord, 
+@* For showing GameCode, Status, Number of Players, Category, StartWord,
 and a Start button if ready to start. Also includes a Copy button for the GameCode. *@
 
-
 <div style="padding:0.5rem 0;">
-    <h2 style="font-size:1rem;text-transform:uppercase;letter-spacing:0.12em;color:#9999bb;font-weight:500;margin-bottom:2rem;">Lobby</h2>
+    <h2 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);font-weight:600;margin-bottom:1.75rem;">Lobby</h2>
 
-    @*   if GameCode us null >> Show massage... *@
     @if (string.IsNullOrWhiteSpace(GameCode))
     {
-        <p id="lobbyNoCodeMessage" style="color:#9999bb;">Ingen spelkod hittades.</p>
+        <p id="lobbyNoCodeMessage" style="color:var(--muted);">No game code found.</p>
     }
-
-    @*   if there is GameCode, but Status is null>> Show massage... *@
     else if (Status is null)
     {
-        <p style="color:#9999bb;">Laddar lobby...</p>
+        <p style="color:var(--muted);">Loading lobby...</p>
     }
-
-    @*   if GameCode and Status is not null >>> Show details...GameCode, Copy-button *@
     else
     {
-        <div style="margin-bottom:2rem;">
-            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:0.5rem;">Spelkod</div>
-            <div style="display:flex;align-items:center;gap:1rem;">
-                <span style="font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;letter-spacing:0.2em;color:#e8e8f0;">@GameCode</span>
-                <button id="copyGameCodeButton"
-                        type="button"
-                        class="btn btn-outline-secondary btn-sm"
-                        @onclick="CopyGameCodeAsync">
-                    @(_copyMessage ?? "Kopiera")
-                </button>
-            </div>
+        @* Game code *@
+        <div style="margin-bottom:2rem;text-align:center;">
+            <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.75rem;font-weight:600;">Game code — share with your opponent</div>
+            <div style="
+                font-family:'JetBrains Mono',monospace;
+                font-size:3rem;
+                font-weight:700;
+                letter-spacing:0.25em;
+                color:var(--accent);
+                margin-bottom:1rem;
+                background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(184, 212, 227, 0.12) 0%, transparent 70%);
+                padding:0.5rem 0;
+                border-radius:var(--radius);">@GameCode</div>
+            <button id="copyGameCodeButton"
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    @onclick="CopyGameCodeAsync">
+                @(_copyMessage ?? "📋 Copy code")
+            </button>
         </div>
 
-        @*   Show the data from DTO *@
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:2rem;">
-            <div style="background:#2a2a3e;border:1px solid #9999bb45a;padding:1rem;">
-                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:0.25rem;">Kategori</div>
-                <div id="lobbyCategory" style="color:#e8e8f0;font-weight:500;">@Status.CategoryName</div>
+        @* Info tiles *@
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.75rem;">
+
+            @* Category *@
+            <div id="lobbyCategory" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Category</div>
+                <div style="color:var(--text);font-weight:700;font-size:1.05rem;">@Status.CategoryName</div>
             </div>
-            <div style="background:#2a2a3e;border:1px solid #9999bb45a;padding:1rem;">
-                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:0.25rem;">Spelare</div>
-                <div id="lobbyPlayers" style="color:#e8e8f0;font-weight:500;">@Status.PlayerCount / @Status.MaxPlayers</div>
+
+            @* Players *@
+            <div id="lobbyPlayers" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Players</div>
+                <div style="color:var(--text);font-weight:700;font-size:1.2rem;">@Status.PlayerCount / @Status.MaxPlayers</div>
             </div>
-            <div style="background:#2a2a3e;border:1px solid #9999bb45a;padding:1rem;">
-                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:0.25rem;">Startord</div>
-                <div id="lobbyStartWord" style="font-family:'JetBrains Mono',monospace;color:#e8e8f0;font-weight:600;">@Status.StartWord</div>
+
+            @* Start word *@
+            <div id="lobbyStartWord" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Start word</div>
+                <div style="font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:700;font-size:1.1rem;">@Status.StartWord</div>
             </div>
-            <div style="background:#2a2a3e;border:1px solid #9999bb45a;padding:1rem;">
-                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:0.25rem;">Status</div>
-                <div id="lobbyStatus" style="color:#e8e8f0;font-weight:500;">@Status.Status</div>
+
+            @* Status *@
+            <div id="lobbyStatus" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+                <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Status</div>
+                <div style="color:var(--text);font-weight:600;font-size:0.95rem;">@Status.Status</div>
             </div>
+
         </div>
 
-        @* If IsReadyToStart= true >>> Show StartGame-button *@
+        @* Start / waiting *@
         @if (Status.IsReadyToStart)
         {
-            <div style="display:flex;align-items:center;justify-content:space-between;background:#061a0e;border:1px solid #114422;padding:1rem 1.25rem;">
-                <span style="color:#44ff88;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.06em;">Redo att starta (@Status.PlayerCount/@Status.MaxPlayers)</span>
+            <div style="
+                background:
+                    radial-gradient(ellipse 120% 70% at 50% -10%, rgba(157,232,138,0.18) 0%, transparent 65%),
+                    rgba(255,255,255,0.82);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(157,232,138,0.3);
+                border-radius: var(--radius);
+                padding: 1.25rem;
+                text-align: center;
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 2px 8px rgba(40,120,40,0.1), 0 8px 28px rgba(40,120,40,0.12), 0 20px 44px rgba(40,120,40,0.07);
+            ">
+                <div style="color:var(--success);font-size:0.85rem;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1rem;font-weight:600;">
+                    Ready to start (@Status.PlayerCount/@Status.MaxPlayers)
+                </div>
                 <button id="startGameButton"
                         type="button"
-                        class="btn btn-success btn-sm"
+                        class="btn btn-success"
+                        style="width:100%;"
                         @onclick="OnStartClicked">
-                    Starta
+                    Start game
                 </button>
             </div>
         }
-
-        @* If IsReadyToStart= false >>> Waiting for players*@
         else
         {
-            <div style="background:#2a2a3e;border:1px solid #9999bb45a;padding:1rem 1.25rem;color:#9999bb;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.06em;">
-                Väntar på spelare... (@Status.PlayerCount/@Status.MaxPlayers)
+            <div style="
+                background:
+                    radial-gradient(ellipse 120% 70% at 50% -10%, rgba(184,212,227,0.25) 0%, transparent 65%),
+                    rgba(255,255,255,0.72);
+                backdrop-filter: blur(10px);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                padding: 1.25rem;
+                text-align: center;
+                color: var(--muted);
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 2px 8px rgba(102,16,31,0.08), 0 8px 28px rgba(102,16,31,0.1), 0 20px 44px rgba(102,16,31,0.06);
+            ">
+                Waiting for opponent... (@Status.PlayerCount/@Status.MaxPlayers)
             </div>
         }
     }
 </div>
-
-
 
 @code {
     [Parameter, EditorRequired]
@@ -107,11 +140,11 @@ and a Start button if ready to start. Also includes a Copy button for the GameCo
         try
         {
             await JS.InvokeVoidAsync("navigator.clipboard.writeText", GameCode);
-            _copyMessage = "Copied";
+            _copyMessage = "✓ Copied!";
         }
         catch (JSException)
         {
-            _copyMessage = "Kunde inte kopiera";
+            _copyMessage = "Could not copy";
         }
 
         _ = Task.Run(async () =>
@@ -130,4 +163,3 @@ and a Start button if ready to start. Also includes a Copy button for the GameCo
         }
     }
 }
-

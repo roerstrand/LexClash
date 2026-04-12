@@ -1,28 +1,51 @@
-﻿@using OrdSpel.Shared.Constraints
+@using OrdSpel.Shared.Constraints
 
-<div style="background:#2a2a3e;border:1px solid #44445a;padding:1.5rem;max-width:1000px;width:100%;margin-top:1rem;">
+<div style="
+    background:
+        radial-gradient(ellipse 130% 70% at 50% -10%, rgba(184,212,227,0.38) 0%, transparent 60%),
+        rgba(255,255,255,0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.72);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(102,16,31,0.09), 0 8px 28px rgba(102,16,31,0.12), 0 20px 44px rgba(102,16,31,0.07);
+    transition: box-shadow 0.25s cubic-bezier(0.4,0,0.2,1);
+">
 
     @if (ShowRules)
     {
-        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1.25rem;">
-            <h3>Välkommen till LexDuel!</h3>
+        <div style="margin-bottom:1.5rem;">
+            <h3 style="font-size:1rem;font-weight:700;letter-spacing:0.01em;margin-bottom:1rem;color:var(--text);">How to play</h3>
+            <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:0.55rem;">
+                <li style="display:flex;align-items:flex-start;gap:0.65rem;font-size:0.9rem;color:var(--muted);line-height:1.5;">
+                    <span style="flex-shrink:0;width:1.4rem;height:1.4rem;background:rgba(102,16,31,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--accent);font-weight:700;margin-top:0.05rem;">1</span>
+                    <span>Choose a category and create or join a game</span>
+                </li>
+                <li style="display:flex;align-items:flex-start;gap:0.65rem;font-size:0.9rem;color:var(--muted);line-height:1.5;">
+                    <span style="flex-shrink:0;width:1.4rem;height:1.4rem;background:rgba(102,16,31,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--accent);font-weight:700;margin-top:0.05rem;">2</span>
+                    <span>Take turns — each word must <strong style="color:var(--text);">start with the last letter</strong> of the previous word</span>
+                </li>
+                <li style="display:flex;align-items:flex-start;gap:0.65rem;font-size:0.9rem;color:var(--muted);line-height:1.5;">
+                    <span style="flex-shrink:0;width:1.4rem;height:1.4rem;background:rgba(102,16,31,0.08);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--accent);font-weight:700;margin-top:0.05rem;">3</span>
+                    <span>Each letter has a point value — longer words earn more</span>
+                </li>
+                <li style="display:flex;align-items:flex-start;gap:0.65rem;font-size:0.9rem;color:var(--muted);line-height:1.5;">
+                    <span style="flex-shrink:0;width:1.4rem;height:1.4rem;background:rgba(138,96,16,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.65rem;color:var(--warning);font-weight:700;margin-top:0.05rem;">!</span>
+                    <span>Words &gt; 12 letters earn a <strong style="color:var(--text);">bonus</strong> — passing costs <strong style="color:var(--danger);">−5 points</strong></span>
+                </li>
+            </ul>
         </div>
-
-        <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1rem;">
-            Spelet går ut på att samla så många poäng som möjligt. Detta gör du genom att välja en av tre kategorier och skapa ett spel. Dela din spelkod till en kompis och turas om att spela. Ett slumpmässigt ord ur den valda kategorin är startordet och din uppgift är att svara med ett ord som börjar på bokstaven som föregående ord slutade på. Bokstäver har olika värde. Du kan få bonuspoäng ifall du svarar med ett ord som är längre än 12 bokstäver. Du får -5 poäng ifall du står över en runda. Lycka till!
-        </p>
     }
 
-    <div class="d-flex flex-wrap gap-4">
+    <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.75rem;font-weight:600;">Letter scores</div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
         @foreach (var letter in Scores)
         {
-            <div>
-                <small style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;">
-                    @letter.Key =
-                </small>
-                <strong style="color:#e8e8f0;">
-                    @letter.Value p
-                </strong>
+            <div style="background:rgba(255,255,255,0.8);border:1px solid var(--border);border-radius:6px;padding:0.3rem 0.6rem;display:flex;align-items:center;gap:0.3rem;">
+                <span style="font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--text);font-size:0.95rem;">@letter.Key</span>
+                <span style="color:var(--muted);font-size:0.75rem;">=</span>
+                <span style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-weight:600;font-size:0.85rem;">@letter.Value</span>
             </div>
         }
     </div>
@@ -37,5 +60,3 @@
     [Parameter]
     public bool ShowRules { get; set; } = false;
 }
-
-

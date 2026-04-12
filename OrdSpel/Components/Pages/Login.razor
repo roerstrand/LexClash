@@ -6,35 +6,33 @@
 @inject NavigationManager NavigationManager
 @inject AuthStateService AuthState
 
-<PageTitle>LexDuel</PageTitle>
+<PageTitle>LexClash</PageTitle>
 
-<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1e1e2e;">
-    <div style="width:360px;">
+<div class="auth-page">
+    <div class="auth-card">
 
         <div style="margin-bottom:2.5rem;text-align:center;">
-            <div style="font-family:'JetBrains Mono',monospace;font-size:2rem;font-weight:700;letter-spacing:0.04em;color:#e8e8f0;margin-bottom:0.25rem;">LexDuel</div>
-            <div style="color:#6666aa;font-size:0.8rem;text-transform:uppercase;letter-spacing:0.12em;">Ordduell</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:2.2rem;font-weight:700;letter-spacing:0.04em;color:var(--text);margin-bottom:0.25rem;">LexClash</div>
+            <div style="color:var(--muted);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.12em;">Word Duel</div>
         </div>
 
         <form @onsubmit="LoginUser" @onsubmit:preventDefault>
-            <div style="margin-bottom:1rem;">
-                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Användarnamn</label>
+            <div style="margin-bottom:1.1rem;">
+                <label class="form-label" style="display:block;margin-bottom:0.4rem;">Username</label>
                 <input id="username"
                        class="form-control"
                        @bind="_enteredUsername"
                        type="text"
-                       placeholder="användarnamn"
-                       style="background:#2a2a3e;border:1px solid #6666aa45a;color:#e8e8f0;padding:0.6rem 0.75rem;" />
+                       placeholder="username" />
             </div>
 
-            <div style="margin-bottom:1.5rem;">
-                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Lösenord</label>
+            <div style="margin-bottom:1.75rem;">
+                <label class="form-label" style="display:block;margin-bottom:0.4rem;">Password</label>
                 <input id="password"
                        class="form-control"
                        @bind="_enteredPassword"
                        type="password"
-                       placeholder="••••••"
-                       style="background:#2a2a3e;border:1px solid #6666aa45a;color:#e8e8f0;padding:0.6rem 0.75rem;" />
+                       placeholder="••••••" />
             </div>
 
             @if (!string.IsNullOrEmpty(DisplayBox))
@@ -42,13 +40,13 @@
                 <div class="alert alert-danger" style="margin-bottom:1rem;">@DisplayBox</div>
             }
 
-            <button id="submitLogin" type="submit" class="btn btn-primary" style="width:100%;padding:0.65rem;">
-                Logga in
+            <button id="submitLogin" type="submit" class="btn btn-primary" style="width:100%;">
+                Log in
             </button>
         </form>
 
-        <div style="margin-top:1.5rem;text-align:center;font-size:0.82rem;color:#6666aa;">
-            Inget konto? <a href="/register" style="color:#888;text-decoration:none;border-bottom:1px solid #333;">Registrera dig</a>
+        <div style="margin-top:1.5rem;text-align:center;font-size:0.9rem;color:var(--muted);">
+            No account? <a href="/register" style="color:var(--accent);text-decoration:none;">Sign up</a>
         </div>
     </div>
 </div>
@@ -63,7 +61,7 @@
         if (string.IsNullOrWhiteSpace(_enteredUsername) ||
             string.IsNullOrWhiteSpace(_enteredPassword))
         {
-            DisplayBox = "Fyll i användarnamn och lösenord.";
+            DisplayBox = "Please enter your username and password.";
             return;
         }
 
@@ -77,7 +75,7 @@
 
         if (!result.Success)
         {
-            DisplayBox = "Fel användarnamn eller lösenord.";
+            DisplayBox = "Incorrect username or password.";
             await Task.Delay(3000);
             DisplayBox = string.Empty;
             return;

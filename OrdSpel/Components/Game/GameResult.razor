@@ -1,86 +1,86 @@
-
 @using OrdSpel.Shared.DTOs
 @using OrdSpel.Shared.Enums
 @inject OrdSpel.UI.Services.GameService GameService
 @inject NavigationManager Navigation
 
+@if (_isLoading)
+{
+    <p id="gameResultLoading" class="text-muted">Loading results...</p>
+}
+else if (_error is not null)
+{
+    <div id="gameResultError" class="alert alert-danger">@_error</div>
+    <button id="gameResultBackButton" class="btn btn-outline-secondary" style="width:100%;" @onclick="BackToGame">
+        Back
+    </button>
+}
+else if (_result is null)
+{
+    <div id="gameResultError" class="alert alert-danger">Could not load results.</div>
+    <button id="gameResultBackButton" class="btn btn-outline-secondary" style="width:100%;" @onclick="BackToGame">
+        Back
+    </button>
+}
+else
+{
+    <div style="margin-bottom:1.75rem;text-align:center;">
+        <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);margin-bottom:0.4rem;">Game over</div>
+        <h2 id="gameResultTitle" style="font-size:2rem;font-weight:700;letter-spacing:-0.02em;margin:0;">Results</h2>
+    </div>
 
+    @* Winner banner *@
+    <div style="margin-bottom:1.5rem;">
+        @if (string.IsNullOrWhiteSpace(_result.WinnerUserId))
+        {
+            <div id="gameResultWinner" class="alert alert-info" style="text-align:center;font-size:1.3rem;">
+                <strong>It's a draw!</strong>
+            </div>
+        }
+        else
+        {
+            <div id="gameResultWinner" class="alert alert-success" style="text-align:center;font-size:1.3rem;">
+                <strong>🏆 @(GetWinnerName()) wins!</strong>
+            </div>
+        }
+    </div>
 
-<div class="container mt-4">
-
-    @* Loading *@
-    @if (_isLoading)
-    {
-        <p id="gameResultLoading" class="text-muted">Laddar resultat...</p>
-    }
-
-    @* If error is not null, show error message >>> "BackToGame" *@
-    else if (_error is not null)
-    {
-        <div id="gameResultError" class="alert alert-danger">@_error</div>
-        <button id="gameResultBackButton" class="btn btn-outline-secondary" @onclick="BackToGame">
-            Tillbaka
-        </button>
-    }
-
-    @* No error, but Result is null >>> "Back to Game" *@
-    else if (_result is null)
-    {
-        <div id="gameResultError" class="alert alert-danger">Kunde inte ladda resultatet.</div>
-        <button id="gameResultBackButton" class="btn btn-outline-secondary" @onclick="BackToGame">
-            Tillbaka
-        </button>
-    }
-
-    @* Loading is completed, Result is not null && Error is null >> Show SpelSlut & Result *@
-    else
-    {
-        <div class="mb-4">
-            <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.12em;color:#999;margin-bottom:0.25rem;">Spelslut</div>
-            <h2 id="gameResultTitle" style="font-size:1.8rem;font-weight:700;letter-spacing:-0.02em;margin:0;">Resultat</h2>
+    @* Score table *@
+    <div style="
+        background:
+            radial-gradient(ellipse 130% 70% at 50% -10%, rgba(184,212,227,0.4) 0%, transparent 60%),
+            rgba(255,255,255,0.88);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.72);
+        border-radius: var(--radius);
+        padding: 1.25rem 1.25rem 0.5rem;
+        margin-bottom: 2rem;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 8px rgba(102,16,31,0.09), 0 8px 28px rgba(102,16,31,0.12), 0 20px 44px rgba(102,16,31,0.07);
+    ">
+        <div id="gameResultScoreboardTitle" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.75rem;font-weight:600;">
+            Final score
         </div>
-
-        @* Vinnarbanner *@
-        <div class="mb-4">
-            @if (string.IsNullOrWhiteSpace(_result.WinnerUserId))
-            {
-                <div id="gameResultWinner" class="alert alert-info text-center fs-4">
-                    <strong>Oavgjort</strong>
-                </div>
-            }
-            else
-            {
-                <div id="gameResultWinner" class="alert alert-success text-center fs-4">
-                    <strong>@(GetWinnerName()) vinner</strong>
-                </div>
-            }
-        </div>
-
-        @* Poängtabell *@
-        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#999;margin-bottom:0.75rem;" id="gameResultScoreboardTitle">
-            Slutresultat
-        </div>
-        <ul id="gameResultScoreboard" class="list-group" style="max-width:420px;margin-bottom:2rem;">
+        <ul id="gameResultScoreboard" class="list-group list-group-flush">
             @foreach (var player in _result.Players.OrderByDescending(p => p.TotalScore))
             {
                 var isWinner = player.UserId == _result.WinnerUserId;
                 <li class="list-group-item d-flex justify-content-between align-items-center @(isWinner ? "list-group-item-success" : "")"
-                    id="gameResultPlayer-@player.PlayerOrder">
-                    <span style="font-weight:@(isWinner ? "700" : "400");">
-                        @(player.Username ?? $"Spelare {player.PlayerOrder}")
+                    id="gameResultPlayer-@player.PlayerOrder"
+                    style="background:transparent;">
+                    <span style="font-weight:@(isWinner ? "700" : "400");font-size:1.05rem;">
+                        @(isWinner ? "🏆 " : "")@(player.Username ?? $"Player {player.PlayerOrder}")
                     </span>
-                    <span class="badge @(isWinner ? "bg-success" : "bg-primary")" style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;">
+                    <span class="badge @(isWinner ? "bg-success" : "bg-primary")" style="font-size:1rem;padding:0.5em 0.8em;">
                         @player.TotalScore p
                     </span>
                 </li>
             }
         </ul>
+    </div>
 
-        <button id="gameResultBackButton" class="btn btn-primary" @onclick="BackToGame">
-            Nytt spel
-        </button>
-    }
-</div>
+    <button id="gameResultBackButton" class="btn btn-primary" style="width:100%;" @onclick="BackToGame">
+        New game
+    </button>
+}
 
 @code {
     [Parameter, EditorRequired]
@@ -90,13 +90,11 @@
     private bool _isLoading = true;
     private string? _error;
 
-
-
     protected override async Task OnParametersSetAsync()
     {
         if (string.IsNullOrWhiteSpace(GameCode))
         {
-            _error = "Game code saknas.";
+            _error = "Game code is missing.";
             _isLoading = false;
             return;
         }
@@ -107,34 +105,27 @@
 
         try
         {
-            // Call API 
             _result = await GameService.GetGameResultAsync(GameCode);
 
-            // If result is not null, but game has finished yet 
             if (_result is not null && _result.Status != GameStatus.GameFinished)
             {
-                _error = "Spelet är inte avslutat ännu.";
+                _error = "The game has not ended yet.";
             }
         }
-        // Trow execption when calling API 
         catch (HttpRequestException)
         {
-            _error = "Kunde inte hämta resultat från servern.";
+            _error = "Could not fetch results from the server.";
         }
-
-        // Keep Working even error occurs, but show error message to user and "Back to Game" button
         finally
         {
             _isLoading = false;
         }
     }
 
-
-
     private string GetWinnerName()
     {
         var winner = _result?.Players.FirstOrDefault(p => p.UserId == _result.WinnerUserId);
-        return winner?.Username ?? $"Spelare {winner?.PlayerOrder}";
+        return winner?.Username ?? $"Player {winner?.PlayerOrder}";
     }
 
     private void BackToGame()

@@ -4,33 +4,30 @@
 @inject HttpService HttpService
 @inject NavigationManager Navigation
 
-<PageTitle>LexDuel — Registrera</PageTitle>
+<PageTitle>LexClash — Register</PageTitle>
 
-<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#1e1e2e;">
-    <div style="width:360px;">
+<div class="auth-page">
+    <div class="auth-card">
 
-        <div style="margin-bottom:2.5rem;">
-            <a href="/" style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;text-decoration:none;">← Tillbaka</a>
-            <div style="font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:700;letter-spacing:0.04em;color:#e8e8f0;margin-top:1rem;">Skapa konto</div>
+        <div style="margin-bottom:2rem;">
+            <a href="/" style="font-size:0.82rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);text-decoration:none;">← Back</a>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.6rem;font-weight:700;letter-spacing:0.02em;color:var(--text);margin-top:1rem;">Create account</div>
         </div>
 
         <form @onsubmit="HandleRegister" @onsubmit:preventDefault>
-            <div style="margin-bottom:1rem;">
-                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Användarnamn</label>
-                <input class="form-control" @bind="registerDto.Username" type="text" placeholder="användarnamn"
-                       style="background:#2a2a3e;border:1px solid #44445a;color:#e8e8f0;padding:0.6rem 0.75rem;" />
+            <div style="margin-bottom:1.1rem;">
+                <label class="form-label" style="display:block;margin-bottom:0.4rem;">Username</label>
+                <input class="form-control" @bind="registerDto.Username" type="text" placeholder="username" />
             </div>
 
-            <div style="margin-bottom:1rem;">
-                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Lösenord</label>
-                <input class="form-control" @bind="registerDto.Password" type="password" placeholder="••••••"
-                       style="background:#2a2a3e;border:1px solid #44445a;color:#e8e8f0;padding:0.6rem 0.75rem;" />
+            <div style="margin-bottom:1.1rem;">
+                <label class="form-label" style="display:block;margin-bottom:0.4rem;">Password</label>
+                <input class="form-control" @bind="registerDto.Password" type="password" placeholder="••••••" />
             </div>
 
-            <div style="margin-bottom:1.5rem;">
-                <label style="display:block;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:#9999bb;margin-bottom:0.4rem;">Bekräfta lösenord</label>
-                <input class="form-control" @bind="registerDto.ConfirmPassword" type="password" placeholder="••••••"
-                       style="background:#2a2a3e;border:1px solid #44445a;color:#e8e8f0;padding:0.6rem 0.75rem;" />
+            <div style="margin-bottom:1.75rem;">
+                <label class="form-label" style="display:block;margin-bottom:0.4rem;">Confirm password</label>
+                <input class="form-control" @bind="registerDto.ConfirmPassword" type="password" placeholder="••••••" />
             </div>
 
             @if (!string.IsNullOrEmpty(errorMessage))
@@ -38,8 +35,8 @@
                 <div class="alert alert-danger" style="margin-bottom:1rem;">@errorMessage</div>
             }
 
-            <button type="submit" class="btn btn-primary" style="width:100%;padding:0.65rem;">
-                Skapa konto
+            <button type="submit" class="btn btn-primary" style="width:100%;">
+                Create account
             </button>
         </form>
     </div>
@@ -55,13 +52,13 @@
             string.IsNullOrWhiteSpace(registerDto.Password) ||
             string.IsNullOrWhiteSpace(registerDto.ConfirmPassword))
         {
-            errorMessage = "Fyll i alla fält.";
+            errorMessage = "Please fill in all fields.";
             return;
         }
 
         if (registerDto.Password != registerDto.ConfirmPassword)
         {
-            errorMessage = "Lösenorden matchar inte.";
+            errorMessage = "Passwords do not match.";
             return;
         }
 
@@ -70,6 +67,6 @@
         if (result.Success)
             Navigation.NavigateTo("/");
         else
-            errorMessage = result.ErrorMessage ?? "Något gick fel.";
+            errorMessage = result.ErrorMessage ?? "Something went wrong.";
     }
 }
