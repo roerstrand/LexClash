@@ -1,0 +1,41 @@
+﻿@using OrdSpel.Shared.Constraints
+
+<div style="background:#2a2a3e;border:1px solid #44445a;padding:1.5rem;max-width:1000px;width:100%;margin-top:1rem;">
+
+    @if (ShowRules)
+    {
+        <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1.25rem;">
+            <h3>Välkommen till LexDuel!</h3>
+        </div>
+
+        <p style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;margin-bottom:1rem;">
+            Spelet går ut på att samla så många poäng som möjligt. Detta gör du genom att välja en av tre kategorier och skapa ett spel. Dela din spelkod till en kompis och turas om att spela. Ett slumpmässigt ord ur den valda kategorin är startordet och din uppgift är att svara med ett ord som börjar på bokstaven som föregående ord slutade på. Bokstäver har olika värde. Du kan få bonuspoäng ifall du svarar med ett ord som är längre än 12 bokstäver. Du får -5 poäng ifall du står över en runda. Lycka till!
+        </p>
+    }
+
+    <div class="d-flex flex-wrap gap-4">
+        @foreach (var letter in Scores)
+        {
+            <div>
+                <small style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.1em;color:#9999bb;">
+                    @letter.Key =
+                </small>
+                <strong style="color:#e8e8f0;">
+                    @letter.Value p
+                </strong>
+            </div>
+        }
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public Dictionary<char, int> Scores { get; set; }
+
+    [Parameter]
+    public bool ShowRules { get; set; } = false;
+}
+
+

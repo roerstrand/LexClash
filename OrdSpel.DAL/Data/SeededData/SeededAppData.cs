@@ -213,6 +213,8 @@ namespace OrdSpel.DAL.Data.SeededData
 "Turkiet",
 "Turkmenistan",
 "Tuvalu",
+"Tyskland",
+"Tjeckien",
 "Uganda",
 "Ukraina",
 "Ungern",

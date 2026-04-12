@@ -31,8 +31,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/dev/reset",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "dev", "reset"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "dev", "reset" ]
             }
           },
           "response": []
@@ -74,8 +74,8 @@
         },
         "url": {
           "raw": "{{baseUrl}}/api/auth/login",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "auth", "login"]
+          "host": [ "{{baseUrl}}" ],
+          "path": [ "api", "auth", "login" ]
         }
       },
       "response": []
@@ -95,7 +95,7 @@
                   "});\r",
                   ""
                 ]
-                
+
               }
             }
           ],
@@ -118,8 +118,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "register" ]
             }
           },
           "response": []
@@ -136,7 +136,7 @@
                   "});\r",
                   ""
                 ]
-               
+
               }
             }
           ],
@@ -159,8 +159,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "register" ]
             }
           },
           "response": []
@@ -179,10 +179,10 @@
                   "var json = pm.response.json();\r",
                   ""
                 ]
-               
+
               }
             }
-           
+
           ],
           "request": {
             "method": "POST",
@@ -203,8 +203,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "register" ]
             }
           },
           "response": []
@@ -221,7 +221,7 @@
                   "});\r",
                   ""
                 ]
-                
+
               }
             }
           ],
@@ -244,8 +244,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "register" ]
             }
           },
           "response": []
@@ -262,7 +262,7 @@
                   "});\r",
                   ""
                 ]
-                
+
               }
             }
           ],
@@ -271,8 +271,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/auth/delete",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "delete"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "delete" ]
             }
           },
           "response": []
@@ -298,10 +298,10 @@
                   "    json = pm.response.json();",
                   "} catch (e) {}"
                 ]
-              
+
               }
             }
-            
+
           ],
           "request": {
             "method": "POST",
@@ -322,8 +322,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "register" ]
             }
           },
           "response": []
@@ -344,10 +344,10 @@
                   "    json = pm.response.json();",
                   "} catch (e) {}"
                 ]
-              
+
               }
             }
-           
+
           ],
           "request": {
             "method": "POST",
@@ -368,8 +368,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "register" ]
             }
           },
           "response": []
@@ -390,7 +390,7 @@
                   "    json = pm.response.json();",
                   "} catch (e) {}"
                 ]
-              
+
               }
             }
           ],
@@ -413,8 +413,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "register" ]
             }
           },
           "response": []
@@ -434,7 +434,7 @@
                   "\r",
                   "pm.environment.set(\"gameCode\", pm.response.json().code);"
                 ]
-              
+
               }
             }
           ],
@@ -457,8 +457,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/game/create",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "game", "create"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "game", "create" ]
             }
           },
           "response": []
@@ -480,10 +480,10 @@
                   "});\r",
                   ""
                 ]
-            
+
               }
             }
-            
+
           ],
           "request": {
             "method": "POST",
@@ -504,8 +504,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/game/join",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "game", "join"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "game", "join" ]
             }
           },
           "response": []
@@ -522,10 +522,10 @@
                   "});\r",
                   ""
                 ]
-               
+
               }
             }
-          
+
           ],
           "request": {
             "method": "POST",
@@ -546,8 +546,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/game/join",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "game", "join"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "game", "join" ]
             }
           },
           "response": []
@@ -564,10 +564,10 @@
                   "});\r",
                   ""
                 ]
-              
+
               }
             }
-           
+
           ],
           "request": {
             "method": "PUT",
@@ -579,8 +579,8 @@
             ],
             "url": {
               "raw": "{{baseUrl}}/api/game/end/{{gameCode}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "game", "end", "{{gameCode}}"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "game", "end", "{{gameCode}}" ]
             }
           },
           "response": []
@@ -597,18 +597,18 @@
                   "});\r",
                   ""
                 ]
-              
+
               }
             }
-          
+
           ],
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/auth/delete",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "delete"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "delete" ]
             }
           },
           "response": []
@@ -624,18 +624,18 @@
                   "    pm.response.to.have.status(200);\r",
                   "});"
                 ]
-               
+
               }
             }
-          
+
           ],
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/auth/delete",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "delete"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "delete" ]
             }
           },
           "response": []
@@ -651,7 +651,7 @@
                   "    pm.response.to.have.status(200);\r",
                   "});"
                 ]
-               
+
               }
             }
           ],
@@ -660,8 +660,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/auth/delete",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "delete"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "delete" ]
             }
           },
           "response": []
@@ -700,8 +700,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "login" ]
             }
           },
           "response": []
@@ -736,8 +736,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "login" ]
             }
           },
           "response": []
@@ -753,18 +753,18 @@
                   "    pm.response.to.have.status(401);",
                   "});"
                 ]
-               
+
               }
             }
-            
+
           ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/auth/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "me"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "me" ]
             }
           },
           "response": []
@@ -783,18 +783,18 @@
                   "pm.expect(json.userId).to.exist;",
                   "pm.expect(json.username).to.exist;"
                 ]
-             
+
               }
             }
-           
+
           ],
           "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/auth/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "me"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "auth", "me" ]
             }
           },
           "response": []
@@ -824,8 +824,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/category",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "category"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "category" ]
             }
           },
           "response": []
@@ -850,8 +850,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/category/1/words",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "category", "1", "words"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "category", "1", "words" ]
             }
           },
           "response": []
@@ -876,8 +876,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/category/9999/words",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "category", "9999", "words"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "category", "9999", "words" ]
             }
           },
           "response": []
@@ -902,8 +902,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/word",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "word"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "word" ]
             }
           },
           "response": []
@@ -933,8 +933,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/game/{{gameCode}}/lobby",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "game", "{{gameCode}}", "lobby"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "game", "{{gameCode}}", "lobby" ]
             }
           },
           "response": []
@@ -959,8 +959,8 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/game/{{gameCode}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "game", "{{gameCode}}"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "game", "{{gameCode}}" ]
             }
           },
           "response": []
@@ -991,11 +991,241 @@
             "header": [],
             "url": {
               "raw": "{{baseUrl}}/api/dev/reset",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "dev", "reset"]
+              "host": [ "{{baseUrl}}" ],
+              "path": [ "api", "dev", "reset" ]
             }
           },
           "response": []
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "OrdSpel",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+      },
+      "item": [
+        {
+          "name": "TurnController",
+          "item": [
+            {
+              "name": "DELETE {{baseUrl}}/api/dev/reset",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/dev/reset"
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/auth/register spelare1",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "var ts = Date.now();",
+                      "pm.collectionVariables.set('testUser1', 'testspelare1_' + ts);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\",\n  \"confirmPassword\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/auth/login spelare1",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/Game/create",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "pm.collectionVariables.set('gameCode', json.gameCode);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/Game/create",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"categoryId\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/auth/register spelare2",
+              "event": [
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      "var ts = Date.now();",
+                      "pm.collectionVariables.set('testUser2', 'testspelare2_' + ts);"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/auth/register",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\",\n  \"confirmPassword\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/auth/login spelare2",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/Game/join",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/Game/join",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"gameCode\": \"{{gameCode}}\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST måste logga in igen för att få rätt cookie spelare1",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser1}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/games/{{gameCode}}/turns spelare1",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/games/{{gameCode}}/turns",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"word\": \"Albanien\",\n  \"passedTurn\": false\n}"
+                }
+              }
+            },
+            {
+              "name": "POST måste logga in igen för att få rätt cookie spelare2",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/auth/login",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"{{testUser2}}\",\n  \"password\": \"test123\"\n}"
+                }
+              }
+            },
+            {
+              "name": "POST {{baseUrl}}/api/games/{{gameCode}}/turns spelare2",
+              "request": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/games/{{gameCode}}/turns",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"word\": \"Albanien\",\n  \"passedTurn\": false\n}"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "WordController + CategoryController",
+          "item": [
+            {
+              "name": "GET all categories",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/category"
+              }
+            },
+            {
+              "name": "GET non existing category",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/category/4/words"
+              }
+            },
+            {
+              "name": "GET all words for category 1",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/category/1/words"
+              }
+            },
+            {
+              "name": "GET all words in all categories",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/word"
+              }
+            }
+          ]
+        },
+        {
+          "name": "GameController",
+          "item": [
+            {
+              "name": "GET {{baseUrl}}/api/game/{{gameCode}}/status",
+              "request": {
+                "method": "GET",
+                "url": "{{baseUrl}}/api/game/{{gameCode}}/status"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Testing completed",
+          "item": [
+            {
+              "name": "DELETE {{baseUrl}}/api/dev/reset",
+              "request": {
+                "method": "DELETE",
+                "url": "{{baseUrl}}/api/dev/reset"
+              }
+            }
+          ]
+        }
+      ],
+      "variable": [
+        {
+          "key": "baseUrl",
+          "value": ""
+        },
+        {
+          "key": "gameCode",
+          "value": ""
         }
       ]
     }
