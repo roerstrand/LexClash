@@ -21,7 +21,6 @@ namespace OrdSpel.API.Test
                 Mock.Of<IUserClaimsPrincipalFactory<IdentityUser>>(),
                 null, null, null, null);
 
-            // SignInAsync sätter cookien i ett riktigt API-anrop – i testet gör vi ingenting
             signInManagerMock
                 .Setup(s => s.SignInAsync(It.IsAny<IdentityUser>(), It.IsAny<bool>(), null))
                 .Returns(Task.CompletedTask);

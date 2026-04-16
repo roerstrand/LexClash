@@ -21,7 +21,6 @@ namespace OrdSpel.API.Test
                 Mock.Of<IUserClaimsPrincipalFactory<IdentityUser>>(),
                 null, null, null, null);
 
-            // SignInAsync sätter cookien i ett riktigt API-anrop – i testet gör vi ingenting
             signInManagerMock
                 .Setup(s => s.SignInAsync(It.IsAny<IdentityUser>(), It.IsAny<bool>(), null))
                 .Returns(Task.CompletedTask);
@@ -51,9 +50,9 @@ namespace OrdSpel.API.Test
 
             var result = await controller.Register(new RegisterDto
             {
-                Username = "okändanvändare",
-                Password = "FelLösen!",
-                ConfirmPassword = "FelLösen!"
+                Username = "unknownuser",
+                Password = "WrongPass1!",
+                ConfirmPassword = "WrongPass1!"
             });
 
             Assert.IsType<BadRequestObjectResult>(result);

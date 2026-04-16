@@ -1,6 +1,7 @@
 @using OrdSpel.Shared.DTOs
 @using OrdSpel.UI.Services
 @inject GameService GameService
+@inject IJSRuntime JS
 
 @if (_isLoading)
 {
@@ -54,7 +55,7 @@ else
                     }
 
                     @* Players *@
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush" style="margin-bottom:1rem;">
                         @foreach (var player in game.Players.OrderByDescending(p => p.TotalScore))
                         {
                             var isWinner = player.UserId == game.WinnerUserId;
@@ -69,6 +70,12 @@ else
                             </li>
                         }
                     </ul>
+
+                    <button class="btn btn-outline-danger btn-sm"
+                            disabled="@(_deletingCode == game.GameCode)"
+                            @onclick="() => DeleteGame(game.GameCode)">
+                        @(_deletingCode == game.GameCode ? "Deleting..." : "Delete")
+                    </button>
                 </div>
             </div>
         }
@@ -79,6 +86,7 @@ else
 @code {
     private List<GameSummaryDto> _games = new();
     private bool _isLoading = true;
+    private string? _deletingCode;
 
     protected override async Task OnInitializedAsync()
     {
@@ -90,6 +98,25 @@ else
         finally
         {
             _isLoading = false;
+        }
+    }
+
+    private async Task DeleteGame(string gameCode)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Delete this game from history?");
+        if (!confirmed) return;
+
+        _deletingCode = gameCode;
+        try
+        {
+            var ok = await GameService.DeleteGameAsync(gameCode);
+            if (ok)
+                _games.RemoveAll(g => g.GameCode == gameCode);
+        }
+        catch { }
+        finally
+        {
+            _deletingCode = null;
         }
     }
 }

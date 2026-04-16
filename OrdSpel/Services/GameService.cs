@@ -23,8 +23,6 @@ namespace OrdSpel.UI.Services
                 _httpClient.DefaultRequestHeaders.Add("Cookie", _authState.CookieValue);
         }
 
-        // OBS: Stäm av  när kategori-feature är pushad — säkerställ att hela
-        // flödet går via BLL-service och DAL-repository istället för direkt mot DbContext i controllern.
         public async Task<List<T>> GetCategoriesAsync<T>()
         {
             SetAuthHeader();
@@ -110,6 +108,13 @@ namespace OrdSpel.UI.Services
                 return null;
 
             return await response.Content.ReadFromJsonAsync<GameResultDto>();
+        }
+
+        public async Task<bool> DeleteGameAsync(string gameCode)
+        {
+            SetAuthHeader();
+            var response = await _httpClient.DeleteAsync($"api/game/{gameCode}");
+            return response.IsSuccessStatusCode;
         }
 
         public async Task<List<GameSummaryDto>> GetGameHistoryAsync()

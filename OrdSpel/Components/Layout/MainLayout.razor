@@ -24,7 +24,15 @@
             <span>🏠</span> Home
         </NavLink>
 
-        <NavLink href="/sparade-spel"
+        <NavLink href="/game?tab=active"
+                 Match="NavLinkMatch.All"
+                 style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
+                 activeClass="nav-active">
+            <span>🎮</span> Active games
+        </NavLink>
+
+        <NavLink href="/game?tab=history" "
+                 Match="NavLinkMatch.All"
                  style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
                  activeClass="nav-active">
             <span>📋</span> Saved games
@@ -79,9 +87,14 @@
             <span>Home</span>
         </NavLink>
 
-        <NavLink href="/sparade-spel" class="bottom-nav-item" activeClass="nav-active">
+        <NavLink href="/aktiva-spel" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+            <span class="bottom-nav-icon">🎮</span>
+            <span>Active</span>
+        </NavLink>
+
+        <NavLink href="/sparade-spel" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
             <span class="bottom-nav-icon">📋</span>
-            <span>History</span>
+            <span>Saved</span>
         </NavLink>
 
         <button class="bottom-nav-item" @onclick="Logout">

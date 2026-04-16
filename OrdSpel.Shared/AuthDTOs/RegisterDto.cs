@@ -11,12 +11,12 @@ namespace OrdSpel.Shared.AuthDTOs
         public string Username { get; set; }
 
         [Required]
-        [MinLength(4, ErrorMessage = "Lösenordet måste vara minst 4 tecken.")]
+        [MinLength(4, ErrorMessage = "Password must be at least 4 characters.")]
         public string Password { get; set; }
 
         [Required]
-        [MinLength(4, ErrorMessage = "Lösenordet måste vara minst 4 tecken.")]
-        [Compare("Password", ErrorMessage = "Lösenorden matchar inte.")]
+        [MinLength(4, ErrorMessage = "Password must be at least 4 characters.")]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
     }
 }

@@ -410,6 +410,61 @@ label { font-size: 0.9rem; }
   color: #eeffdb;
 }
 
+/* Focus / active — override Bootstrap's blue ring */
+.btn:focus,
+.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 16, 31, 0.25) !important;
+}
+.btn:focus:not(:focus-visible) { box-shadow: none !important; }
+
+.btn-primary:active,
+.btn-primary:focus,
+.btn-primary.active {
+  background:
+    radial-gradient(ellipse 90% 65% at 50% 0%, rgba(238, 255, 219, 0.15) 0%, transparent 65%),
+    #500d17 !important;
+  border-color: var(--smoky-rose) !important;
+  color: #eeffdb !important;
+}
+.btn-outline-secondary:active,
+.btn-outline-secondary:focus,
+.btn-outline-secondary.active {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: var(--accent) !important;
+  color: var(--text) !important;
+}
+.btn-outline-light:active,
+.btn-outline-light:focus,
+.btn-outline-light.active {
+  background: rgba(255, 255, 255, 0.75) !important;
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+}
+.btn-outline-danger:active,
+.btn-outline-danger:focus,
+.btn-outline-danger.active {
+  background: rgba(184, 28, 42, 0.1) !important;
+  border-color: var(--danger) !important;
+  color: var(--danger) !important;
+}
+.btn-outline-warning:active,
+.btn-outline-warning:focus,
+.btn-outline-warning.active {
+  background: rgba(138, 96, 16, 0.1) !important;
+  border-color: var(--warning) !important;
+  color: var(--warning) !important;
+}
+.btn-success:active,
+.btn-success:focus,
+.btn-success.active {
+  background:
+    radial-gradient(ellipse 90% 65% at 50% 0%, rgba(255, 255, 255, 0.2) 0%, transparent 65%),
+    #1f5c13 !important;
+  border-color: #3a9a28 !important;
+  color: #eeffdb !important;
+}
+
 /* Small */
 .btn-sm {
   padding: 0.5rem 1rem;

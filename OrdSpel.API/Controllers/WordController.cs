@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using OrdSpel.API.Interfaces;
@@ -19,14 +19,11 @@ namespace OrdSpel.API.Controllers
             _wordService = wordService;
         }
 
-        [HttpGet] //enpoint för att hämta alla ord
+        [HttpGet]
         public async Task<IActionResult> GetAllWords()
         {
             var words = await _wordService.GetAllAsync();
             return Ok(words);
         }
-
-        //endpoint för att hämta ord i en specifik kategori finns i CategoryController
-
     }
 }

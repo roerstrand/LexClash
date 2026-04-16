@@ -218,12 +218,27 @@ namespace OrdSpel.DAL.Repositories
                 return new GameSummaryDto
                 {
                     GameCode = session.GameCode,
-                    CategoryName = session.Category?.Name ?? "Okänd",
+                    CategoryName = session.Category?.Name ?? "Unknown",
                     CreatedAt = session.CreatedAt,
                     Players = players,
                     WinnerUserId = winnerUserId
                 };
             }).ToList();
+        }
+
+        public async Task<bool> DeleteSessionAsync(string gameCode, string userId)
+        {
+            var session = await _db.GameSessions
+                .Include(s => s.Players)
+                .FirstOrDefaultAsync(s => s.GameCode == gameCode);
+
+            if (session == null) return false;
+            if (!session.Players.Any(p => p.UserId == userId)) return false;
+            if (session.Status != GameStatus.GameFinished) return false;
+
+            _db.GameSessions.Remove(session);
+            await _db.SaveChangesAsync();
+            return true;
         }
 
         private static GameSessionResponseDto MapToDto(GameSession session)

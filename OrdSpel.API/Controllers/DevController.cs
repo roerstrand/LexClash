@@ -21,8 +21,7 @@ namespace OrdSpel.API.Controllers
         }
 
         /// <summary>
-        /// Rensar all testdata: alla spelsessioner och alla användare.
-        /// Kategorier och ord behålls. Endast tillgänglig i Development-miljön.
+        /// Resets all test data: game sessions and users. Categories and words are kept. Only available in Development.
         /// </summary>
         [HttpDelete("reset")]
         public async Task<IActionResult> Reset()
@@ -30,13 +29,10 @@ namespace OrdSpel.API.Controllers
             if (!_env.IsDevelopment())
                 return NotFound();
 
-            // GameTurns och GamePlayers tas bort via cascade när GameSessions tas bort
             await _appDb.GameSessions.ExecuteDeleteAsync();
-
-            // Ta bort alla användare
             await _authDb.Users.ExecuteDeleteAsync();
 
-            return Ok(new { message = "Reset complete. GameSessions, GamePlayers, GameTurns och Users borttagna." });
+            return Ok(new { message = "Reset complete. GameSessions, GamePlayers, GameTurns and Users removed." });
         }
     }
 }

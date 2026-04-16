@@ -147,6 +147,20 @@ namespace OrdSpel.API.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("{gameCode}")]
+        public async Task<IActionResult> DeleteGame(string gameCode)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null)
+                return Unauthorized();
+
+            var result = await _gameService.DeleteGameAsync(gameCode, userId);
+            if (!result.Success)
+                return BadRequest(result.Error);
+
+            return NoContent();
+        }
+
         [HttpGet("{code}/status")]
         public async Task<ActionResult<GameStatusDto>> GetGameStatus(string code)
         {

@@ -51,7 +51,7 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
                 .WaitForAsync(new() { State = WaitForSelectorState.Visible });
 
             var text = await _page.Locator("#errorBox").InnerTextAsync();
-            Assert.That(text, Does.Contain("Fel användarnamn eller lösenord"));
+            Assert.That(text, Does.Contain("Incorrect username or password"));
 
         }
 
@@ -62,7 +62,7 @@ namespace OrdSpel.PlaywrightTests.StepDefinitions
                 .WaitForAsync(new() { State = WaitForSelectorState.Visible });
 
             var text = await _page.Locator("#errorBox").InnerTextAsync();
-            Assert.That(text, Does.Contain("Vänligen fyll i både användarnamn"));
+            Assert.That(text, Does.Contain("Please fill in all fields"));
         }
     }
 }

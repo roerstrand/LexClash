@@ -14,5 +14,6 @@ namespace OrdSpel.BLL.Interfaces
        Task<GameResultDto?> GetGameResultAsync(string gameCode);
         Task<GameSessionResponseDto?> GetActiveGameByUserAsync(string userId);
         Task<List<GameSummaryDto>> GetGameHistoryAsync(string userId);
+        Task<ServiceResult<bool>> DeleteGameAsync(string gameCode, string userId);
     }
 }
