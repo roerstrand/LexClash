@@ -9,15 +9,15 @@ namespace OrdSpel.DAL.Data.SeededData
     {
         public static async Task SeedUserAsync(UserManager<IdentityUser> userManager)
         {
-            if (await userManager.FindByNameAsync("spelare1") == null)
+            if (await userManager.FindByNameAsync("player1") == null)
             {
-                var user = new IdentityUser { UserName = "spelare1", EmailConfirmed = true };
+                var user = new IdentityUser { UserName = "player1", EmailConfirmed = true };
                 await userManager.CreateAsync(user, "123");
             }
 
-            if (await userManager.FindByNameAsync("spelare2") == null)
+            if (await userManager.FindByNameAsync("player2") == null)
             {
-                var user = new IdentityUser { UserName = "spelare2", EmailConfirmed = true };
+                var user = new IdentityUser { UserName = "player2", EmailConfirmed = true };
                 await userManager.CreateAsync(user, "123");
             }
 

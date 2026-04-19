@@ -44,25 +44,25 @@ and a Start button if ready to start. Also includes a Copy button for the GameCo
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1.75rem;">
 
             @* Category *@
-            <div id="lobbyCategory" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+            <div id="lobbyCategory" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(42,42,42,0.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 2px 8px rgba(0,0,0,0.3),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
                 <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Category</div>
                 <div style="color:var(--text);font-weight:700;font-size:1.05rem;">@Status.CategoryName</div>
             </div>
 
             @* Players *@
-            <div id="lobbyPlayers" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+            <div id="lobbyPlayers" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(42,42,42,0.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 2px 8px rgba(0,0,0,0.3),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
                 <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Players</div>
                 <div style="color:var(--text);font-weight:700;font-size:1.2rem;">@Status.PlayerCount / @Status.MaxPlayers</div>
             </div>
 
             @* Start word *@
-            <div id="lobbyStartWord" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+            <div id="lobbyStartWord" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(42,42,42,0.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 2px 8px rgba(0,0,0,0.3),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
                 <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Start word</div>
                 <div style="font-family:'JetBrains Mono',monospace;color:var(--text);font-weight:700;font-size:1.1rem;">@Status.StartWord</div>
             </div>
 
             @* Status *@
-            <div id="lobbyStatus" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(255,255,255,0.82);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.72);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),0 2px 8px rgba(102,16,31,0.09),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
+            <div id="lobbyStatus" style="background:radial-gradient(ellipse 130% 80% at 50% -15%,rgba(184,212,227,0.35) 0%,transparent 65%),rgba(42,42,42,0.88);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius);padding:1rem;text-align:center;box-shadow:inset 0 1px 0 rgba(255,255,255,0.06),0 2px 8px rgba(0,0,0,0.3),0 8px 28px rgba(102,16,31,0.1),0 18px 40px rgba(102,16,31,0.06);transition:box-shadow 0.25s cubic-bezier(0.4,0,0.2,1),transform 0.25s cubic-bezier(0.4,0,0.2,1);">
                 <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;font-weight:600;">Status</div>
                 <div style="color:var(--text);font-weight:600;font-size:0.95rem;">@Status.Status</div>
             </div>
@@ -75,7 +75,7 @@ and a Start button if ready to start. Also includes a Copy button for the GameCo
             <div style="
                 background:
                     radial-gradient(ellipse 120% 70% at 50% -10%, rgba(157,232,138,0.18) 0%, transparent 65%),
-                    rgba(255,255,255,0.82);
+                    rgba(42,42,42,0.88);
                 backdrop-filter: blur(10px);
                 border: 1px solid rgba(157,232,138,0.3);
                 border-radius: var(--radius);
@@ -99,8 +99,8 @@ and a Start button if ready to start. Also includes a Copy button for the GameCo
         {
             <div style="
                 background:
-                    radial-gradient(ellipse 120% 70% at 50% -10%, rgba(184,212,227,0.25) 0%, transparent 65%),
-                    rgba(255,255,255,0.72);
+                    radial-gradient(ellipse 120% 70% at 50% -10%, rgba(255,93,115,0.06) 0%, transparent 60%),
+                    rgba(255,255,255,0.08);
                 backdrop-filter: blur(10px);
                 border: 1px solid var(--border);
                 border-radius: var(--radius);
@@ -110,7 +110,7 @@ and a Start button if ready to start. Also includes a Copy button for the GameCo
                 font-size: 0.9rem;
                 text-transform: uppercase;
                 letter-spacing: 0.06em;
-                box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 2px 8px rgba(102,16,31,0.08), 0 8px 28px rgba(102,16,31,0.1), 0 20px 44px rgba(102,16,31,0.06);
+                box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 2px 8px rgba(255,93,115,0.12), 0 8px 28px rgba(102,16,31,0.1), 0 20px 44px rgba(102,16,31,0.06);
             ">
                 Waiting for opponent... (@Status.PlayerCount/@Status.MaxPlayers)
             </div>

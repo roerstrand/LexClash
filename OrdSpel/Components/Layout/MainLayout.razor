@@ -6,71 +6,64 @@
 @* ── Desktop sidebar ─────────────────────────────────────────── *@
 <nav class="sidebar">
 
-    <a href="/game" class="topbar-logo" style="margin-bottom:1.75rem;">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="28" height="28" rx="6" fill="#66101f"/>
-            <text x="5" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#eeffdb">L</text>
-            <text x="15" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#b8d4e3">C</text>
-        </svg>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:1.25rem;font-weight:700;color:var(--text);letter-spacing:0.04em;">LexClash</span>
+    <a href="/game" class="topbar-logo" style="margin-bottom:2rem;gap:0.75rem;">
+        <div style="width:42px;height:42px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(255,93,115,0.4);">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:#fff;line-height:1;letter-spacing:-0.02em;">LC</span>
+        </div>
+        <span style="font-family:'Fondamento',serif;font-size:1.3rem;font-weight:700;color:var(--text);letter-spacing:0.05em;">LexClash</span>
     </a>
 
     @if (AuthState.IsLoggedIn)
     {
-        <NavLink href="/game"
-                 Match="NavLinkMatch.All"
-                 style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
-                 activeClass="nav-active">
-            <span>🏠</span> Home
-        </NavLink>
+        <div style="background:linear-gradient(135deg,rgba(255,93,115,0.18) 0%,rgba(255,93,115,0.06) 100%);border:1px solid var(--border2);border-radius:12px;padding:1rem 1.1rem;margin-bottom:0.75rem;">
+            <div style="font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:0.3rem;">Logged in as</div>
+            <div style="font-size:1.15rem;color:#fff;font-weight:800;letter-spacing:0.04em;word-break:break-all;">@AuthState.Username</div>
+        </div>
 
-        <NavLink href="/game?tab=active"
-                 Match="NavLinkMatch.All"
-                 style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
-                 activeClass="nav-active">
-            <span>🎮</span> Active games
-        </NavLink>
+        <a href="/game"
+           class="nav-item-link @(ActiveClass("new"))"
+           @onclick:preventDefault="true"
+           @onclick='() => Navigate("/game")'>
+            <span style="font-size:1.25rem;line-height:1;">🏠</span> Home
+        </a>
 
-        <NavLink href="/game?tab=history" "
-                 Match="NavLinkMatch.All"
-                 style="display:flex;align-items:center;gap:0.6rem;color:var(--muted);text-decoration:none;font-size:0.9rem;font-weight:500;padding:0.6rem 0.75rem;border-radius:8px;transition:background 0.15s,color 0.15s;"
-                 activeClass="nav-active">
-            <span>📋</span> Saved games
-        </NavLink>
+        <a href="/game?tab=active"
+           class="nav-item-link @(ActiveClass("active"))"
+           @onclick:preventDefault="true"
+           @onclick='() => Navigate("/game?tab=active")'>
+            <span style="font-size:1.25rem;line-height:1;">🎮</span> Active games
+        </a>
 
-        <div style="margin-top:auto;border-top:1px solid var(--border);padding-top:1rem;">
-            <div style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem;">Logged in as</div>
-            <div style="font-size:0.9rem;color:var(--text);margin-bottom:0.85rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;">@AuthState.Username</div>
-            <button class="btn btn-outline-danger btn-sm" style="width:100%;" @onclick="Logout">
-                Log out
-            </button>
+        <a href="/game?tab=history"
+           class="nav-item-link @(ActiveClass("history"))"
+           @onclick:preventDefault="true"
+           @onclick='() => Navigate("/game?tab=history")'>
+            <span style="font-size:1.25rem;line-height:1;">📋</span> Saved games
+        </a>
+
+        <div style="margin-top:auto;padding-top:1rem;border-top:1px solid var(--border);">
+            <button class="btn-logout" @onclick="Logout">Log out</button>
         </div>
     }
     else
     {
-        <NavLink href="/" class="btn btn-outline-light btn-sm" style="margin-bottom:0.5rem;text-align:left;">
-            Log in
-        </NavLink>
-        <NavLink href="/register" class="btn btn-outline-light btn-sm" style="text-align:left;">
-            Register
-        </NavLink>
+        <a href="/" class="btn btn-primary" style="margin-bottom:0.5rem;text-align:left;width:100%;">Log in</a>
+        <a href="/register" class="btn btn-outline-secondary" style="text-align:left;width:100%;">Register</a>
     }
 </nav>
 
 @* ── Mobile top bar ───────────────────────────────────────────── *@
 <header class="topbar">
-    <a href="/game" class="topbar-logo">
-        <svg width="26" height="26" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="28" height="28" rx="6" fill="#66101f"/>
-            <text x="5" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#eeffdb">L</text>
-            <text x="15" y="20" font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" fill="#b8d4e3">C</text>
-        </svg>
-        <span style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:0.04em;">LexClash</span>
+    <a href="/game" class="topbar-logo" style="gap:0.6rem;">
+        <div style="width:34px;height:34px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 6px rgba(255,93,115,0.4);">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;font-weight:700;color:#fff;line-height:1;letter-spacing:-0.02em;">LC</span>
+        </div>
+        <span style="font-family:'Fondamento',serif;font-size:1.15rem;font-weight:700;color:var(--text);letter-spacing:0.05em;">LexClash</span>
     </a>
 
     @if (AuthState.IsLoggedIn)
     {
-        <span class="topbar-user">@AuthState.Username</span>
+        <span class="topbar-user" style="font-weight:600;color:var(--accent);font-size:0.9rem;">@AuthState.Username</span>
     }
     else
     {
@@ -82,20 +75,20 @@
 <nav class="bottom-nav">
     @if (AuthState.IsLoggedIn)
     {
-        <NavLink href="/game" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+        <a href="/game" class="bottom-nav-item @(ActiveClass("new"))" @onclick:preventDefault="true" @onclick='() => Navigate("/game")'>
             <span class="bottom-nav-icon">🏠</span>
             <span>Home</span>
-        </NavLink>
+        </a>
 
-        <NavLink href="/aktiva-spel" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+        <a href="/game?tab=active" class="bottom-nav-item @(ActiveClass("active"))" @onclick:preventDefault="true" @onclick='() => Navigate("/game?tab=active")'>
             <span class="bottom-nav-icon">🎮</span>
             <span>Active</span>
-        </NavLink>
+        </a>
 
-        <NavLink href="/sparade-spel" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+        <a href="/game?tab=history" class="bottom-nav-item @(ActiveClass("history"))" @onclick:preventDefault="true" @onclick='() => Navigate("/game?tab=history")'>
             <span class="bottom-nav-icon">📋</span>
             <span>Saved</span>
-        </NavLink>
+        </a>
 
         <button class="bottom-nav-item" @onclick="Logout">
             <span class="bottom-nav-icon">🚪</span>
@@ -104,15 +97,14 @@
     }
     else
     {
-        <NavLink href="/" Match="NavLinkMatch.All" class="bottom-nav-item" activeClass="nav-active">
+        <a href="/" class="bottom-nav-item @(Nav.Uri.EndsWith("/") || Nav.Uri.Contains("login") ? "nav-active" : "")">
             <span class="bottom-nav-icon">🔑</span>
             <span>Log in</span>
-        </NavLink>
-
-        <NavLink href="/register" class="bottom-nav-item" activeClass="nav-active">
+        </a>
+        <a href="/register" class="bottom-nav-item @(Nav.Uri.Contains("register") ? "nav-active" : "")">
             <span class="bottom-nav-icon">✏️</span>
             <span>Register</span>
-        </NavLink>
+        </a>
     }
 </nav>
 
@@ -128,9 +120,50 @@
 </div>
 
 @code {
+    private string _currentTab = "new";
+
+    protected override void OnInitialized()
+    {
+        Nav.LocationChanged += OnLocationChanged;
+        UpdateTab();
+    }
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e)
+    {
+        var prev = _currentTab;
+        UpdateTab();
+        if (_currentTab != prev)
+            InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateTab()
+    {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        if (query.TryGetValue("tab", out var tab))
+            _currentTab = tab.ToString();
+        else if (uri.AbsolutePath.StartsWith("/game"))
+            _currentTab = "new";
+        else
+            _currentTab = "";
+    }
+
+    private string ActiveClass(string tab) =>
+        _currentTab == tab ? "nav-active" : "";
+
+    private void Navigate(string url)
+    {
+        Nav.NavigateTo(url);
+    }
+
     private void Logout()
     {
         AuthState.Logout();
         Nav.NavigateTo("/");
+    }
+
+    public void Dispose()
+    {
+        Nav.LocationChanged -= OnLocationChanged;
     }
 }
