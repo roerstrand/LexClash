@@ -1,3 +1,5 @@
+YouTube: https://youtube.com/shorts/HhwuGdsO7Lg
+
 # LexClash — Multiplayer Word Game
 
 A real-time multiplayer word game built with **ASP.NET Core**, **Blazor**, and **SignalR**. Two players compete by taking turns submitting words from a given category, scoring points based on word length and letter values over 20 rounds.
